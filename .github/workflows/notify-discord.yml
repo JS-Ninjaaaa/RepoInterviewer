@@ -1,0 +1,65 @@
+name: Notify Discord on PR Events
+
+on:
+  pull_request:
+    types: [review_requested]
+  issue_comment:
+    types: [created]
+
+jobs:
+  notify_review_requested:
+    if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Write user_map.json from Secret
+        run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
+
+      - name: Notify reviewer on PR review request
+        env:
+          REVIEWER: ${{ github.event.requested_reviewer.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
+        run: |
+          USER="$REVIEWER"
+          DISCORD_ID=$(jq -r --arg user "$USER" '.[$user]' user_map.json)
+          MENTION="@here"
+          [ "$DISCORD_ID" != "null" ] && [ -n "$DISCORD_ID" ] && MENTION="<@$DISCORD_ID>"
+
+          cat <<EOF > message.json
+          {
+            "content": "$MENTION 👀レビューがリクエストされました: [$PR_TITLE]($PR_URL)"
+          }
+          EOF
+          curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
+
+  notify_comment:
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Write user_map.json from Secret
+        run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
+
+      - name: Notify PR author on comment
+        env:
+          AUTHOR: ${{ github.event.issue.user.login }}
+          COMMENT_URL: ${{ github.event.comment.html_url }}
+          WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
+        run: |
+          USER="$AUTHOR"
+          DISCORD_ID=$(jq -r --arg user "$USER" '.[$user]' user_map.json)
+          MENTION="@here"
+          [ "$DISCORD_ID" != "null" ] && [ -n "$DISCORD_ID" ] && MENTION="<@$DISCORD_ID>"
+
+          cat <<EOF > message.json
+          {
+            "content": "$MENTION 💬コメントされました: $COMMENT_URL"
+          }
+          EOF
+          curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
