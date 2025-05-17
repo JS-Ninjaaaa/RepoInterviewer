@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Avatar, Button, IconButton } from '@mui/material';
+import { Box, Typography, Avatar, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { characters } from '../data/characters';
 
-interface FirstScreenProps {
-  vscode: VSCodeAPI;
-}
+// interface StartScreenProps {
+//   vscode: VSCodeAPI;
+// }
 
-declare global {
-  interface VSCodeAPI {
-  postMessage: (msg: { type: string; payload?: unknown }) => void;
-  getState: () => unknown;
-  setState: (data: unknown) => void;
-}
-  function acquireVsCodeApi(): VSCodeAPI;
-}
+// declare global {
+//   interface VSCodeAPI {
+//   postMessage: (msg: { type: string; payload?: unknown }) => void;
+//   getState: () => unknown;
+//   setState: (data: unknown) => void;
+// }
+//   function acquireVsCodeApi(): VSCodeAPI;
+// }
 
 
-const FirstScreen: React.FC<FirstScreenProps> = ({ vscode }) => {
+// const StartScreen: React.FC<StartScreenProps> = () => {
+const StartScreen = () => {
 
   const [imageSrc, setImageSrc] = useState<string>("");
 
@@ -42,9 +43,9 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ vscode }) => {
     setIndex((prev) => (prev - 1 + characters.length) % characters.length);
   };
 
-  const handleClick = () => {
-    vscode.postMessage({ type: 'hello', payload: 'こんにちは！' });
-  };
+  // const handleClick = () => {
+  //   vscode.postMessage({ type: 'hello', payload: 'こんにちは！' });
+  // };
 
   return (
     <Box
@@ -71,7 +72,6 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ vscode }) => {
           minWidth={100}
           textAlign="center"
         >
-          <h1>Hello</h1>
           <Avatar
             src={imageSrc}
             alt={current.name}
@@ -98,4 +98,4 @@ const FirstScreen: React.FC<FirstScreenProps> = ({ vscode }) => {
   );
 };
 
-export default FirstScreen;
+export default StartScreen;
