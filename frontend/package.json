@@ -1,6 +1,6 @@
 {
   "name": "repointerviewer",
-  "publisher": "hikari", 
+  "publisher": "hikari",
   "displayName": "Repointerviewer",
   "description": "A VSCode extension with a chat button",
   "version": "0.0.1",
@@ -12,12 +12,20 @@
   ],
   "main": "./build/commands/extension.js",
   "activationEvents": [
-  "*"
-],
+    "*"
+  ],
+  "contributes": {
+  "commands": [
+    {
+      "command": "repointerviewer.start",
+      "title": "Repointerviewer: Start"
+    }
+  ]
+}
+,
   "scripts": {
     "vscode:prepublish": "pnpm run compile",
     "compile": "tsc -b src/commands src/webview",
-    "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
@@ -37,6 +45,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "@vscode/test-cli": "^0.0.4",
     "@vscode/test-electron": "^2.3.8",
+    "concurrently": "^9.1.2",
     "eslint": "^8.54.0",
     "typescript": "^5.3.2",
     "vite": "^5.0.10"

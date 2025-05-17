@@ -7,7 +7,6 @@ export default defineConfig({
   root: '.',                      // ここの . は “src/webview” を指す
   plugins: [react()],
   build: {
-    /** ★ ルート直下の build/webview へ吐き出す */
     outDir: resolve(__dirname, '../../build/webview'),
     emptyOutDir: true,
 
