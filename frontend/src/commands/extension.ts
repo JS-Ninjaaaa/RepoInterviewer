@@ -7,13 +7,13 @@ export function activate(context: vscode.ExtensionContext) {
 
   myStatusBarItem.text = 'Ⓜ️モード'; // ← 絵文字＋テキスト
   myStatusBarItem.tooltip = 'クリックして面接質問を表示';
-  myStatusBarItem.command = 'menpro.menpro';
+  myStatusBarItem.command = 'repointerviewer.repointerviewer';
   myStatusBarItem.show();
 
   context.subscriptions.push(myStatusBarItem);
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("menpro.menpro", async() => {
+    vscode.commands.registerCommand("repointerviewer.repointerviewer", async() => {
       const panel = await openWindow(context.extensionUri);
       panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
       const sakiImageUri = getUri(panel.webview, context.extensionUri, [
@@ -82,7 +82,7 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Menpro</title>
+      <title>repointerviewer</title>
       <meta http-equiv="Content-Security-Policy"
             content="default-src 'none';
                     style-src 'unsafe-inline' ${webview.cspSource};

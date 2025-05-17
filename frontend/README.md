@@ -1,6 +1,6 @@
-# menpro README
+# repointerviewer README
 
-This is the README for your extension "menpro". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "repointerviewer". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 
