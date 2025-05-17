@@ -1,7 +1,7 @@
 {
-  "name": "menpro",
+  "name": "repointerviewer",
   "publisher": "hikari", 
-  "displayName": "Menpro",
+  "displayName": "Repointerviewer",
   "description": "A VSCode extension with a chat button",
   "version": "0.0.1",
   "engines": {
