@@ -15,14 +15,13 @@
     "*"
   ],
   "contributes": {
-  "commands": [
-    {
-      "command": "repointerviewer.start",
-      "title": "Repointerviewer: Start"
-    }
-  ]
-}
-,
+    "commands": [
+      {
+        "command": "repointerviewer.start",
+        "title": "Repointerviewer: Start"
+      }
+    ]
+  },
   "scripts": {
     "vscode:prepublish": "pnpm run compile",
     "compile": "tsc -b src/commands src/webview",
@@ -51,6 +50,10 @@
     "vite": "^5.0.10"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.1.0",
+    "jszip": "^3.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

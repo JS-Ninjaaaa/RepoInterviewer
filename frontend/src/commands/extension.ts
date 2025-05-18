@@ -1,4 +1,15 @@
 import * as vscode from "vscode";
+import { fetchFiles } from "./functions/fetchFiles";
+import { sendInitialInfo } from "./api/api"
+import { error } from "console";
+
+type message = {
+  type: string,
+  payload: {
+    difficulty: string, 
+    questionnumbers: number
+  }
+}
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
@@ -16,6 +27,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("repointerviewer.repointerviewer", async() => {
       const panel = await openWindow(context.extensionUri);
       panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
+
+      // 画像のパスを正す
       const sakiImageUri = getUri(panel.webview, context.extensionUri, [
         "media", "saki.png"
       ]);
@@ -23,8 +36,38 @@ export function activate(context: vscode.ExtensionContext) {
         type: "init",
         imageUri: sakiImageUri.toString(),
       });
+      // reactからメッセージを受け取ったタイミングで実行される
+      panel.webview.onDidReceiveMessage(async (message: message) => {
+        console.log("webview clicked");
+        const QuestionInfo = await switchCommands(panel,message); 
+        if (QuestionInfo) {
+          panel.webview.postMessage({
+            type: "firstQuestion",
+            payload: QuestionInfo
+          });
+        }
+      });
     })
   );
+}
+
+async function switchCommands(panel: vscode.WebviewPanel, message: message) {
+  switch (message.type) {
+    case "sendInitialInfo": {
+      const zipBinary = await fetchFiles();
+      try {
+        const QuestionInfo = await sendInitialInfo(zipBinary, message.payload); // zipファイルと難易度，質問数をバックエンドに送る
+        return QuestionInfo;
+      } catch (err: any) {
+        console.error("❌ 処理中エラー:", err);
+        panel.webview.postMessage({
+          type: "error",
+          payload: err.message || "不明なエラー"
+        });
+        return null;
+      }
+    }
+  }
 }
 
 // 画面を二分割し，右側にwebviewを開く関数
@@ -55,16 +98,16 @@ export function deactivate() {}
     pathList: string[]
   ): vscode.Uri {
     return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
-  }
+}
 
-  /**
-   * CSP用ランダム nonce を生成
-   */
-  function getNonce(): string {
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    return Array.from({ length: 32 }, () =>
-      possible.charAt(Math.floor(Math.random() * possible.length))
-    ).join("");
+/**
+ * CSP用ランダム nonce を生成
+ */
+function getNonce(): string {
+  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  return Array.from({ length: 32 }, () =>
+    possible.charAt(Math.floor(Math.random() * possible.length))
+  ).join("");
 }
 
 /**
