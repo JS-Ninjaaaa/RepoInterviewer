@@ -1,4 +1,4 @@
-import { yellow, lightGreen, blue, deepPurple } from '@mui/material/colors'
+import type { Color } from '@mui/material';
 
 export interface Character {
   level: '初級' | '中級' | '上級' | '激詰め';
@@ -8,5 +8,5 @@ export interface Character {
   title: string;
   quotes: string[];
   image: string;
-  color: typeof yellow | typeof lightGreen | typeof blue | typeof deepPurple;
+  color: Color;
 }
