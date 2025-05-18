@@ -4,7 +4,8 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
 export default defineConfig({
-  root: '.',                      // ここの . は “src/webview” を指す
+  root: '.',      
+  base: './',              
   plugins: [react()],
   build: {
     outDir: resolve(__dirname, '../../build/webview'),
@@ -16,7 +17,7 @@ export default defineConfig({
 
       /** ファイル名を固定 (index.js) にすると extension.ts が読みやすい */
       output: {
-        entryFileNames: 'index.js'
+        entryFileNames: 'index.js',
       }
     }
   }

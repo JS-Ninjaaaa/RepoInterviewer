@@ -1,51 +1,62 @@
-export interface Character {
-  level: '初級' | '中級' | '上級' | '超上級';
-  name: string;
-  title: string;
-  quotes: string[];
-  image: string;
-}
+import { yellow, lightGreen, blue, deepPurple } from '@mui/material/colors'
+import { Character } from "../types/character";
+
+import yuzuPng from '../assets/images/yuzu.png';
+import haruPng from '../assets/images/haru.png';
+import sakiPng from '../assets/images/saki.png';
+import renPng  from '../assets/images/ren.png';
 
 export const characters: Character[] = [
   {
     level: '初級',
+    questionnum: 5,
     name: 'ユズ',
-    title: 'ギャルAI「ユズ」',
+    text: "Yuzu",
+    title: 'やさしいギャル',
     quotes: [
       'マジすごいじゃん〜！えらい！',
-      'これちょっとだけ直せば完璧っしょ☆',
+      'ちょっとだけ直せば完璧っしょ☆',
     ],
-    image: '/images/yuzu.png',
+    image: yuzuPng,
+    color: yellow,
   },
   {
     level: '中級',
-    name: 'サキ',
-    title: '先輩エンジニア「サキ」',
+    questionnum: 5,
+    name: 'ハル',
+    text: "Haru",
+    title: '先輩エンジニア',
     quotes: [
       'この責務分離、もう一歩かな',
       '設計思想としては筋が通ってる',
     ],
-    image: '/images/saki.png',
+    image: haruPng,
+    color: lightGreen,
   },
   {
     level: '上級',
-    name: 'カグヤ',
-    title: '辛口メンター「カグヤ」',
+    questionnum: 2,
+    name: 'サキ',
+    text: "Saki",
+    title: '辛口メンター',
     quotes: [
       'このコード、保守性ゼロ',
       'それ、Goの文法理解してる？',
     ],
-    image: '/images/kaguya.png',
+    image: sakiPng,
+    color: blue,
   },
   {
-    level: '超上級',
+    level: '激詰め',
+    questionnum: 2,
     name: '黒鉄レン',
-    title: '黒鉄（くろがね）レン / Kurogane',
+    text: "Ren",
+    title: 'Kurogane',
     quotes: [
       'このコード、今すぐリファクタしろ',
-      '責務が曖昧。お前が書いたのか？',
       'その程度の抽象化で通ると思うな',
     ],
-    image: '/images/kurogane.png',
+    image: renPng,
+    color: deepPurple,
   },
 ];
