@@ -1,16 +1,7 @@
-// index.tsx (エントリーポイント)
-import { createRoot } from "react-dom/client";
-import StartScreen from "./screens/StartScreen";
+// // index.tsx (エントリーポイント)
 
-// ✨ここでグローバルから取得✨
-const vscode = typeof acquireVsCodeApi === "function"
-  ? acquireVsCodeApi()
-  : {
-      postMessage: () => {},
-      getState: () => undefined,
-      setState: () => {},
-    };
+import { createRoot } from 'react-dom/client';
+import AppRoutes from './AppRoutes';
 
-
-const root = createRoot(document.getElementById("app")!);
-root.render(<StartScreen vscode={vscode} />);
+const root = createRoot(document.getElementById('app')!);
+root.render(<AppRoutes />);
