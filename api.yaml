@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: Code Interview API
+  version: 1.0.0
+tags:
+  - name: InterviewAPI
+    description: LLMによるコードレビュー面接システム
+servers:
+  - url: http://localhost:8000
+
+paths:
+  /interview:
+    post:
+      summary: コードと設定を送って面接セッションを開始
+      tags: [InterviewAPI]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                source_code:
+                  type: string
+                  format: binary
+                difficulty:
+                  type: string
+                  enum: [easy, normal, hard]
+                total_question:
+                  type: integer
+      responses:
+        '200':
+          description: 面接IDと初回の質問文を返す
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  interview_id:
+                    type: string
+                  question:
+                    type: string
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_message:
+                    type: string
+
+  /interview/{interview_id}:
+    post:
+      summary: ユーザーの回答や質問に対してLLMからの返答を取得
+      tags: [InterviewAPI]
+      parameters:
+        - in: path
+          name: interview_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: stream
+          required: true
+          schema:
+            type: boolean
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                question_id:
+                  type: integer
+                message:
+                  type: string
+      responses:
+        '200':
+          description: LLMからの返答と現在の質問IDを返す
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  question_id:
+                    type: integer
+                  response:
+                    type: string
+        '400':
+          description: Bad Request
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_message:
+                    type: string
+
+    get:
+      summary: 指定された質問IDの質問文を取得
+      tags: [InterviewAPI]
+      parameters:
+        - in: path
+          name: interview_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: question_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 質問内容を返す
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  question_id:
+                    type: integer
+                  question:
+                    type: string
+        '404':
+          description: 質問が見つからなかった場合
+
+  /interview/{interview_id}/result:
+    get:
+      summary: 全質問に対する評価結果を取得
+      tags: [InterviewAPI]
+      parameters:
+        - in: path
+          name: interview_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 各質問の点数と総評を返す
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  scores:
+                    type: array
+                    items:
+                      type: integer
+                  general_review:
+                    type: string
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_message:
+                    type: string
