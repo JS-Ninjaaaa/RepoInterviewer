@@ -40,3 +40,4 @@ src/webview/.vite/
 src/test-server/
 src/webview/src/App.tsx
 src/webview/src/main.tsx
+src/webview/src/screens/AnswerScreen.tsx
