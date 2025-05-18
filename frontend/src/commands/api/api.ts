@@ -1,4 +1,4 @@
-export async function sendInitialInfo(
+export async function fetchfirstQuestion(
   zipBinary: Uint8Array,
   payload: { difficulty: string; questionnumbers: number }
 ): Promise<any> {

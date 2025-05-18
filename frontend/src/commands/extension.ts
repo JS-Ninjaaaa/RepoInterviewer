@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { fetchFiles } from "./functions/fetchFiles";
-import { sendInitialInfo } from "./api/api";
+import { fetchfirstQuestion } from "./api/api";
 
 type message = {
   type: string,
@@ -43,11 +43,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function switchCommands(panel: vscode.WebviewPanel, message: message) {
   switch (message.type) {
-    case "sendInitialInfo": {
+    case "fetchfirstQuestion": {
       const zipBinary = await fetchFiles();
       // zipファイルと難易度，質問数をバックエンドに送る
       try {
-        const QuestionInfo = await sendInitialInfo(zipBinary, message.payload); 
+        const QuestionInfo = await fetchfirstQuestion(zipBinary, message.payload); 
         return QuestionInfo;
       } catch (err: any) {
         console.error("処理中エラー:", err);
