@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { fetchFiles } from "./functions/fetchFiles";
-import { sendInitialInfo } from "./api/api"
-import { error } from "console";
+import { sendInitialInfo } from "./api/api";
 
 type message = {
   type: string,
@@ -13,10 +12,9 @@ type message = {
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
-  console.log("🟢 Mensetsu拡張が起動しました");
   const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
 
-  myStatusBarItem.text = 'Ⓜ️モード'; // ← 絵文字＋テキスト
+  myStatusBarItem.text = 'Ⓜ️モード'; 
   myStatusBarItem.tooltip = 'クリックして面接質問を表示';
   myStatusBarItem.command = 'repointerviewer.repointerviewer';
   myStatusBarItem.show();
@@ -36,6 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
         type: "init",
         imageUri: sakiImageUri.toString(),
       });
+
       // reactからメッセージを受け取ったタイミングで実行される
       panel.webview.onDidReceiveMessage(async (message: message) => {
         console.log("webview clicked");
@@ -55,11 +54,12 @@ async function switchCommands(panel: vscode.WebviewPanel, message: message) {
   switch (message.type) {
     case "sendInitialInfo": {
       const zipBinary = await fetchFiles();
+      // zipファイルと難易度，質問数をバックエンドに送る
       try {
-        const QuestionInfo = await sendInitialInfo(zipBinary, message.payload); // zipファイルと難易度，質問数をバックエンドに送る
+        const QuestionInfo = await sendInitialInfo(zipBinary, message.payload); 
         return QuestionInfo;
       } catch (err: any) {
-        console.error("❌ 処理中エラー:", err);
+        console.error("処理中エラー:", err);
         panel.webview.postMessage({
           type: "error",
           payload: err.message || "不明なエラー"
