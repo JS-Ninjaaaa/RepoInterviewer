@@ -13,7 +13,7 @@ type message = {
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
-
+  console.log("面接モードボタンが押されました！")
   myStatusBarItem.text = 'Ⓜ️モード'; 
   myStatusBarItem.tooltip = 'クリックして面接質問を表示';
   myStatusBarItem.command = 'repointerviewer.repointerviewer';
@@ -25,16 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("repointerviewer.repointerviewer", async() => {
       const panel = await openWindow(context.extensionUri);
       panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
-
-      // 画像のパスを正す
-      const sakiImageUri = getUri(panel.webview, context.extensionUri, [
-        "media", "saki.png"
-      ]);
-      panel.webview.postMessage({
-        type: "init",
-        imageUri: sakiImageUri.toString(),
-      });
-
+      
       // reactからメッセージを受け取ったタイミングで実行される
       panel.webview.onDidReceiveMessage(async (message: message) => {
         console.log("webview clicked");
@@ -124,7 +115,13 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="Content-Security-Policy" name="viewport"  content="
+        default-src 'none';
+        style-src 'unsafe-inline' vscode-resource:;
+        script-src vscode-resource:;
+        font-src vscode-resource:;
+        img-src vscode-resource:;
+      ">
       <title>repointerviewer</title>
       <meta http-equiv="Content-Security-Policy"
             content="default-src 'none';
