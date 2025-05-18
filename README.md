@@ -20,5 +20,5 @@
   - **言語**：TypeScript / JavaScript
   - **ビルドツール**：Vite
   - **UI構成**：HTML / CSS / WebView（VS Code Extension 向け）
-  - **パッケージ管理**：npm / Node.js
+  - **パッケージ管理**：pnpm / Node.js
 
