@@ -1,47 +1,26 @@
-import  { useState, useEffect } from 'react';
-import { Box, Typography, Avatar, IconButton, Button } from '@mui/material';
+import  { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Box, Typography, Avatar, IconButton, Button, ThemeProvider } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { characters } from '../data/characters';
-import { ThemeProvider } from '@mui/material/styles';
 import { theme } from '../theme';
+import { message } from '../types/message';
 
-// interface StartScreenProps {
-//   vscode: VSCodeAPI;
-// }
+interface StartScreenProps {
+  vscode: VSCodeAPI;
+}
 
-// type message = {
-//   type: string,
-//   payload: {
-//     difficulty: string, 
-//     questionnumbers: number
-//   }
-// }
+declare global {
+  interface VSCodeAPI {
+  postMessage: (msg: message) => void;
+  getState: () => unknown;
+  setState: (data: unknown) => void;
+}
+  function acquireVsCodeApi(): VSCodeAPI;
+}
 
-// declare global {
-//   interface VSCodeAPI {
-//   postMessage: (msg: message) => void;
-//   getState: () => unknown;
-//   setState: (data: unknown) => void;
-// }
-//   function acquireVsCodeApi(): VSCodeAPI;
-// }
-
-
-// const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
-const StartScreen = () => {
-
-  const [imageSrc, setImageSrc] = useState<string>("");
-
-  useEffect(() => {
-    window.addEventListener("message", (event) => {
-      const message = event.data;
-      if (message.type === "init") {
-        setImageSrc(message.imageUri);
-      }
-    });
-  }, []);
-
+const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
   const [index, setIndex] = useState(0);
   const current = characters[index];
 
@@ -52,6 +31,19 @@ const StartScreen = () => {
   const handlePrev = () => {
     setIndex((prev) => (prev - 1 + characters.length) % characters.length);
   };
+  const navigate = useNavigate();
+
+  const handleStart = () => {
+    const message: message = { type: 'sendInitialInfo', payload: { difficulty: "hard", questionnum: 5 }}
+    vscode.postMessage(message)
+    }
+
+  window.addEventListener("message", (event) => {
+    const { type, payload } = event.data;
+    if (type === "firstQuestion") {
+      navigate('/answer', { state: payload });
+    }
+  })
 
   return (
     <ThemeProvider theme={theme}>
@@ -61,54 +53,75 @@ const StartScreen = () => {
           flexDirection: 'column',
           alignItems: 'center',
           mt: 4,
+          backgroundColor: current.color[100],
+          minHeight: '100vh',
         }}
       >
-        <Typography variant="h5" fontWeight="bold" marginTop={8} marginBottom={8} gutterBottom>
-          キャラ選択
+        <Typography variant="h5" sx={{ fontWeight: "bold", marginTop: 16, marginBottom: 8}} gutterBottom>
+          面接官選択
         </Typography>
 
-        <Box display="flex" alignItems="center" justifyContent="center">
+        <Box 
+        sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mt: "10%",
+          }}
+        >
           <IconButton onClick={handlePrev}>
             <ArrowBackIcon />
           </IconButton>
 
           <Box
-            border={1}
-            borderRadius={2}
-            p={4}
-            minWidth={100}
-            textAlign="center"
+            sx={{
+              p: 4,
+              borderRadius: 1,
+              width: 280,
+              height: 180,
+              backgroundColor: 'white',
+              boxShadow: 3,
+              textAlign: 'center',
+              alignItems: 'center',
+            }}
           >
-            <Avatar
-              src={imageSrc}
-              alt={current.name}
-              sx={{ width: 60, height: 60, margin: '0 auto', mb: 1 }}
-            />
-            <Typography variant="subtitle1" fontWeight="bold">
+            <Box sx={{ alignItems: 'center', display: 'inline-flex', mb: 2 }}>
+              <Avatar
+                src={current.image}
+                alt={current.name}
+                sx={{ width: 84, height: 84, mr: 3 }}
+              />
+              <Box sx={{ ml: 4 }}> 
+                <Typography variant="subtitle1" sx={{ fontSize: 32, mb: 0 }}>
+                  {current.name}
+                </Typography>
+                <Typography variant="body2" sx={{ color: current.color[900], fontWeight: "bold" }}>
+                  {current.level}
+                </Typography>
+              </Box>
+            </Box>
+            
+            <Typography variant="body2" sx={{ backgroundColor: current.color[200], mb: 1, fontWeight: 700 }}>
               {current.title}
             </Typography>
-            <Typography variant="body2" color="text.secondary" mb={1}>
-              {current.level}
-            </Typography>
+
             {current.quotes.map((q, i) => (
-              <Typography key={i} variant="caption" display="block">
-                「{q}」
-              </Typography>
-            ))}
+            <Typography key={i} variant="caption" display="block">
+              「{q}」
+            </Typography>
+          ))}
           </Box>
 
           <IconButton onClick={handleNext}>
             <ArrowForwardIcon />
           </IconButton>
         </Box>
-        {/* <Button 
-          onClick={() => vscode.postMessage({ type: 'sendInitialInfo', payload: { difficulty: "hard", questionnumbers: 5 }})} 
-          variant='contained' 
-          sx={{ backgroundColor: theme.palette.primary.light, color: "white", mt: 12, width: "30%", height: 48, fontSize:18  }}
-        > */}
+        <Button onClick={handleStart}>テスト</Button>
         <Button 
+          onClick={() => vscode.postMessage({ type: 'sendInitialInfo', payload: { difficulty: "hard", questionnum: 5 }})} 
           variant='contained' 
-          sx={{ backgroundColor: theme.palette.primary.light, color: "white", mt: 12, width: "30%", height: 48, fontSize:18  }}>
+          sx={{ backgroundColor: current.color[700], color: "white", mt: 12, width: "30%", height: 48, fontSize:18  }}
+        >
           面接開始
         </Button>
       </Box>
