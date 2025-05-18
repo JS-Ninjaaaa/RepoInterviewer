@@ -5,7 +5,7 @@ import { spawn } from "child_process";
 
 export async function fetchFiles() {
     const files = await getFilteredFiles(); // ファイルパスをすべて探す
-    const zipBinary = await generateZip(files);      // ファイルをフィルターして中身を取り出す
+    const zipBinary = await generateZip(files);      // ファイルをフィルターして中身を取り出しzipファイルにする
     
     return zipBinary;
 }
