@@ -31,7 +31,7 @@ src/webview/.vite/
 # 💻 OSごとの不要ファイル
 # =============================
 
-.DS_Sto
+.DS_Store
 
 # =============================
 # 💻 テスト用フォルダ
@@ -40,6 +40,5 @@ src/webview/.vite/
 src/test-server/
 src/webview/src/App.tsx
 src/webview/src/main.tsx
-src/webview/src/screens/AnswerScreen.tsx
 src/webview/src/data/test/
 
