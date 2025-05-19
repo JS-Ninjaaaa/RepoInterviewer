@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import JSZip from 'jszip';
 import { spawn } from "child_process";
+import { mensetsuIgnoreFiles } from './data/mensetsuignore'; 
 
 export async function fetchFiles() {
     const files = await getFilteredFiles(); // ファイルパスをすべて探す
@@ -14,14 +15,16 @@ export async function getFilteredFiles(): Promise<vscode.Uri[]> {
   const root = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
   if (!root) {return [];}
   const ignoredRelPaths = await getGitIgnoredFilesAsync(root); // 相対パス
-  const allFiles = await vscode.workspace.findFiles('**/*');
+  const allFiles = await vscode.workspace.findFiles('**/*', `{${mensetsuIgnoreFiles.join(',')}}`);
 
-  const filtered = allFiles.filter(file => {
+  const gitignoreFiltered = allFiles
+  .filter(file => file.fsPath.startsWith(root))
+  .filter(file => {
     const relativePath = path.relative(root, file.fsPath);
     return !ignoredRelPaths.includes(relativePath.replace(/\\/g, '/')); // Windows対策
   });
 
-  return filtered;
+  return gitignoreFiltered;
 }
 
 function getGitIgnoredFilesAsync(rootPath: string): Promise<string[]> {
