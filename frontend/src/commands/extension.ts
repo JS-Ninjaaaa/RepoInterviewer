@@ -8,7 +8,7 @@ import { testfeedback } from "./functions/data/test/testfeedback";
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
-  console.log("面接モードボタンが押されました！")
+  console.log("面接モードボタンが押されました！");
   myStatusBarItem.text = 'Ⓜ️モード'; 
   myStatusBarItem.tooltip = 'クリックして面接質問を表示';
   myStatusBarItem.command = 'repointerviewer.repointerviewer';
@@ -24,13 +24,13 @@ export function activate(context: vscode.ExtensionContext) {
       // reactからメッセージを受け取ったタイミングで実行される
       panel.webview.onDidReceiveMessage(async (message: Message) => {
         console.log("webview clicked");
-        switchCommands(panel,message); 
+        handleWebviewMessage(panel,message); 
       });
     })
   );
 }
 
-async function switchCommands(panel: vscode.WebviewPanel, message: Message) {
+async function handleWebviewMessage(panel: vscode.WebviewPanel, message: Message) {
   switch (message.type) {
     case "fetchfirstQuestion": {
       const zipBinary = await fetchFiles();
