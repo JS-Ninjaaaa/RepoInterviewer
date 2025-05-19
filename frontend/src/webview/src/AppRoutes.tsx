@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 
 import StartScreen from './screens/StartScreen';
-// import AnswerScreen from './screens/AnswerScreen';
+import AnswerScreen from './screens/AnswerScreen';
 
 const vscode = typeof acquireVsCodeApi === 'function'
   ? acquireVsCodeApi()
@@ -20,7 +20,7 @@ function AppRoutes() {
         <MemoryRouter>
           <Routes>
             <Route path="/" element={<StartScreen vscode={vscode}/>} />
-            {/* <Route path="/answer" element={<AnswerScreen />} /> */}
+            <Route path="/answer" element={<AnswerScreen vscode={vscode}/>} />
           </Routes>
         </MemoryRouter>
     </ThemeProvider>
