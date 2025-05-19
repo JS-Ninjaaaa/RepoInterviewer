@@ -6,7 +6,8 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { characters } from '../data/characters';
 import { theme } from '../theme';
 
-import { message } from '../types/message';
+
+import type { Message } from "../types/messages" 
 
 interface StartScreenProps {
   vscode: VSCodeAPI;
@@ -14,7 +15,7 @@ interface StartScreenProps {
 
 declare global {
   interface VSCodeAPI {
-  postMessage: (msg: message) => void;
+  postMessage: (msg: Message) => void;
   getState: () => unknown;
   setState: (data: unknown) => void;
 }
@@ -36,17 +37,28 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
   };
   const navigate = useNavigate();
 
-  const fetchfirstQuestion = () => {
-    const message: message = { type: 'fetchfirstQuestion', payload: { difficulty: "hard", questionnum: 5 }}
+  
+  const handleStart = () => {
+    const message: Message = { type: 'fetchfirstQuestion', payload: { difficulty: "hard", total_question: 5 }}
     vscode.postMessage(message)
-    }
+  }
 
-  window.addEventListener("message", (event) => {
+  const fetchfirstQuestion = (event: MessageEvent) => {
     const { type, payload } = event.data;
     if (type === "firstQuestion") {
-      navigate('/answer', { state: payload }); // ← ページ遷移！
+      console.log(type, payload)
+      navigate('/answer', {
+      state: {
+        ...payload,
+        charadata: current  // currentは選択中のキャラクター情報
+      }
+      });
+    } else {
+      console.log(type, payload)
     }
-  })
+  };
+
+  window.addEventListener("message", fetchfirstQuestion);
 
   return (
     <ThemeProvider theme={theme}>
@@ -58,6 +70,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           mt: 4,
           backgroundColor: current.color[100],
           minHeight: '100vh',
+          minWidth: "320px"
         }}
       >
         <Typography variant="h5" sx={{ fontWeight: "bold", marginTop: 16, marginBottom: 8}} gutterBottom>
@@ -70,6 +83,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
             alignItems: 'center',
             justifyContent: 'center',
             mt: "10%",
+            width: '100%',
           }}
         >
           <IconButton onClick={handlePrev}>
@@ -80,8 +94,10 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
             sx={{
               p: 4,
               borderRadius: 1,
-              width: 280,
-              height: 180,
+              width: "100%",
+              minWidth: "220px",
+              maxWidth: "320px",
+              height: 160,
               backgroundColor: 'white',
               boxShadow: 3,
               textAlign: 'center',
@@ -119,10 +135,11 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
             <ArrowForwardIcon />
           </IconButton>
         </Box>
+        
         <Button 
-          onClick={fetchfirstQuestion} 
+          onClick={handleStart} 
           variant='contained' 
-          sx={{ backgroundColor: current.color[700], color: "white", mt: 12, width: "30%", height: 48, fontSize:18  }}
+          sx={{ backgroundColor: current.color[700], color: "white", mt: 12, width: "30%", minWidth: "160px", height: 48, fontSize:18  }}
         >
           面接開始
         </Button> 
