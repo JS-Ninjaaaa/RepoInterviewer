@@ -1,2 +1,5 @@
 fastapi
 uvicorn[standard]
+ollama
+python-multipart
+redis>=4.5.0
