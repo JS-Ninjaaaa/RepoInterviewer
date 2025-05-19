@@ -9,7 +9,7 @@ import renPng  from '../assets/images/ren.png';
 export const characters: Character[] = [
   {
     level: '初級',
-    questionnum: 5,
+    question_id: 5,
     name: 'ユズ',
     text: "Yuzu",
     title: 'やさしいギャル',
@@ -22,7 +22,7 @@ export const characters: Character[] = [
   },
   {
     level: '中級',
-    questionnum: 5,
+    question_id: 5,
     name: 'ハル',
     text: "Haru",
     title: '先輩エンジニア',
@@ -35,7 +35,7 @@ export const characters: Character[] = [
   },
   {
     level: '上級',
-    questionnum: 2,
+    question_id: 2,
     name: 'サキ',
     text: "Saki",
     title: '辛口メンター',
@@ -48,7 +48,7 @@ export const characters: Character[] = [
   },
   {
     level: '激詰め',
-    questionnum: 2,
+    question_id: 2,
     name: '黒鉄レン',
     text: "Ren",
     title: 'Kurogane',

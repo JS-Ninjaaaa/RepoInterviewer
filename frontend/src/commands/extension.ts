@@ -6,14 +6,13 @@ type message = {
   type: string,
   payload: {
     difficulty: string, 
-    questionnumbers: number
+    puestion_id: number
   }
 }
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
-  console.log("面接モードボタンが押されました！")
   myStatusBarItem.text = 'Ⓜ️モード'; 
   myStatusBarItem.tooltip = 'クリックして面接質問を表示';
   myStatusBarItem.command = 'repointerviewer.repointerviewer';
@@ -28,7 +27,6 @@ export function activate(context: vscode.ExtensionContext) {
       
       // reactからメッセージを受け取ったタイミングで実行される
       panel.webview.onDidReceiveMessage(async (message: message) => {
-        console.log("webview clicked");
         const QuestionInfo = await switchCommands(panel,message); 
         if (QuestionInfo) {
           panel.webview.postMessage({
@@ -50,7 +48,6 @@ async function switchCommands(panel: vscode.WebviewPanel, message: message) {
         const QuestionInfo = await fetchfirstQuestion(zipBinary, message.payload); 
         return QuestionInfo;
       } catch (err: any) {
-        console.error("処理中エラー:", err);
         panel.webview.postMessage({
           type: "error",
           payload: err.message || "不明なエラー"
