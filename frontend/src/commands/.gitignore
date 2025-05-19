@@ -4,4 +4,4 @@ node_modules
 .vscode-test/
 *.vsix
 
-src/functions/data/test/
+./src/commands/functions/data/test/
