@@ -37,7 +37,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
   const navigate = useNavigate();
 
   const fetchfirstQuestion = () => {
-    const message: message = { type: 'fetchfirstQuestion', payload: { difficulty: "hard", questionnum: 5 }}
+    const message: message = { type: 'fetchfirstQuestion', payload: { difficulty: "hard", question_id: 5 }}
     vscode.postMessage(message)
     }
 

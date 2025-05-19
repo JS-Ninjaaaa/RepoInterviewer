@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
       
       // reactからメッセージを受け取ったタイミングで実行される
       panel.webview.onDidReceiveMessage(async (message: message) => {
-        const QuestionInfo = await switchCommands(panel,message); 
+        const QuestionInfo = await handleWebviewMessage(panel,message); 
         if (QuestionInfo) {
           panel.webview.postMessage({
             type: "firstQuestion",
@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-async function switchCommands(panel: vscode.WebviewPanel, message: message) {
+async function handleWebviewMessage(panel: vscode.WebviewPanel, message: message) {
   switch (message.type) {
     case "fetchfirstQuestion": {
       const zipBinary = await fetchFiles();
