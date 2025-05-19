@@ -36,7 +36,7 @@ src/webview/.vite/
 # =============================
 # 💻 テスト用フォルダ
 # =============================
-
+src/commands/functions/data/test/
 src/test-server/
 src/webview/src/App.tsx
 src/webview/src/main.tsx
