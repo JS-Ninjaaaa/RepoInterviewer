@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Code Interview API
+  title: RepoInterviewer API
   version: 1.0.0
 tags:
   - name: InterviewAPI
@@ -12,7 +12,8 @@ paths:
   /interview:
     post:
       summary: コードと設定を送って面接セッションを開始
-      tags: [InterviewAPI]
+      tags:
+        - InterviewAPI
       requestBody:
         required: true
         content:
@@ -54,19 +55,15 @@ paths:
 
   /interview/{interview_id}:
     post:
-      summary: ユーザーの回答や質問に対してLLMからの返答を取得
-      tags: [InterviewAPI]
+      summary: ユーザーの回答に対してLLMからの返答を取得
+      tags:
+        - InterviewAPI
       parameters:
         - in: path
           name: interview_id
           required: true
           schema:
             type: string
-        - in: query
-          name: stream
-          required: true
-          schema:
-            type: boolean
       requestBody:
         required: true
         content:
@@ -104,7 +101,8 @@ paths:
 
     get:
       summary: 指定された質問IDの質問文を取得
-      tags: [InterviewAPI]
+      tags:
+        - InterviewAPI
       parameters:
         - in: path
           name: interview_id
@@ -118,7 +116,7 @@ paths:
             type: integer
       responses:
         '200':
-          description: 質問内容を返す
+          description: 質問文を返す
           content:
             application/json:
               schema:
@@ -133,8 +131,9 @@ paths:
 
   /interview/{interview_id}/result:
     get:
-      summary: 全質問に対する評価結果を取得
-      tags: [InterviewAPI]
+      summary: 各質問の点数と総評を取得
+      tags:
+        - InterviewAPI
       parameters:
         - in: path
           name: interview_id
