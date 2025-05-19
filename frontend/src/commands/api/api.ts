@@ -1,20 +1,25 @@
+const ENDPOINT = "http://localhost:3001";
+
 export async function fetchfirstQuestion(
   zipBinary: Uint8Array,
-  payload: { difficulty: string; questionnumbers: number }
+  payload: { difficulty: string; total_question: number }
 ): Promise<any> {
-  const { difficulty, questionnumbers } = payload;
 
-  // クエリ文字列にメタ情報を埋め込む
-  const url = `http://localhost:3001/upload?difficulty=${encodeURIComponent(
-    difficulty
-  )}&questionnumbers=${questionnumbers}`;
+  const formData = new FormData();
+  
+  // ZIPファイルを Blob に変換して送信
+  const zipBlob = new Blob([zipBinary], { type: "application/zip" });
+  formData.append("source_code", zipBlob, "data.zip");
 
-  const res = await fetch(url, {
+  formData.append("difficulty", payload.difficulty);
+  formData.append("total_question", payload.total_question.toString());
+
+  const res = await fetch(`${ENDPOINT}/interview`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/zip",
+      "Content-Type": "multipart/form-data",
     },
-    body: zipBinary, // ← ZIPだけ送る！
+    body: formData
   });
 
   if (!res.ok) {
@@ -24,3 +29,41 @@ export async function fetchfirstQuestion(
   const result = await res.json();
   return result;
 }
+
+export async function fetchNextQuestion(payload: { interview_id: string; question_id: number }) {
+  const { interview_id, question_id } = payload;
+
+  // クエリパラメターの設定
+  const url = `${ENDPOINT}/interview/${interview_id}?question_id=${question_id}`;
+
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!res.ok) {
+    throw new Error(`サーバーエラー: ${res.status}`);
+  }
+
+  const result = await res.json();
+  return result;
+}
+
+export async function fetchFeedBack(payload: { interview_id: string; question_id: number; answer: string; }) {
+  const { interview_id, question_id } = payload;
+
+  // クエリパラメターの設定
+  const url = `${ENDPOINT}/feedback/${interview_id}?question_id=${question_id}`;
+
+  const res = await fetch(url, {
+    method: "GET",
+  });
+
+  if (!res.ok) {
+    throw new Error(`サーバーエラー: ${res.status}`);
+  }
+
+  const result = await res.json();
+  return result;
+}
+
+

@@ -1,14 +1,9 @@
 import * as vscode from "vscode";
 import { fetchFiles } from "./functions/fetchFiles";
-import { fetchfirstQuestion } from "./api/api";
-
-type message = {
-  type: string,
-  payload: {
-    difficulty: string, 
-    questionnumbers: number
-  }
-}
+import { fetchfirstQuestion, fetchNextQuestion, fetchFeedBack } from "./api/api";
+import { testchat } from "./functions/data/test/testchat";
+import type { Message } from "./types/messages";
+import { testfeedback } from "./functions/data/test/testfeedback";
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
@@ -27,28 +22,78 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
       
       // reactからメッセージを受け取ったタイミングで実行される
-      panel.webview.onDidReceiveMessage(async (message: message) => {
+      panel.webview.onDidReceiveMessage(async (message: Message) => {
         console.log("webview clicked");
-        const QuestionInfo = await switchCommands(panel,message); 
-        if (QuestionInfo) {
-          panel.webview.postMessage({
-            type: "firstQuestion",
-            payload: QuestionInfo
-          });
-        }
+        switchCommands(panel,message); 
       });
     })
   );
 }
 
-async function switchCommands(panel: vscode.WebviewPanel, message: message) {
+async function switchCommands(panel: vscode.WebviewPanel, message: Message) {
   switch (message.type) {
     case "fetchfirstQuestion": {
       const zipBinary = await fetchFiles();
       // zipファイルと難易度，質問数をバックエンドに送る
       try {
         const QuestionInfo = await fetchfirstQuestion(zipBinary, message.payload); 
-        return QuestionInfo;
+        // テスト用レスポンス
+        const interveiw_id = "user123";
+        const question = testchat[0];
+        panel.webview.postMessage({
+          type: "firstQuestion",
+          payload: { interveiw_id: interveiw_id, question: question.text }
+        });
+        console.log("message posted");
+        break;
+      } catch (err: any) {
+        console.error("処理中エラー:", err);
+        panel.webview.postMessage({
+          type: "error",
+          payload: err.message || "不明なエラー"
+        });
+        return null;
+      }
+    }
+
+    case "fetchNextQuestion": {
+      // interview_id, question_idで次の質問を取得する
+      try {
+        const nextQuestionInfo = await fetchNextQuestion(message.payload); 
+        // テスト用レスポンス
+        const question_id = message.payload.question_id;
+        const question = testchat[question_id - 1];
+
+        panel.webview.postMessage({
+          type: "nextQuestion",
+          payload: { question_id: question_id, question: question.text }
+        });
+        console.log("next question posted");
+        break;
+      } catch (err: any) {
+        console.error("処理中エラー:", err);
+        panel.webview.postMessage({
+          type: "error",
+          payload: err.message || "不明なエラー"
+        });
+        return null;
+      }
+    }
+
+    case "fetchFeedBack": {
+      // interview_id, question_idで次の質問を取得する
+      try {
+        const QuestionInfo = await fetchFeedBack(message.payload); 
+        // テスト用レスポンス
+        const question_id = message.payload.question_id;
+        const feedback = testfeedback[question_id - 1];
+
+        panel.webview.postMessage({
+          type: "FeedBack",
+          payload: { feedback: feedback.text }
+        });
+        console.log("feed back posted");
+        break;
       } catch (err: any) {
         console.error("処理中エラー:", err);
         panel.webview.postMessage({
@@ -115,19 +160,14 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <meta http-equiv="Content-Security-Policy" name="viewport"  content="
-        default-src 'none';
-        style-src 'unsafe-inline' vscode-resource:;
-        script-src vscode-resource:;
-        font-src vscode-resource:;
-        img-src vscode-resource:;
-      ">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>repointerviewer</title>
       <meta http-equiv="Content-Security-Policy"
             content="default-src 'none';
                     style-src 'unsafe-inline' ${webview.cspSource};
                     img-src ${webview.cspSource};
-                    script-src 'nonce-${nonce}';">
+                    script-src 'nonce-${nonce}';
+                    font-src ${webview.cspSource};">
     </head>
     <body>
       <div id="app"></div>
