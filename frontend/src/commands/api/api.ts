@@ -1,23 +1,23 @@
-const ENDPOINT = "http://localhost:3001";
+const ENDPOINT = 'http://localhost:3001';
 
 export async function fetchfirstQuestion(
   zipBinary: Uint8Array,
   payload: { difficulty: string; total_question: number }
-): Promise<any> {
+): Promise<JSON> {
 
   const formData = new FormData();
   
   // ZIPファイルを Blob に変換して送信
-  const zipBlob = new Blob([zipBinary], { type: "application/zip" });
-  formData.append("source_code", zipBlob, "data.zip");
+  const zipBlob = new Blob([zipBinary], { type: 'application/zip' });
+  formData.append('source_code', zipBlob, 'data.zip');
 
-  formData.append("difficulty", payload.difficulty);
-  formData.append("total_question", payload.total_question.toString());
+  formData.append('difficulty', payload.difficulty);
+  formData.append('total_question', payload.total_question.toString());
 
   const res = await fetch(`${ENDPOINT}/interview`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "multipart/form-data",
+      'Content-Type': 'multipart/form-data',
     },
     body: formData
   });
@@ -37,7 +37,7 @@ export async function fetchNextQuestion(payload: { interview_id: string; questio
   const url = `${ENDPOINT}/interview/${interview_id}?question_id=${question_id}`;
 
   const res = await fetch(url, {
-    method: "GET",
+    method: 'GET',
   });
 
   if (!res.ok) {
@@ -55,7 +55,7 @@ export async function fetchFeedBack(payload: { interview_id: string; question_id
   const url = `${ENDPOINT}/feedback/${interview_id}?question_id=${question_id}`;
 
   const res = await fetch(url, {
-    method: "GET",
+    method: 'GET',
   });
 
   if (!res.ok) {
