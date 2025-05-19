@@ -1,13 +1,13 @@
 export async function fetchfirstQuestion(
   zipBinary: Uint8Array,
-  payload: { difficulty: string; questionnumbers: number }
+  payload: { difficulty: string; puestion_id: number }
 ): Promise<any> {
-  const { difficulty, questionnumbers } = payload;
+  const { difficulty, puestion_id } = payload;
 
   // クエリ文字列にメタ情報を埋め込む
   const url = `http://localhost:3001/upload?difficulty=${encodeURIComponent(
     difficulty
-  )}&questionnumbers=${questionnumbers}`;
+  )}&puestion_id=${puestion_id}`;
 
   const res = await fetch(url, {
     method: "POST",
