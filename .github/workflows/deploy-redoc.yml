@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'api.yml'
+  workflow_dispatch:  # 👈 追加：手動トリガー（ボタン実行）
 
 permissions:
   contents: write
