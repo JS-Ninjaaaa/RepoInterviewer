@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api.endpoints import interview, health
+from app.api.endpoints import health, interview
 
 app = FastAPI()
 

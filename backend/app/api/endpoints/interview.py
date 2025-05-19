@@ -1,6 +1,6 @@
 from typing import Union
 
-from backend.models.models import (
+from ...models.models import (
     InterviewInterviewIdGetResponse,
     InterviewInterviewIdPostRequest,
     InterviewInterviewIdPostResponse,
