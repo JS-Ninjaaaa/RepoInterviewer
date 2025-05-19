@@ -1,4 +1,4 @@
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 
@@ -19,12 +19,12 @@ function AppRoutes() {
     <ThemeProvider theme={theme}>
         <MemoryRouter>
           <Routes>
-            <Route path="/" element={<StartScreen vscode={vscode}/>} />
-            <Route path="/answer" element={<AnswerScreen vscode={vscode}/>} />
+            <Route path='/' element={<StartScreen vscode={vscode}/>} />
+            <Route path='/answer' element={<AnswerScreen vscode={vscode}/>} />
           </Routes>
         </MemoryRouter>
     </ThemeProvider>
-  )
+  );
 }
 
-export default AppRoutes
+export default AppRoutes;

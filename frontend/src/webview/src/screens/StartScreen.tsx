@@ -7,7 +7,7 @@ import { characters } from '../data/characters';
 import { theme } from '../theme';
 
 
-import type { Message } from "../types/messages" 
+import type { Message } from '../types/messages';
 
 interface StartScreenProps {
   vscode: VSCodeAPI;
@@ -39,14 +39,14 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
 
   
   const handleStart = () => {
-    const message: Message = { type: 'fetchfirstQuestion', payload: { difficulty: "hard", total_question: 5 }}
-    vscode.postMessage(message)
-  }
+    const message: Message = { type: 'fetchfirstQuestion', payload: { difficulty: current.level, total_question: current.total_question }};
+    vscode.postMessage(message);
+  };
 
   const fetchfirstQuestion = (event: MessageEvent) => {
     const { type, payload } = event.data;
-    if (type === "firstQuestion") {
-      console.log(type, payload)
+    if (type === 'firstQuestion') {
+      console.log(type, payload);
       navigate('/answer', {
       state: {
         ...payload,
@@ -54,11 +54,11 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
       }
       });
     } else {
-      console.log(type, payload)
+      console.log(type, payload);
     }
   };
 
-  window.addEventListener("message", fetchfirstQuestion);
+  window.addEventListener('message', fetchfirstQuestion);
 
   return (
     <ThemeProvider theme={theme}>
@@ -70,10 +70,10 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           mt: 4,
           backgroundColor: current.color[100],
           minHeight: '100vh',
-          minWidth: "320px"
+          minWidth: '320px'
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: "bold", marginTop: 16, marginBottom: 8}} gutterBottom>
+        <Typography variant='h5' sx={{ fontWeight: 'bold', marginTop: 16, marginBottom: 8}} gutterBottom>
           面接官選択
         </Typography>
 
@@ -82,7 +82,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            mt: "10%",
+            mt: '10%',
             width: '100%',
           }}
         >
@@ -94,9 +94,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
             sx={{
               p: 4,
               borderRadius: 1,
-              width: "100%",
-              minWidth: "220px",
-              maxWidth: "320px",
+              width: '100%',
+              minWidth: '220px',
+              maxWidth: '320px',
               height: 160,
               backgroundColor: 'white',
               boxShadow: 3,
@@ -111,21 +111,21 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
                 sx={{ width: 84, height: 84, mr: 3 }}
               />
               <Box sx={{ ml: 4 }}> 
-                <Typography variant="subtitle1" sx={{ fontSize: 32, mb: 0 }}>
+                <Typography variant='subtitle1' sx={{ fontSize: 32, mb: 0 }}>
                   {current.name}
                 </Typography>
-                <Typography variant="body2" sx={{ color: current.color[900], fontWeight: "bold" }}>
+                <Typography variant='body2' sx={{ color: current.color[900], fontWeight: 'bold' }}>
                   {current.level}
                 </Typography>
               </Box>
             </Box>
             
-            <Typography variant="body2" sx={{ backgroundColor: current.color[200], mb: 1, fontWeight: 700 }}>
+            <Typography variant='body2' sx={{ backgroundColor: current.color[200], mb: 1, fontWeight: 700 }}>
               {current.title}
             </Typography>
 
             {current.quotes.map((q, i) => (
-            <Typography key={i} variant="caption" display="block">
+            <Typography key={i} variant='caption' display='block'>
               「{q}」
             </Typography>
           ))}
@@ -139,7 +139,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
         <Button 
           onClick={handleStart} 
           variant='contained' 
-          sx={{ backgroundColor: current.color[700], color: "white", mt: 12, width: "30%", minWidth: "160px", height: 48, fontSize:18  }}
+          sx={{ backgroundColor: current.color[700], color: 'white', mt: 12, width: '30%', minWidth: '160px', height: 48, fontSize:18  }}
         >
           面接開始
         </Button> 

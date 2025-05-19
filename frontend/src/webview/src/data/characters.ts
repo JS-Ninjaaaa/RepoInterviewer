@@ -1,5 +1,5 @@
 import { amber, lightGreen, blue, deepPurple } from '@mui/material/colors'
-import { Character } from "../types/character";
+import { Character } from '../types/character';
 
 import yuzuPng from '../assets/images/yuzu.png';
 import haruPng from '../assets/images/haru.png';
@@ -11,7 +11,7 @@ export const characters: Character[] = [
     level: '初級',
     total_question: 5,
     name: 'ユズ',
-    text: "Yuzu",
+    text: 'Yuzu',
     title: 'やさしいギャル',
     quotes: [
       'マジすごいじゃん〜！えらい！',
@@ -24,7 +24,7 @@ export const characters: Character[] = [
     level: '中級',
     total_question: 5,
     name: 'ハル',
-    text: "Haru",
+    text: 'Haru',
     title: '先輩エンジニア',
     quotes: [
       'この責務分離、もう一歩かな',
@@ -37,7 +37,7 @@ export const characters: Character[] = [
     level: '上級',
     total_question: 2,
     name: 'サキ',
-    text: "Saki",
+    text: 'Saki',
     title: '辛口メンター',
     quotes: [
       'このコード、保守性ゼロ',
@@ -50,7 +50,7 @@ export const characters: Character[] = [
     level: '激詰め',
     total_question: 2,
     name: '黒鉄レン',
-    text: "Ren",
+    text: 'Ren',
     title: 'Kurogane',
     quotes: [
       'このコード、今すぐリファクタしろ',
