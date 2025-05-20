@@ -6,7 +6,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { characters } from '../data/characters';
 import { theme } from '../theme';
 
-
 import type { Message } from '../types/messages';
 
 interface StartScreenProps {
@@ -23,7 +22,6 @@ declare global {
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
-// const StartScreen = () => {
 
   const [index, setIndex] = useState(0);
   const current = characters[index];
@@ -73,7 +71,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           minWidth: '320px'
         }}
       >
-        <Typography variant='h5' sx={{ fontWeight: 'bold', marginTop: 16, marginBottom: 8}} gutterBottom>
+        <Typography variant='h5' sx={{ fontWeight: 'bold', mt: '10%', marginBottom: 8}} >
           面接官選択
         </Typography>
 

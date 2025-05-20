@@ -6,6 +6,11 @@ import haruPng from '../assets/images/haru.png';
 import sakiPng from '../assets/images/saki.png';
 import renPng  from '../assets/images/ren.png';
 
+import wholeYuzuPng from '../assets/images/wholeYuzu.png';
+import wholeHaruPng from '../assets/images/wholeHaru.png';
+import wholeSakiPng from '../assets/images/wholeSaki.png';
+import wholeRenPng  from '../assets/images/wholeRen.png';
+
 export const characters: Character[] = [
   {
     level: '初級',
@@ -18,6 +23,7 @@ export const characters: Character[] = [
       'ちょっとだけ直せば完璧っしょ☆',
     ],
     image: yuzuPng,
+    wholeImage: wholeYuzuPng,
     color: amber,
   },
   {
@@ -31,6 +37,7 @@ export const characters: Character[] = [
       '設計思想としては筋が通ってる',
     ],
     image: haruPng,
+    wholeImage: wholeHaruPng,
     color: lightGreen,
   },
   {
@@ -44,6 +51,7 @@ export const characters: Character[] = [
       'それ、Goの文法理解してる？',
     ],
     image: sakiPng,
+    wholeImage: wholeSakiPng,
     color: blue,
   },
   {
@@ -57,6 +65,7 @@ export const characters: Character[] = [
       'その程度の抽象化で通ると思うな',
     ],
     image: renPng,
+    wholeImage: wholeRenPng,
     color: deepPurple,
   },
 ];
