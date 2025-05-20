@@ -11,9 +11,9 @@ from pydantic import BaseModel
 
 
 class Difficulty(Enum):
-    easy = 'easy'
-    normal = 'normal'
-    hard = 'hard'
+    easy = "easy"
+    normal = "normal"
+    hard = "hard"
 
 
 class InterviewPostRequest(BaseModel):
