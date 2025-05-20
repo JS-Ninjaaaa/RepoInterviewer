@@ -7,10 +7,12 @@ import { theme } from '../theme';
 import { characters } from '../data/characters';
 
 
-
+interface GeneralFeedBackScreenProps {
+  vscode: VSCodeAPI;
+}
 const charadata = characters[0];
 const score = 88;
-const FinelFeedBackScreen = () => {
+const FinelFeedBackScreen: React.FC<GeneralFeedBackScreenProps> = () => {
   return (
     <Box
       sx={{
@@ -45,7 +47,7 @@ const FinelFeedBackScreen = () => {
         width: '100%',
         justifyContent: 'center', }}
       >
-        <img src={charadata.wholeImage} height="220px" />
+        <img src={charadata.wholeImage} height='220px' />
         <Box 
         sx={{
             bgcolor: 'white',
