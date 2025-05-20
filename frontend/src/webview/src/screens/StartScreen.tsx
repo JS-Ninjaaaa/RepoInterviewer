@@ -22,9 +22,10 @@ declare global {
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
+// const StartScreen = () => {
 
   const [index, setIndex] = useState(0);
-  const current = characters[index];
+  const charadata = characters[index];
 
   const handleNext = () => {
     setIndex((prev) => (prev + 1) % characters.length);
@@ -37,7 +38,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
 
   
   const handleStart = () => {
-    const message: Message = { type: 'fetchfirstQuestion', payload: { difficulty: current.level, total_question: current.total_question }};
+    const message: Message = { type: 'fetchfirstQuestion', payload: { difficulty: charadata.level, total_question: charadata.total_question }};
     vscode.postMessage(message);
   };
 
@@ -48,7 +49,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
       navigate('/answer', {
       state: {
         ...payload,
-        charadata: current  // currentは選択中のキャラクター情報
+        charadata: charadata  // charadataは選択中のキャラクター情報
       }
       });
     } else {
@@ -66,7 +67,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           flexDirection: 'column',
           alignItems: 'center',
           mt: 4,
-          backgroundColor: current.color[100],
+          backgroundColor: charadata.color[100],
           minHeight: '100vh',
           minWidth: '320px'
         }}
@@ -104,25 +105,25 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           >
             <Box sx={{ alignItems: 'center', display: 'inline-flex', mb: 2 }}>
               <Avatar
-                src={current.image}
-                alt={current.name}
+                src={charadata.image}
+                alt={charadata.name}
                 sx={{ width: 84, height: 84, mr: 3 }}
               />
               <Box sx={{ ml: 4 }}> 
                 <Typography variant='subtitle1' sx={{ fontSize: 32, mb: 0 }}>
-                  {current.name}
+                  {charadata.name}
                 </Typography>
-                <Typography variant='body2' sx={{ color: current.color[900], fontWeight: 'bold' }}>
-                  {current.level}
+                <Typography variant='body2' sx={{ color: charadata.color[900], fontWeight: 'bold' }}>
+                  {charadata.level}
                 </Typography>
               </Box>
             </Box>
             
-            <Typography variant='body2' sx={{ backgroundColor: current.color[200], mb: 1, fontWeight: 700 }}>
-              {current.title}
+            <Typography variant='body2' sx={{ backgroundColor: charadata.color[200], mb: 1, fontWeight: 700 }}>
+              {charadata.title}
             </Typography>
 
-            {current.quotes.map((q, i) => (
+            {charadata.quotes.map((q, i) => (
             <Typography key={i} variant='caption' display='block'>
               「{q}」
             </Typography>
@@ -137,7 +138,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
         <Button 
           onClick={handleStart} 
           variant='contained' 
-          sx={{ backgroundColor: current.color[700], color: 'white', mt: 12, width: '30%', minWidth: '160px', height: 48, fontSize:18  }}
+          sx={{ backgroundColor: charadata.color[700], color: 'white', mt: 12, width: '30%', minWidth: '160px', height: 48, fontSize:18  }}
         >
           面接開始
         </Button> 

@@ -4,6 +4,7 @@ import { theme } from './theme';
 
 import StartScreen from './screens/StartScreen';
 import AnswerScreen from './screens/AnswerScreen';
+import FinelFeedBackScreen from './screens/GeneralFeedBackScreen';
 
 const vscode = typeof acquireVsCodeApi === 'function'
   ? acquireVsCodeApi()
@@ -21,6 +22,7 @@ function AppRoutes() {
           <Routes>
             <Route path='/' element={<StartScreen vscode={vscode}/>} />
             <Route path='/answer' element={<AnswerScreen vscode={vscode}/>} />
+            <Route path='/GeneralFeedBack' element={<FinelFeedBackScreen vscode={vscode}/>} />
           </Routes>
         </MemoryRouter>
     </ThemeProvider>
