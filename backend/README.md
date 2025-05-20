@@ -23,7 +23,7 @@ Redisによるセッション管理、Ollamaモデルによる質問生成・回
 
 - Docker / Docker Compose がインストールされていること
 - Ollama がローカルにインストール & `serve` で起動済み
-- 使用したLLMはElyzaの[このモデル](https://huggingface.co/elyza/Llama-3-ELYZA-JP-8B-GGUF)を使用
+- LLMは[このモデル](https://huggingface.co/elyza/Llama-3-ELYZA-JP-8B-GGUF)を使用します．
 
 ```bash
 ollama run Llama-3-ELYZA-JP
@@ -35,6 +35,6 @@ ollama serve
 
 #### ✅ 2. 本体の起動
 ```bash
-docker compose up -build
+docker compose up [ -build ]
 ```
 
