@@ -1,6 +1,6 @@
 from typing import Union
-
 from fastapi import APIRouter, Form, UploadFile
+from ...services.interview_service import process_interview_upload
 
 from ...models.models import (InterviewInterviewIdGetResponse,
                               InterviewInterviewIdPostRequest,
@@ -20,12 +20,14 @@ router = APIRouter()
     tags=["InterviewAPI"],
 )
 def post_interview(
-    file: UploadFile,
+    source_code: UploadFile,
+    difficulty: str = Form(...),
+    total_question: int = Form(...),
 ) -> Union[InterviewPostResponse, InterviewPostResponse1]:
     """
     コードと設定を送って面接セッションを開始
     """
-    pass
+    return process_interview_upload(source_code, difficulty, total_question)
 
 
 @router.post(
