@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/interview",
+    "/",
     response_model=InterviewPostResponse,
     responses={"500": {"model": InterviewPostResponse1}},
     tags=["InterviewAPI"],
@@ -29,7 +29,7 @@ def post_interview(
 
 
 @router.post(
-    "/interview/{interview_id}",
+    "/{interview_id}",
     response_model=InterviewInterviewIdPostResponse,
     responses={"500": {"model": InterviewInterviewIdPostResponse1}},
     tags=["InterviewAPI"],
@@ -44,7 +44,7 @@ def post_interview_interview_id(
 
 
 @router.get(
-    "/interview/{interview_id}",
+    "/{interview_id}",
     response_model=InterviewInterviewIdGetResponse,
     tags=["InterviewAPI"],
 )
@@ -58,7 +58,7 @@ def get_interview_interview_id(
 
 
 @router.get(
-    "/interview/{interview_id}/result",
+    "/{interview_id}/result",
     response_model=InterviewInterviewIdResultGetResponse,
     responses={"500": {"model": InterviewInterviewIdResultGetResponse1}},
     tags=["InterviewAPI"],
