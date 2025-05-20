@@ -35,6 +35,6 @@ ollama serve
 
 #### ✅ 2. 本体の起動
 ```bash
-docker compose up [ -build ]
+docker compose up [ --build ]
 ```
 
