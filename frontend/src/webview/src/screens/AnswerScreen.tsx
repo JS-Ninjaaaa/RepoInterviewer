@@ -77,8 +77,6 @@ const AnswerScreen: React.FC<StartScreenProps>  = ({ vscode }) => {
     };
   }, []);
 
-
-
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -171,7 +169,8 @@ const AnswerScreen: React.FC<StartScreenProps>  = ({ vscode }) => {
           display: 'flex',
           width: 'auto',
           mt: '7%',
-          gap: '20%',justifyContent: 'center'
+          gap: '20%',
+          justifyContent: 'center'
         }}>
           <Button onClick={() => setInterruptModalOpen(true)}  variant='contained' sx={{ backgroundColor: theme.palette.secondary.light, color: 'white', minWidth: '120px', width: '42%', height: 42, fontSize:18  }}>
             中断

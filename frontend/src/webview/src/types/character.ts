@@ -8,5 +8,6 @@ export interface Character {
   title: string;
   quotes: string[];
   image: string;
+  wholeImage: string;
   color: Color;
 }
