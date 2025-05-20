@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from ...services.llm_client import send_prompt
 
 router = APIRouter()

@@ -1,16 +1,14 @@
 from typing import Union
 
-from ...models.models import (
-    InterviewInterviewIdGetResponse,
-    InterviewInterviewIdPostRequest,
-    InterviewInterviewIdPostResponse,
-    InterviewInterviewIdPostResponse1,
-    InterviewInterviewIdResultGetResponse,
-    InterviewInterviewIdResultGetResponse1,
-    InterviewPostResponse,
-    InterviewPostResponse1,
-)
-from fastapi import APIRouter, UploadFile, Form
+from fastapi import APIRouter, Form, UploadFile
+
+from ...models.models import (InterviewInterviewIdGetResponse,
+                              InterviewInterviewIdPostRequest,
+                              InterviewInterviewIdPostResponse,
+                              InterviewInterviewIdPostResponse1,
+                              InterviewInterviewIdResultGetResponse,
+                              InterviewInterviewIdResultGetResponse1,
+                              InterviewPostResponse, InterviewPostResponse1)
 
 router = APIRouter()
 
