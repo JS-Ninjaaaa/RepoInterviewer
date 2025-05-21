@@ -2,10 +2,11 @@ from pathlib import Path
 from uuid import uuid4
 from fastapi import UploadFile
 from typing import Union
+import re
 
 from ..utils.zip_handler import save_upload_zip, extract_zip, get_source_code
 from ..models.models import InterviewPostResponse, InterviewPostResponse1
-from .llm_client import send_prompt, build_question_prompt
+from .llm_service import send_prompt, build_question_prompt
 
 # POST interview用
 def process_interview_upload(
@@ -35,4 +36,13 @@ def process_interview_upload(
     # LLM question あとで実装する
     question_prompt = build_question_prompt("ギャル",difficulty,total_question,repository)
     res = send_prompt(question_prompt)
-    return InterviewPostResponse(interview_id=interview_id, question=res)
+    first_question = filter_question(res, 1)
+
+    return InterviewPostResponse(interview_id=interview_id, question=first_question)
+
+# 質問の絞り込み
+def filter_question(text: str,number :int) -> str:
+    # number問目の問題を抽出
+    pattern = rf'{number}\.\s*(.+?)(?=\n\d+\.|\Z)'
+    match = re.search(pattern, text.strip(), flags=re.DOTALL)
+    return match.group(1).strip() if match else ""
