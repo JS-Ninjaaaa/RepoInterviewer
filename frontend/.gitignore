@@ -40,4 +40,5 @@ src/commands/functions/data/test/
 src/test-server/
 src/webview/src/App.tsx
 src/webview/src/main.tsx
-src/webview/src/screens/AnswerScreen.tsx
+src/webview/src/data/test/
+
