@@ -3,8 +3,9 @@ from uuid import uuid4
 from fastapi import UploadFile
 from typing import Union
 
-from ..utils.zip_handler import save_upload_zip, extract_zip
+from ..utils.zip_handler import save_upload_zip, extract_zip, get_source_code
 from ..models.models import InterviewPostResponse, InterviewPostResponse1
+from .llm_client import send_prompt, build_question_prompt
 
 # POST interview用
 def process_interview_upload(
@@ -26,7 +27,12 @@ def process_interview_upload(
         extract_zip(zip_path, session_dir / "source")
     except Exception as e:
         return InterviewPostResponse1(error_message=f"ZIP処理に失敗: {str(e)}")
-
+    # ソースコード整形
+    try:
+        repository = get_source_code(session_dir / "source")
+    except Exception as e:
+        return InterviewPostResponse1(error_message=f"ソースコードを正しく処理できませんでした: {str(e)}")
     # LLM question あとで実装する
-    question = f"{difficulty}レベルの質問を {total_question} 問生成します。"
-    return InterviewPostResponse(interview_id=interview_id, question=question)
+    question_prompt = build_question_prompt("ギャル",difficulty,total_question,repository)
+    res = send_prompt(question_prompt)
+    return InterviewPostResponse(interview_id=interview_id, question=res)
