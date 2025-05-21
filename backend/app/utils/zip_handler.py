@@ -23,3 +23,14 @@ def save_upload_zip(upload_file: UploadFile, dest_path: Path) -> Path:
 def extract_zip(zip_path: Path, extract_to: Path) -> None:
     with ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(extract_to)
+
+# Pythonのみ対応（今後拡張）
+def get_source_code(source_dir: Path) -> str:
+    code = ""
+    # LLMに渡せるようにレポジトリ内容を整形
+    for file in source_dir.rglob("*.py"):
+        with file.open("r", encoding="utf-8") as f:
+            code += f"\n# --- {file.name} ---\n"
+            code += f.read() + "\n"
+
+    return code
