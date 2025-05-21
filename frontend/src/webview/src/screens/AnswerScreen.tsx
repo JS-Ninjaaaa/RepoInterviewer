@@ -99,7 +99,6 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
       moveGeneralFeedbackScreen(payload)
     }
     else {
-      console.log('その他のメッセージ', payload);
     }
   };
 
