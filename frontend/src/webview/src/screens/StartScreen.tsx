@@ -24,15 +24,15 @@ declare global {
 const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
 // const StartScreen = () => {
 
-  const [index, setIndex] = useState(0);
-  const current = characters[index];
+  const [characterIndex, setcharacterIndex] = useState(0);
+  const current = characters[characterIndex];
 
   const handleNext = () => {
-    setIndex((prev) => (prev + 1) % characters.length);
+    setcharacterIndex((prev) => (prev + 1) % characters.length);
   };
 
   const handlePrev = () => {
-    setIndex((prev) => (prev - 1 + characters.length) % characters.length);
+    setcharacterIndex((prev) => (prev - 1 + characters.length) % characters.length);
   };
   const navigate = useNavigate();
 
