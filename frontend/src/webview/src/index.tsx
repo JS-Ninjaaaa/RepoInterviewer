@@ -1,4 +1,4 @@
-// // index.tsx (エントリーポイント)
+// index.tsx (エントリーポイント)
 
 import { createRoot } from 'react-dom/client';
 import AppRoutes from './AppRoutes';

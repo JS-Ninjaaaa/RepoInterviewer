@@ -1,9 +1,10 @@
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 
 import StartScreen from './screens/StartScreen';
-// import AnswerScreen from './screens/AnswerScreen';
+import AnswerScreen from './screens/AnswerScreen';
+import GeneralFeedbackScreen from './screens/GeneralFeedbackScreen';
 
 const vscode = typeof acquireVsCodeApi === 'function'
   ? acquireVsCodeApi()
@@ -19,12 +20,13 @@ function AppRoutes() {
     <ThemeProvider theme={theme}>
         <MemoryRouter>
           <Routes>
-            <Route path="/" element={<StartScreen vscode={vscode}/>} />
-            {/* <Route path="/answer" element={<AnswerScreen />} /> */}
+            <Route path='/' element={<StartScreen vscode={vscode}/>} />
+            <Route path='/answer' element={<AnswerScreen vscode={vscode}/>} />
+            <Route path='/GeneralFeedback' element={<GeneralFeedbackScreen vscode={vscode}/>} />
           </Routes>
         </MemoryRouter>
     </ThemeProvider>
-  )
+  );
 }
 
-export default AppRoutes
+export default AppRoutes;

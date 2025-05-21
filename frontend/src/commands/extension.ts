@@ -1,20 +1,18 @@
 import * as vscode from "vscode";
 import { fetchFiles } from "./functions/fetchFiles";
-import { fetchfirstQuestion } from "./api/api";
+import { fetchFirstQuestion, fetchNextQuestion, fetchFeedBack, fetchGeneralFeedback } from "./api/api";
+import {  testQuestions } from "./functions/data/test/testQuestion";
+import type { apiRequestValue } from "./types/apiRequestValue";
+import { testFeedback } from "./functions/data/test/testFeedback";
+import { testGeneralFeedback } from "./functions/data/test/testGeneralFeedback";
 
-type message = {
-  type: string,
-  payload: {
-    difficulty: string, 
-    puestion_id: number
-  }
-}
+let currentPanel: vscode.WebviewPanel | undefined;
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
   myStatusBarItem.text = 'Ⓜ️モード'; 
-  myStatusBarItem.tooltip = 'クリックして面接質問を表示';
+  myStatusBarItem.tooltip = 'クリックして面接開始';
   myStatusBarItem.command = 'repointerviewer.repointerviewer';
   myStatusBarItem.show();
 
@@ -26,27 +24,28 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
       
       // reactからメッセージを受け取ったタイミングで実行される
-      panel.webview.onDidReceiveMessage(async (message: message) => {
-        const QuestionInfo = await handleWebviewMessage(panel,message); 
-        if (QuestionInfo) {
-          panel.webview.postMessage({
-            type: "firstQuestion",
-            payload: QuestionInfo
-          });
-        }
+      panel.webview.onDidReceiveMessage(async (message: apiRequestValue) => {
+        handleWebviewMessage(panel,message); 
       });
     })
   );
 }
 
-async function handleWebviewMessage(panel: vscode.WebviewPanel, message: message) {
+async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequestValue) {
   switch (message.type) {
-    case "fetchfirstQuestion": {
+    case "fetchFirstQuestion": {
       const zipBinary = await fetchFiles();
       // zipファイルと難易度，質問数をバックエンドに送る
       try {
-        const QuestionInfo = await fetchfirstQuestion(zipBinary, message.payload); 
-        return QuestionInfo;
+        const QuestionInfo = await fetchFirstQuestion(zipBinary, message.payload); 
+        // テスト用レスポンス
+        const interveiw_id = "user123";
+        const question = testQuestions[0].question;
+        panel.webview.postMessage({
+          type: "firstQuestion",
+          payload: { interveiw_id: interveiw_id, question: question }
+        });
+        break;
       } catch (err: any) {
         panel.webview.postMessage({
           type: "error",
@@ -55,14 +54,90 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: message
         return null;
       }
     }
+
+    case "fetchNextQuestion": {
+      // interview_id, question_idで次の質問を取得する
+      try {
+        const nextQuestionInfo = await fetchNextQuestion(message.payload); 
+        // テスト用レスポンス
+        const question_id = message.payload.question_id;
+        const question = testQuestions[question_id - 1].question;
+
+        panel.webview.postMessage({
+          type: "nextQuestion",
+          payload: { question_id: question_id, question: question }
+        });
+        break;
+      } catch (err: any) {
+        panel.webview.postMessage({
+          type: "error",
+          payload: err.message || "不明なエラー"
+        });
+        return null;
+      }
+    }
+
+    case "fetchFeedBack": {
+      // interview_id, question_idで次の質問を取得する
+      try {
+        const QuestionInfo = await fetchFeedBack(message.payload); 
+        // テスト用レスポンス
+        const question_id = message.payload.question_id;
+        const feedback = testFeedback[question_id - 1].response;
+        const score = 15;
+
+        panel.webview.postMessage({
+          type: "FeedBack",
+          payload: { question_id: question_id, feedback: feedback, score: score }
+        });
+        break;
+      } catch (err: any) {
+        panel.webview.postMessage({
+          type: "error",
+          payload: err.message || "不明なエラー"
+        });
+        return null;
+      }
+    }
+
+    case "fetchGeneralFeedback": {
+      // interview_id, question_idで次の質問を取得する
+      try {
+        const QuestionInfo = await fetchGeneralFeedback(message.payload); 
+        // テスト用レスポンス
+        const GeneralFeedback = testGeneralFeedback.general_review;
+        const scores = testGeneralFeedback.scores;
+
+        panel.webview.postMessage({
+          type: "GeneralFeedback",
+          payload: { scores: scores, GeneralFeedback: GeneralFeedback }
+        });
+        break;
+      } catch (err: any) {
+        panel.webview.postMessage({
+          type: "error",
+          payload: err.message || "不明なエラー"
+        });
+        return null;
+      }
+    }
+    case "closeWebview": {
+      panel.dispose();
+      break;
+    }
   }
 }
 
 // 画面を二分割し，右側にwebviewを開く関数
-export async function openWindow(extensionUri: vscode.Uri) {
+export async function openWindow(extensionUri: vscode.Uri): Promise<vscode.WebviewPanel> {
   await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
 
-  const panel = vscode.window.createWebviewPanel(
+  if (currentPanel) {
+    currentPanel.reveal();
+    return currentPanel;
+  }
+
+  currentPanel = vscode.window.createWebviewPanel(
     "yourWebview",
     "RepoInterviewer",
     vscode.ViewColumn.Two, // ← 右側に表示！
@@ -73,7 +148,12 @@ export async function openWindow(extensionUri: vscode.Uri) {
       ]
     }
   );
-  return panel;
+
+  currentPanel.onDidDispose(() => {
+    currentPanel = undefined;
+  });
+  
+  return currentPanel;
 }
 
 export function deactivate() {}
@@ -112,19 +192,14 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
     <html lang="en">
     <head>
       <meta charset="UTF-8">
-      <meta http-equiv="Content-Security-Policy" name="viewport"  content="
-        default-src 'none';
-        style-src 'unsafe-inline' vscode-resource:;
-        script-src vscode-resource:;
-        font-src vscode-resource:;
-        img-src vscode-resource:;
-      ">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>repointerviewer</title>
       <meta http-equiv="Content-Security-Policy"
             content="default-src 'none';
                     style-src 'unsafe-inline' ${webview.cspSource};
                     img-src ${webview.cspSource};
-                    script-src 'nonce-${nonce}';">
+                    script-src 'nonce-${nonce}';
+                    font-src ${webview.cspSource};">
     </head>
     <body>
       <div id="app"></div>

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import JSZip from 'jszip';
-import { spawn } from "child_process";
+import { spawn } from 'child_process';
 import { mensetsuIgnoreFiles } from './data/mensetsuignore'; 
 
 export async function fetchFiles() {
@@ -30,21 +30,21 @@ export async function getFilteredFiles(): Promise<vscode.Uri[]> {
 function getGitIgnoredFilesAsync(rootPath: string): Promise<string[]> {
     
   return new Promise((resolve, reject) => {
-    const git = spawn("git", ["ls-files", "--others", "--ignored", "--exclude-standard"], {
+    const git = spawn('git', ['ls-files', '--others', '--ignored', '--exclude-standard'], {
       cwd: rootPath,
     });
 
-    let result = "";
-    git.stdout.on("data", (data) => {
+    let result = '';
+    git.stdout.on('data', (data) => {
       result += data.toString();
     });
 
-    git.stderr.on("data", (data) => {
+    git.stderr.on('data', (data) => {
     });
 
-    git.on("close", (code) => {
+    git.on('close', (code) => {
       if (code === 0) {
-        const list = result.trim().split("\n").filter((line) => line);
+        const list = result.trim().split('\n').filter((line) => line);
         resolve(list);
       } else {
         reject(new Error(`git process exited with code ${code}`));
@@ -58,7 +58,7 @@ export async function generateZip(files: vscode.Uri[]): Promise<Uint8Array>{
 
     for (const file of files) {
         const bytes = await vscode.workspace.fs.readFile(file);
-        const content = new TextDecoder("utf-8").decode(bytes);
+        const content = new TextDecoder('utf-8').decode(bytes);
         const fileName = vscode.workspace.asRelativePath(file);
         zip.file(fileName, content);
     }
