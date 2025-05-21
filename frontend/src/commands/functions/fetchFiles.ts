@@ -40,13 +40,11 @@ function getGitIgnoredFilesAsync(rootPath: string): Promise<string[]> {
     });
 
     git.stderr.on('data', (data) => {
-      console.error('❌ git stderr:', data.toString());
     });
 
     git.on('close', (code) => {
       if (code === 0) {
         const list = result.trim().split('\n').filter((line) => line);
-        console.log('📛 Gitで無視されたファイル数:', list.length);
         resolve(list);
       } else {
         reject(new Error(`git process exited with code ${code}`));

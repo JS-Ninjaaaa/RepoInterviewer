@@ -11,7 +11,6 @@ let currentPanel: vscode.WebviewPanel | undefined;
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
-  console.log("面接モードボタンが押されました！");
   myStatusBarItem.text = 'Ⓜ️モード'; 
   myStatusBarItem.tooltip = 'クリックして面接開始';
   myStatusBarItem.command = 'repointerviewer.repointerviewer';
@@ -26,7 +25,6 @@ export function activate(context: vscode.ExtensionContext) {
       
       // reactからメッセージを受け取ったタイミングで実行される
       panel.webview.onDidReceiveMessage(async (message: apiRequestValue) => {
-        console.log("webview clicked");
         handleWebviewMessage(panel,message); 
       });
     })
@@ -47,10 +45,8 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
           type: "firstQuestion",
           payload: { interveiw_id: interveiw_id, question: question }
         });
-        console.log("message posted");
         break;
       } catch (err: any) {
-        console.error("処理中エラー:", err);
         panel.webview.postMessage({
           type: "error",
           payload: err.message || "不明なエラー"
@@ -71,10 +67,8 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
           type: "nextQuestion",
           payload: { question_id: question_id, question: question }
         });
-        console.log("next question posted");
         break;
       } catch (err: any) {
-        console.error("処理中エラー:", err);
         panel.webview.postMessage({
           type: "error",
           payload: err.message || "不明なエラー"
@@ -96,10 +90,8 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
           type: "FeedBack",
           payload: { question_id: question_id, feedback: feedback, score: score }
         });
-        console.log("feed back posted", question_id);
         break;
       } catch (err: any) {
-        console.error("処理中エラー:", err);
         panel.webview.postMessage({
           type: "error",
           payload: err.message || "不明なエラー"
@@ -122,7 +114,6 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
         });
         break;
       } catch (err: any) {
-        console.error("処理中エラー:", err);
         panel.webview.postMessage({
           type: "error",
           payload: err.message || "不明なエラー"

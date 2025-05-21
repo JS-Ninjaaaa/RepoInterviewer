@@ -45,7 +45,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
   const fetchfirstQuestion = (event: MessageEvent) => {
     const { type, payload } = event.data;
     if (type === 'firstQuestion') {
-      console.log(type, payload);
       navigate('/answer', {
       state: {
         ...payload,
@@ -53,7 +52,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
       }
       });
     } else {
-      console.log(type, payload);
     }
   };
 
