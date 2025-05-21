@@ -1,9 +1,10 @@
 const ENDPOINT = 'http://localhost:3001';
+import { FirstQuestionResponse, NextQuestionResponse, FeedBackResponse, GeneralFeedbackResponse } from '../types/apiResponseValue';
 
-export async function fetchfirstQuestion(
+export async function fetchFirstQuestion(
   zipBinary: Uint8Array,
   payload: { difficulty: string; total_question: number }
-): Promise<JSON> {
+): Promise<FirstQuestionResponse> {
 
   const formData = new FormData();
   
@@ -16,9 +17,6 @@ export async function fetchfirstQuestion(
 
   const res = await fetch(`${ENDPOINT}/interview`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
     body: formData
   });
 
@@ -30,10 +28,38 @@ export async function fetchfirstQuestion(
   return result;
 }
 
-export async function fetchNextQuestion(payload: { interview_id: string; question_id: number }) {
-  const { interview_id, question_id } = payload;
+export async function fetchFeedBack(
+  payload: { interview_id: string; question_id: number; answer: string; }
+): Promise<NextQuestionResponse> {
+  const { interview_id, question_id, answer } = payload;
 
   // クエリパラメターの設定
+  const url = `${ENDPOINT}/${interview_id}`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json' 
+    },
+    body: JSON.stringify({
+      question_id,
+      message: answer, // 仕様に合わせてキー名は `message`
+    }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`サーバーエラー : ${res.status}`);
+  }
+
+  const result = await res.json();
+  return result;
+}
+
+export async function fetchNextQuestion(
+  payload: { interview_id: string; question_id: number }
+): Promise<FeedBackResponse> {
+  const { interview_id, question_id } = payload;
+
   const url = `${ENDPOINT}/interview/${interview_id}?question_id=${question_id}`;
 
   const res = await fetch(url, {
@@ -41,18 +67,19 @@ export async function fetchNextQuestion(payload: { interview_id: string; questio
   });
 
   if (!res.ok) {
-    throw new Error(`サーバーエラー: ${res.status}`);
+    throw new Error(`質問が見つかりませんでした: ${res.status}`);
   }
 
   const result = await res.json();
   return result;
 }
 
-export async function fetchFeedBack(payload: { interview_id: string; question_id: number; answer: string; }) {
-  const { interview_id, question_id } = payload;
+export async function fetchGeneralFeedback(
+  payload: { interview_id: string }
+): Promise<GeneralFeedbackResponse> {
+  const { interview_id } = payload;
 
-  // クエリパラメターの設定
-  const url = `${ENDPOINT}/feedback/${interview_id}?question_id=${question_id}`;
+  const url = `${ENDPOINT}/${interview_id}`;
 
   const res = await fetch(url, {
     method: 'GET',

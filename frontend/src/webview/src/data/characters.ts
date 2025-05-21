@@ -59,7 +59,7 @@ export const characters: Character[] = [
     total_question: 2,
     name: '黒鉄レン',
     text: 'Ren',
-    title: 'Kurogane',
+    title: '超冷徹なPM',
     quotes: [
       'このコード、今すぐリファクタしろ',
       'その程度の抽象化で通ると思うな',
