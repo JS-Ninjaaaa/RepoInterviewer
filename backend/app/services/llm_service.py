@@ -1,7 +1,7 @@
 from ollama import Client
 # docker実行用
-ollama = Client(host="http://host.docker.internal:11434")
-# ollama = Client(host="http://localhost:11434") # ローカルで実行する
+# ollama = Client(host="http://host.docker.internal:11434")
+ollama = Client(host="http://localhost:11434") # ローカルで実行する
 model = "elyza-interview:latest"  # 使用するモデル名
 
 
