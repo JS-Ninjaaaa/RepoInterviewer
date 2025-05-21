@@ -1,16 +1,19 @@
 import * as vscode from "vscode";
 import { fetchFiles } from "./functions/fetchFiles";
-import { fetchfirstQuestion, fetchNextQuestion, fetchFeedBack } from "./api/api";
-import { testchat } from "./functions/data/test/testchat";
-import type { Message } from "./types/messages";
-import { testfeedback } from "./functions/data/test/testfeedback";
+import { fetchFirstQuestion, fetchNextQuestion, fetchFeedBack, fetchGeneralFeedback } from "./api/api";
+import {  testQuestions } from "./functions/data/test/testQuestion";
+import type { apiRequestValue } from "./types/apiRequestValue";
+import { testFeedback } from "./functions/data/test/testFeedback";
+import { testGeneralFeedback } from "./functions/data/test/testGeneralFeedback";
+
+let currentPanel: vscode.WebviewPanel | undefined;
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
   console.log("面接モードボタンが押されました！");
   myStatusBarItem.text = 'Ⓜ️モード'; 
-  myStatusBarItem.tooltip = 'クリックして面接質問を表示';
+  myStatusBarItem.tooltip = 'クリックして面接開始';
   myStatusBarItem.command = 'repointerviewer.repointerviewer';
   myStatusBarItem.show();
 
@@ -22,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
       panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
       
       // reactからメッセージを受け取ったタイミングで実行される
-      panel.webview.onDidReceiveMessage(async (message: Message) => {
+      panel.webview.onDidReceiveMessage(async (message: apiRequestValue) => {
         console.log("webview clicked");
         handleWebviewMessage(panel,message); 
       });
@@ -30,19 +33,19 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-async function handleWebviewMessage(panel: vscode.WebviewPanel, message: Message) {
+async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequestValue) {
   switch (message.type) {
-    case "fetchfirstQuestion": {
+    case "fetchFirstQuestion": {
       const zipBinary = await fetchFiles();
       // zipファイルと難易度，質問数をバックエンドに送る
       try {
-        const QuestionInfo = await fetchfirstQuestion(zipBinary, message.payload); 
+        const QuestionInfo = await fetchFirstQuestion(zipBinary, message.payload); 
         // テスト用レスポンス
         const interveiw_id = "user123";
-        const question = testchat[0];
+        const question = testQuestions[0].question;
         panel.webview.postMessage({
           type: "firstQuestion",
-          payload: { interveiw_id: interveiw_id, question: question.text }
+          payload: { interveiw_id: interveiw_id, question: question }
         });
         console.log("message posted");
         break;
@@ -62,11 +65,11 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: Message
         const nextQuestionInfo = await fetchNextQuestion(message.payload); 
         // テスト用レスポンス
         const question_id = message.payload.question_id;
-        const question = testchat[question_id - 1];
+        const question = testQuestions[question_id - 1].question;
 
         panel.webview.postMessage({
           type: "nextQuestion",
-          payload: { question_id: question_id, question: question.text }
+          payload: { question_id: question_id, question: question }
         });
         console.log("next question posted");
         break;
@@ -86,13 +89,14 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: Message
         const QuestionInfo = await fetchFeedBack(message.payload); 
         // テスト用レスポンス
         const question_id = message.payload.question_id;
-        const feedback = testfeedback[question_id - 1];
+        const feedback = testFeedback[question_id - 1].response;
+        const score = 15;
 
         panel.webview.postMessage({
           type: "FeedBack",
-          payload: { feedback: feedback.text }
+          payload: { question_id: question_id, feedback: feedback, score: score }
         });
-        console.log("feed back posted");
+        console.log("feed back posted", question_id);
         break;
       } catch (err: any) {
         console.error("処理中エラー:", err);
@@ -103,14 +107,46 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: Message
         return null;
       }
     }
+
+    case "fetchGeneralFeedback": {
+      // interview_id, question_idで次の質問を取得する
+      try {
+        const QuestionInfo = await fetchGeneralFeedback(message.payload); 
+        // テスト用レスポンス
+        const GeneralFeedback = testGeneralFeedback.general_review;
+        const scores = testGeneralFeedback.scores;
+
+        panel.webview.postMessage({
+          type: "GeneralFeedback",
+          payload: { scores: scores, GeneralFeedback: GeneralFeedback }
+        });
+        break;
+      } catch (err: any) {
+        console.error("処理中エラー:", err);
+        panel.webview.postMessage({
+          type: "error",
+          payload: err.message || "不明なエラー"
+        });
+        return null;
+      }
+    }
+    case "closeWebview": {
+      panel.dispose();
+      break;
+    }
   }
 }
 
 // 画面を二分割し，右側にwebviewを開く関数
-export async function openWindow(extensionUri: vscode.Uri) {
+export async function openWindow(extensionUri: vscode.Uri): Promise<vscode.WebviewPanel> {
   await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
 
-  const panel = vscode.window.createWebviewPanel(
+  if (currentPanel) {
+    currentPanel.reveal();
+    return currentPanel;
+  }
+
+  currentPanel = vscode.window.createWebviewPanel(
     "yourWebview",
     "RepoInterviewer",
     vscode.ViewColumn.Two, // ← 右側に表示！
@@ -121,7 +157,12 @@ export async function openWindow(extensionUri: vscode.Uri) {
       ]
     }
   );
-  return panel;
+
+  currentPanel.onDidDispose(() => {
+    currentPanel = undefined;
+  });
+  
+  return currentPanel;
 }
 
 export function deactivate() {}
