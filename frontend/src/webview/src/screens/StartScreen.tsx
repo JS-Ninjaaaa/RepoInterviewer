@@ -1,12 +1,12 @@
 import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Avatar, IconButton, Button, ThemeProvider } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { characters } from '../data/characters';
 import { theme } from '../theme';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
-import type { Message } from '../types/messages';
+import type { apiRequestValue } from '../types/apiRequestValue';
 
 interface StartScreenProps {
   vscode: VSCodeAPI;
@@ -14,7 +14,7 @@ interface StartScreenProps {
 
 declare global {
   interface VSCodeAPI {
-  postMessage: (msg: Message) => void;
+  postMessage: (msg: apiRequestValue) => void;
   getState: () => unknown;
   setState: (data: unknown) => void;
 }
@@ -25,7 +25,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
 // const StartScreen = () => {
 
   const [index, setIndex] = useState(0);
-  const charadata = characters[index];
+  const currentCharacter = characters[index];
 
   const handleNext = () => {
     setIndex((prev) => (prev + 1) % characters.length);
@@ -38,7 +38,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
 
   
   const handleStart = () => {
-    const message: Message = { type: 'fetchfirstQuestion', payload: { difficulty: charadata.level, total_question: charadata.total_question }};
+    const message: apiRequestValue = { type: 'fetchFirstQuestion', payload: { difficulty: currentCharacter.level, total_question: currentCharacter.total_question }};
     vscode.postMessage(message);
   };
 
@@ -49,7 +49,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
       navigate('/answer', {
       state: {
         ...payload,
-        charadata: charadata  // charadataは選択中のキャラクター情報
+        currentCharacter: currentCharacter  // currentCharacterは選択中のキャラクター情報
       }
       });
     } else {
@@ -66,79 +66,92 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          mt: 4,
-          backgroundColor: charadata.color[100],
-          minHeight: '100vh',
+          backgroundColor: currentCharacter.color[100],
+          height: '100vh',
           minWidth: '320px'
         }}
       >
-        <Typography variant='h5' sx={{ fontWeight: 'bold', mt: '10%', marginBottom: 8}} >
+        <Typography variant='h5' sx={{ fontWeight: 'bold', mt: '20%' }} >
           面接官選択
         </Typography>
 
         <Box 
-        sx={{
+          sx={{
             display: 'flex',
+            flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
-            mt: '10%',
             width: '100%',
+            height: '90%',
+            mb: '100px'
           }}
         >
-          <IconButton onClick={handlePrev}>
-            <ArrowBackIcon />
+          <IconButton
+            onClick={handlePrev}
+            sx={{ mt: '60px', mx: 1, bgcolor: 'white', borderRadius: 5, width: '20px', height: '42px', boxShadow: 1, '&:hover': {
+              background: '#e0e0e0'
+            }, }}
+          >
+            <ArrowBackIosNewIcon sx={{ fontSize: '18px', fontWeight: 'bold' }} />
           </IconButton>
 
           <Box
             sx={{
               p: 4,
               borderRadius: 1,
-              width: '100%',
-              minWidth: '220px',
+              width: '90%',
+              minWidth: '180px',
               maxWidth: '320px',
-              height: 160,
+              maxHeight: '320px',
               backgroundColor: 'white',
               boxShadow: 3,
               textAlign: 'center',
               alignItems: 'center',
+              justifyContent: 'center',
+              mt: '60px',
             }}
           >
-            <Box sx={{ alignItems: 'center', display: 'inline-flex', mb: 2 }}>
+            <Box sx={{ alignItems: 'center', display: 'inline-flex' }}>
               <Avatar
-                src={charadata.image}
-                alt={charadata.name}
+                src={currentCharacter.image}
+                alt={currentCharacter.name}
                 sx={{ width: 84, height: 84, mr: 3 }}
               />
               <Box sx={{ ml: 4 }}> 
                 <Typography variant='subtitle1' sx={{ fontSize: 32, mb: 0 }}>
-                  {charadata.name}
+                  {currentCharacter.name}
                 </Typography>
-                <Typography variant='body2' sx={{ color: charadata.color[900], fontWeight: 'bold' }}>
-                  {charadata.level}
+                <Typography variant='body2' sx={{ color: currentCharacter.color[900], fontWeight: 'bold' }}>
+                  {currentCharacter.level}
                 </Typography>
               </Box>
             </Box>
             
-            <Typography variant='body2' sx={{ backgroundColor: charadata.color[200], mb: 1, fontWeight: 700 }}>
-              {charadata.title}
+            <Typography variant='body2' sx={{ backgroundColor: currentCharacter.color[200], my: 2, fontWeight: 700 }}>
+              {currentCharacter.title}
             </Typography>
 
-            {charadata.quotes.map((q, i) => (
-            <Typography key={i} variant='caption' display='block'>
+            {currentCharacter.quotes.map((q, i) => (
+            <Typography key={i} variant='caption' display='block' sx={{ fontSize: '14px' }}>
               「{q}」
             </Typography>
           ))}
           </Box>
 
-          <IconButton onClick={handleNext}>
-            <ArrowForwardIcon />
+          <IconButton
+            onClick={handleNext}
+            sx={{ mt: '60px', mx: 1, bgcolor: 'white', borderRadius: 5, width: '20px', height: '42px', boxShadow: 1, '&:hover': {
+              background: '#e0e0e0'
+            }, }}
+          >
+            <ArrowForwardIosIcon sx={{ fontSize: '18px', fontWeight: 'bold' }} />
           </IconButton>
         </Box>
         
         <Button 
           onClick={handleStart} 
           variant='contained' 
-          sx={{ backgroundColor: charadata.color[700], color: 'white', mt: 12, width: '30%', minWidth: '160px', height: 48, fontSize:18  }}
+          sx={{ mb: '80px', backgroundColor: currentCharacter.color[700], color: 'white', width: '30%', minWidth: '160px', height: 48, fontSize:18  }}
         >
           面接開始
         </Button> 

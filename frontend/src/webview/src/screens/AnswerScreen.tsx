@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, ThemeProvider, Avatar, Modal } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { theme } from '../theme';
-import type { Message } from '../types/messages';
+import type { apiRequestValue } from '../types/apiRequestValue';
 
 interface AnswerScreenProps {
   vscode: VSCodeAPI;
@@ -14,7 +14,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
 // const AnswerScreen = () => {
   
   const location = useLocation();
-  const charadata = location.state.charadata;
+  const currentCharacter = location.state.currentCharacter;
   const interview_id = location.state.interview_id;
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -25,7 +25,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
   const [buttonDisplay, setButtonDisplay] = useState<string>('スキップ');
   const [displayEnterBox, setDisplayEnterBox] = useState<boolean>(true);
   const [scrollTop, setScrollTop] = useState<boolean>(true);
-  // const [score, setScore] = useState<string>();
+  const [scoreList, setScoreList] = useState<number[]>([]);
   
   const [interruptModalOpen, setInterruptModalOpen] = useState(false);
   const [skipModalOpen, setSkipModalOpen] = useState(false);
@@ -38,7 +38,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
 
   const handleSkip = () => {
     setSkipModalOpen(false);
-    handleNext();
+    handleSubmit();
   };
 
   const handleSubmit = () => {
@@ -47,7 +47,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
     setScrollTop(false);
 
     // フィードバッグを要求するAPI
-    const message: Message = { type: 'fetchFeedBack', payload: { interview_id: interview_id, question_id: questionId, answer: chatInput }};
+    const message: apiRequestValue = { type: 'fetchFeedBack', payload: { interview_id: interview_id, question_id: questionId, answer: chatInput }};
     vscode.postMessage(message);
 
     setChatInput('');
@@ -56,44 +56,47 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
   const handleNext = () => {
     // 次の質問を要求するAPI
     const nextId = questionId + 1;
-    setQuestionId(prev => prev + 1); // カウントを1増やす
-    const message: Message = { type: 'fetchNextQuestion', payload: { interview_id: interview_id, question_id: nextId, }};
+    const message: apiRequestValue = { type: 'fetchNextQuestion', payload: { interview_id: interview_id, question_id: nextId, }};
     vscode.postMessage(message);
   };
 
-  const moveGeneralFeedBackScreen = (payload: {'scores': number[], 'GeneralFeedBack_review': string}) => {
-    // GeneralFeedBackを受け取る関数
-    navigate('/GeneralFeedBack', {
+  const moveGeneralFeedbackScreen = (payload: apiRequestValue) => {
+    // GeneralFeedbackを受け取る関数
+    navigate('/GeneralFeedback', {
       state: {
-        ...payload,
-        charadata: charadata  
+        payload,
+        currentCharacter: currentCharacter  
       }
     })
   }
 
-  const fetchGeneralFeedBack = () => {
+  const fetchGeneralFeedback = () => {
     // 総評を要求するAPI
-    const message: Message = { type: 'fetchGeneralFeedBack', payload: { interview_id: interview_id }};
+    const message: apiRequestValue = { type: 'fetchGeneralFeedback', payload: { interview_id: interview_id }};
     vscode.postMessage(message);
   };
 
-  // APIに対する応答を取得する
+  // vscodeAPIに対する応答を取得する
   const handleMessage = (event: MessageEvent) => {
     const { type, payload } = event.data;
-
     if (type === 'FeedBack') {
-      if (questionId === (charadata?.total_question)) {
-      setButtonDisplay('最終結果へ')
-      } else {
-        setButtonDisplay('次へ')
-      };
+      const total  = currentCharacter.total_question;
+      const lastId = payload.question_id;       
+
+      setButtonDisplay(lastId >= total ? '最終結果へ' : '次へ');
+            
       setChatHistory(prev => [...prev, payload.feedback]);
+      setScoreList(prev => [...prev, payload.score]);
     } else if (type === 'nextQuestion') {
       setChatHistory(prev => [...prev, payload.question]);
+
+      setQuestionId(payload.question_id);
+
       setButtonDisplay('スキップ'); 
+
       setDisplayEnterBox(true);
-    } else if (type === 'fetchGeneralFeedBack') {
-      moveGeneralFeedBackScreen(payload)
+    } else if (type === 'GeneralFeedback') {
+      moveGeneralFeedbackScreen(payload)
     }
     else {
       console.log('その他のメッセージ', payload);
@@ -125,17 +128,16 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
           display: 'flex',
           alignItems: 'center',
           flexDirection: 'column',
-          backgroundColor: charadata?.color[50],
-          minHeight: '100vh',
+          backgroundColor: currentCharacter?.color[50],
+          height: '100vh',
           minWidth: '320px',
           justifyContent: 'space-between',
         }}
       >
-
         <Box
           sx={{
             border: 2,
-            borderColor: charadata.color[200],
+            borderColor: currentCharacter.color[200],
             backgroundColor: 'white',
             width: '76%',
             height: '68vh',
@@ -143,51 +145,50 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
             flexDirection: 'column',
             overflowY: 'auto',
             p: 3,
-            
+            mt: '80px'
           }}
         >
           {/* チャット履歴 */}
           <Box>
             {chatHistory.map((text, index) => (
               <Box key={index}>
-                {index === chatHistory.length - 1 ? (<Box ref={bottomRef} sx={{ mt: '2px' }} />) : null} 
+                {index === chatHistory.length - 1 ? (<Box ref={bottomRef} sx={{ mt: 2 }} />) : null} 
                 {index % 3 === 0 ? (
                   // 質問
-                  <Box sx={{ my: '2px' }}>
+                  <Box sx={{ my: 2 }}>
                     <Box sx={{
                       display: 'flex',
                       width: 'auto',
-                      mt: '7%',
+                      mt: 1,
                       gap: '5%',
                       justifyContent: 'left',
                       alignItems: 'center',
                     }}>
                       <Avatar
-                        src={charadata?.image}
-                        alt={charadata?.name}
+                        src={currentCharacter?.image}
+                        alt={currentCharacter?.name}
                         sx={{ width: 56, height: 56, m: 2 }}
                       />
-                      <Box sx={{ mt: '2px', backgroundColor: charadata?.color[400], textAlign: 'right', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white', minWidth: '120px', width: '24%', height: '36px' }}>
-                        <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}> {Math.floor(index / 3) + 1} of {charadata?.total_question}</Typography>
+                      <Box sx={{ backgroundColor: currentCharacter?.color[400], textAlign: 'right', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white', minWidth: '120px', width: '24%', height: '36px' }}>
+                        <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}> {Math.floor(index / 3) + 1} of {currentCharacter?.total_question}</Typography>
                       </Box>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography sx={{ fontSize: 16, bgcolor: charadata.color[50], p: 2, borderRadius: 2  }}>{text}</Typography>
+                      <Typography sx={{ fontSize: 16, bgcolor: currentCharacter.color[50], p: 2, borderRadius: 2  }}>{text}</Typography>
                     </Box>
                   </Box>
                 ) : index % 3 === 1 ? (
                   // 奇数：ユーザー側
-                  <Box sx={{ my: '2px', width: '100%' }}>
+                  <Box sx={{ my: 2, width: '100%' }}>
                     {/* アバターを右に寄せる */}
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                       <Avatar
-                        alt={charadata?.name}
+                        alt={currentCharacter?.name}
                         sx={{ width: 56, height: 56, m: 2 }}
                       />
                     </Box>
-
                     <Box sx={{ display: 'flex', width: '100%' }}>
-                      <Box sx={{ bgcolor: charadata.color[50], p: 2, borderRadius: 2, width: '100%' }}>
+                      <Box sx={{ bgcolor: currentCharacter.color[50], p: 2, borderRadius: 2, width: '100%' }}>
                         <Typography sx={{ fontSize: 16 }}>
                           {text}
                         </Typography>
@@ -196,14 +197,20 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
                   </Box>
                 ) : (
                   // フィードバック
-                  <Box sx={{ my: '2px' }}>
+                  <Box sx={{ my: 2 }}>
                     <Avatar
-                      src={charadata?.image}
-                      alt={charadata?.name}
+                      src={currentCharacter?.image}
+                      alt={currentCharacter?.name}
                       sx={{ width: 56, height: 56, m: 2 }}
                     />
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Typography sx={{ fontSize: 16, bgcolor: charadata.color[50], p: 2, borderRadius: 2  }}>{text}</Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', bgcolor: currentCharacter.color[50], p: 2, borderRadius: 2 }}>
+                      <Typography sx={{ display: 'flex', alignItems: 'baseline', flexDirection: 'row', fontSize: '36px', color: currentCharacter.color[400] }}>
+                        {scoreList[Math.floor(index / 3)]}
+                        <Typography sx={{ fontSize: '24px' }}>点</Typography>
+                      </Typography> 
+                      <Typography sx={{ fontSize: '16px' }}>
+                        {text}
+                      </Typography>
                     </Box>
                   </Box>
                 )}
@@ -212,7 +219,6 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
           </Box>
 
           {/* 解答欄 */}
-          
             {displayEnterBox ? (
               <>
                 <Box 
@@ -220,36 +226,38 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
                   sx={{
-                    minHeight: '24vh',
+                    height: '100%',
+                    minHeight: '80px',
                     border: '1px solid',
-                    borderColor: charadata.color[200],
+                    maxLength: 300,
+                    borderColor: currentCharacter.color[200],
                     borderRadius: 2,
                     fontSize: 20,
                     mb: 2,
                     mt: 4,
                     p: 2,
                     '&:focus': {
-                      borderColor: charadata.color[200],
+                      borderColor: currentCharacter.color[200],
                       outline: 'none',     
                     }
                   }}
                 />
                 <Box sx={{ textAlign: 'right' }}>
                   <Button onClick={handleSubmit}>
-                    <SendIcon sx={{ cursor: 'pointer', borderRadius: 2, bgcolor: charadata?.color[200], color: 'white',  py: 1, px: 2, fontSize: '28px', boxShadow: 3 }} />
+                    <SendIcon sx={{ cursor: 'pointer', borderRadius: 2, bgcolor: currentCharacter?.color[200], color: 'white',  py: 1, px: 2, fontSize: '28px', boxShadow: 3 }} />
                   </Button>
                 </Box>
               </>
             ) : null}
-          
         </Box>
 
         <Box sx={{
           display: 'flex',
           width: 'auto',
-          mt: '7%',
+          mt: 1,
           gap: '20%',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          mb: '68px',
         }}>
           <Button onClick={() => setInterruptModalOpen(true)}  variant='contained' sx={{ backgroundColor: theme.palette.secondary.light, color: 'white', minWidth: '120px', width: '42%', height: 42, fontSize:18  }}>
             中断
@@ -298,8 +306,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
             if (buttonDisplay === '次へ') {
                  handleNext();
             } else if (buttonDisplay === '最終結果へ') {
-              moveGeneralFeedBackScreen({'scores': [20, 18], 'GeneralFeedBack_review': '最終フィードバッグ'});
-              fetchGeneralFeedBack();
+              fetchGeneralFeedback();
             } else {
               setSkipModalOpen(true)
             }
@@ -307,7 +314,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
             variant='contained' sx={{ 
               backgroundColor: buttonDisplay === '次へ'? theme.palette.primary.light : theme.palette.secondary.light, 
               color: 'white', 
-              minWidth: '120px', 
+              minWidth: '150px', 
               width: '42%', 
               height: 42, 
               fontSize:18  
