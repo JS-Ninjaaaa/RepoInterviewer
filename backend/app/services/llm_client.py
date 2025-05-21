@@ -1,7 +1,7 @@
 from ollama import Client
-
-# ollama = Client(host="http://host.docker.internal:11434")
-ollama = Client(host="http://localhost:11434")
+# docker実行用
+ollama = Client(host="http://host.docker.internal:11434")
+# ollama = Client(host="http://localhost:11434") # ローカルで実行する
 model = "elyza-interview:latest"  # 使用するモデル名
 
 
@@ -21,6 +21,8 @@ def build_question_prompt(character: str, difficulty: str, total_question: int, 
         
         以下のソースコードをレビューしてください。  
         {character}口調で、技術的な観点から{total_question}つの質問を作成してください。  
+        **必ずキャラの言葉遣いや話し方を強く反映させてください**。  
+        口調や語尾がキャラに合っていないと不正解です。
         
         出力ルール：
         - 質問文だけ（説明・コメントは禁止）
