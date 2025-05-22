@@ -2,7 +2,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material';
 import { theme } from './theme';
 
-import StartScreen from './screens/StartScreen';
+import StartScreen from './screens/startScreen/StartScreen';
 import AnswerScreen from './screens/AnswerScreen';
 import GeneralFeedbackScreen from './screens/GeneralFeedbackScreen';
 
@@ -18,11 +18,11 @@ function AppRoutes() {
 
   return (
     <ThemeProvider theme={theme}>
-        <MemoryRouter>
+        <MemoryRouter initialEntries={['/start']}>
           <Routes>
-            <Route path='/' element={<StartScreen vscode={vscode}/>} />
+            <Route path='/start' element={<StartScreen vscode={vscode}/>} />
             <Route path='/answer' element={<AnswerScreen vscode={vscode}/>} />
-            <Route path='/GeneralFeedback' element={<GeneralFeedbackScreen vscode={vscode}/>} />
+            <Route path='/feedback' element={<GeneralFeedbackScreen vscode={vscode}/>} />
           </Routes>
         </MemoryRouter>
     </ThemeProvider>
