@@ -44,4 +44,5 @@ def init_interview_info(interview_id: str, response_text: str, difficulty: str,
     redis = redis_service.get_client()
     # 有効時間は 1H とする
     redis.set(f"interview-{interview_id}", json.dumps(session_data), ex=3600)
-    print(f"{session_data}", flush=True)
+    # テスト
+    # print(f"{session_data}", flush=True)
