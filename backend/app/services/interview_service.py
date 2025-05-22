@@ -15,7 +15,7 @@ from ..services.llm_service import (
     send_prompt,
 )
 from ..utils.zip_handler import extract_zip
-
+from ..repositories.repository import init_interview_info
 
 # POST /interview
 def set_up_interview(
@@ -44,18 +44,17 @@ def set_up_interview(
     # - 面接ID
     # - キャラ設定
     # - 質問文
+    init_interview_info(
+        interview_id=interview_id,
+        response_text=response,
+        difficulty=request_body.difficulty,
+        total_question=request_body.total_question,
+    )
 
     return InterviewPostResponse(
         interview_id=interview_id,
         question=response
     )
-
-# 質問の絞り込み
-def filter_question(text: str,number :int) -> str:
-    # number問目の問題を抽出
-    pattern = rf'{number}\.\s*(.+?)(?=\n\d+\.|\Z)'
-    match = re.search(pattern, text.strip(), flags=re.DOTALL)
-    return match.group(1).strip() if match else ""
 
 # POST /interview/{interview_id}
 def get_response(interview_id: str, request_body: InterviewInterviewIdPostRequest) -> str:

@@ -1,9 +1,10 @@
 import os
 from textwrap import dedent
 from typing import Literal
+from ollama import Client
 
 from ..schemas.schemas import Difficulty
-from ollama import Client
+
 
 ollama = Client(host="http://127.0.0.1:11434")
 
