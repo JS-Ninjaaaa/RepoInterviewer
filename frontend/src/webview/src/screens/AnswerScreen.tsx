@@ -11,11 +11,9 @@ interface AnswerScreenProps {
 }
 
 const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
-// const AnswerScreen = () => {
-  
   const location = useLocation();
   const currentCharacter = location.state.currentCharacter;
-  const interview_id = location.state.interview_id;
+  const interviewId = location.state.interview_id;
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
@@ -32,37 +30,37 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
 
   const navigate = useNavigate();
 
-  const handleInterrrupt = () => {
+  const handleInterrruptInterview = () => {
     navigate('/');
   };
 
-  const handleSkip = () => {
+  const handleQuestionSkip = () => {
     setSkipModalOpen(false);
-    handleSubmit();
+    fetchFeedback();
   };
 
-  const handleSubmit = () => {
+  const fetchFeedback = () => {
     setChatHistory([...chatHistory, chatInput]);
     setDisplayEnterBox(false);
     setScrollTop(false);
 
     // フィードバッグを要求するAPI
-    const message: apiRequestValue = { type: 'fetchFeedBack', payload: { interview_id: interview_id, question_id: questionId, answer: chatInput }};
+    const message: apiRequestValue = { type: 'fetchFeedback', payload: { interview_id: interviewId, question_id: questionId, answer: chatInput }};
     vscode.postMessage(message);
 
     setChatInput('');
   };
 
-  const handleNext = () => {
+  const fetchNextQuestion = () => {
     // 次の質問を要求するAPI
     const nextId = questionId + 1;
-    const message: apiRequestValue = { type: 'fetchNextQuestion', payload: { interview_id: interview_id, question_id: nextId, }};
+    const message: apiRequestValue = { type: 'fetchNextQuestion', payload: { interview_id: interviewId, question_id: nextId, }};
     vscode.postMessage(message);
   };
 
   const moveGeneralFeedbackScreen = (payload: apiRequestValue) => {
     // GeneralFeedbackを受け取る関数
-    navigate('/GeneralFeedback', {
+    navigate('/feedback', {
       state: {
         payload,
         currentCharacter: currentCharacter  
@@ -72,20 +70,21 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
 
   const fetchGeneralFeedback = () => {
     // 総評を要求するAPI
-    const message: apiRequestValue = { type: 'fetchGeneralFeedback', payload: { interview_id: interview_id }};
+    const message: apiRequestValue = { type: 'fetchGeneralFeedback', payload: { interview_id: interviewId }};
     vscode.postMessage(message);
   };
 
-  // vscodeAPIに対する応答を取得する
-  const handleMessage = (event: MessageEvent) => {
+  // extesnion.tsから送られるメッセージにより次の動作にハンドルする
+  const hendleExtensionMassage = (event: MessageEvent) => {
     const { type, payload } = event.data;
-    if (type === 'FeedBack') {
-      const total  = currentCharacter.total_question;
+    if (type === 'Feedback') {
+      const total  = currentCharacter.totalQuestion;
       const lastId = payload.question_id;       
 
       setButtonDisplay(lastId >= total ? '最終結果へ' : '次へ');
             
       setChatHistory(prev => [...prev, payload.feedback]);
+      
       setScoreList(prev => [...prev, payload.score]);
     } else if (type === 'nextQuestion') {
       setChatHistory(prev => [...prev, payload.question]);
@@ -103,10 +102,10 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
   };
 
   useEffect(() => {
-    window.addEventListener('message', handleMessage);
+    window.addEventListener('message', hendleExtensionMassage);
 
     return () => {
-      window.removeEventListener('message', handleMessage);
+      window.removeEventListener('message', hendleExtensionMassage);
     };
   }, []);
 
@@ -242,7 +241,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
                   }}
                 />
                 <Box sx={{ textAlign: 'right' }}>
-                  <Button onClick={handleSubmit}>
+                  <Button onClick={fetchFeedback}>
                     <SendIcon sx={{ cursor: 'pointer', borderRadius: 2, bgcolor: currentCharacter?.color[200], color: 'white',  py: 1, px: 2, fontSize: '28px', boxShadow: 3 }} />
                   </Button>
                 </Box>
@@ -263,7 +262,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
           </Button>
           <Modal
             open={interruptModalOpen}
-            onClick={handleSkip}
+            onClick={handleQuestionSkip}
             aria-labelledby='modal-modal-title'
             aria-describedby='modal-modal-description'
           >
@@ -294,7 +293,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
                   <Button onClick={() => setInterruptModalOpen(false)} variant='contained' sx={{ backgroundColor: theme.palette.primary.light, color: 'white', minWidth: '80px', height: 42, fontSize:16  }}>
                     いいえ
                   </Button>
-                  <Button onClick={handleInterrrupt} variant='contained' sx={{ backgroundColor: theme.palette.secondary.light, color: 'white', minWidth: '80px', height: 42, fontSize:16 }}>
+                  <Button onClick={handleInterrruptInterview} variant='contained' sx={{ backgroundColor: theme.palette.secondary.light, color: 'white', minWidth: '80px', height: 42, fontSize:16 }}>
                     中断
                   </Button>
                 </Box>
@@ -303,7 +302,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
           </Modal>
           <Button onClick={() => {
             if (buttonDisplay === '次へ') {
-                 handleNext();
+                 fetchNextQuestion();
             } else if (buttonDisplay === '最終結果へ') {
               fetchGeneralFeedback();
             } else {
@@ -352,7 +351,7 @@ const AnswerScreen: React.FC<AnswerScreenProps>  = ({ vscode }) => {
                   <Button onClick={() => setSkipModalOpen(false)} variant='contained' sx={{ backgroundColor: theme.palette.primary.light, color: 'white', minWidth: '100px',  height: 42, fontSize:16  }}>
                     いいえ
                   </Button>
-                  <Button onClick={handleSkip} variant='contained' sx={{ backgroundColor: theme.palette.secondary.light, color: 'white', minWidth: '100px',  height: 42, fontSize:16  }}>
+                  <Button onClick={handleQuestionSkip} variant='contained' sx={{ backgroundColor: theme.palette.secondary.light, color: 'white', minWidth: '100px',  height: 42, fontSize:16  }}>
                     スキップ
                   </Button>
                 </Box>
