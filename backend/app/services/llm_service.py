@@ -35,9 +35,6 @@ def send_prompt(messages: list[dict[str, str]], format: Literal['', 'json'] | No
     return response["message"]["content"]
 
 def format_source_code(source_code: dict[str, str]) -> str:
-    """
-    ソースコードを整形して返す
-    """
     formatted_code = ""
     for file_name, code in source_code.items():
         formatted_code += f"# --- {file_name} ---\n{code}\n"

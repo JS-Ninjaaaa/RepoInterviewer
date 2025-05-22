@@ -14,7 +14,12 @@ from ...schemas.schemas import (
     InterviewPostRequest,
     InterviewPostResponse,
 )
-from ...services.interview_service import set_up_interview
+from ...services.interview_service import (
+    get_interview_result,
+    get_question,
+    get_response,
+    set_up_interview,
+)
 
 router = APIRouter()
 
@@ -43,7 +48,7 @@ async def post_interview(
     except Exception as e:
         return InterviewPostErrorResponse(error_message=f"Invalid request body: {str(e)}")
 
-    return await set_up_interview(request_body)
+    return set_up_interview(request_body)
 
 
 @router.post(
@@ -59,7 +64,20 @@ def post_interview_interview_id(
     """
     ユーザーの回答に対してLLMからの返答を取得
     """
-    pass
+    try:
+        request_body = InterviewInterviewIdPostRequest(
+            question_id=body.question_id,
+            message=body.message,
+        )
+    except Exception as e:
+        return InterviewInterviewIdPostErrorResponse(error_message=f"Invalid request body: {str(e)}")
+
+    response = get_response(interview_id, request_body)
+
+    return InterviewInterviewIdPostResponse(
+        question_id=request_body.question_id,
+        response=response,
+    )
 
 
 @router.get(
@@ -73,8 +91,11 @@ def get_interview_interview_id(
     """
     指定された質問IDの質問文を取得
     """
-    pass
-
+    question = get_question(interview_id, question_id)
+    return InterviewInterviewIdGetResponse(
+        question_id=question_id,
+        question=question
+    )
 
 @router.get(
     "/{interview_id}/result",
@@ -91,4 +112,10 @@ def get_interview_interview_id_result(
     """
     各質問の点数と総評を取得
     """
-    pass
+    # 各質問の点数と総評を取得する
+    scores, general_review = get_interview_result(interview_id)
+
+    return InterviewInterviewIdResultGetResponse(
+        scores=scores,
+        general_review=general_review,
+    )
