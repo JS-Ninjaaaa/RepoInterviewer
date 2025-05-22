@@ -5,3 +5,5 @@ node_modules
 *.vsix
 
 functions/data/test/
+
+env.ts
