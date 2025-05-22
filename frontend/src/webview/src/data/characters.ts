@@ -14,7 +14,7 @@ import wholeRenPng  from '../assets/images/wholeRen.png';
 export const characters: Character[] = [
   {
     level: '初級',
-    total_question: 5,
+    totalQuestion: 5,
     name: 'ユズ',
     text: 'Yuzu',
     title: 'やさしいギャル',
@@ -28,7 +28,7 @@ export const characters: Character[] = [
   },
   {
     level: '中級',
-    total_question: 5,
+    totalQuestion: 5,
     name: 'ハル',
     text: 'Haru',
     title: '先輩エンジニア',
@@ -42,7 +42,7 @@ export const characters: Character[] = [
   },
   {
     level: '上級',
-    total_question: 2,
+    totalQuestion: 2,
     name: 'サキ',
     text: 'Saki',
     title: '辛口メンター',
@@ -56,7 +56,7 @@ export const characters: Character[] = [
   },
   {
     level: '激詰め',
-    total_question: 2,
+    totalQuestion: 2,
     name: '黒鉄レン',
     text: 'Ren',
     title: '超冷徹なPM',
