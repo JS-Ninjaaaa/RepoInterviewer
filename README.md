@@ -12,6 +12,7 @@
 
 - **バックエンド**
   - **Webフレームワーク**：FastAPI（Python 3.11）
+  - **WSGIサーバー**：Gunicorn
   - **ASGIサーバー**：Uvicorn
   - **LLMサーバー**：Ollama 
   - **コンテナ環境**：Docker（Python:3.11-slim）
@@ -21,4 +22,3 @@
   - **ビルドツール**：Vite
   - **UI構成**：HTML / CSS / WebView（VS Code Extension 向け）
   - **パッケージ管理**：pnpm / Node.js
-
