@@ -1,36 +1,32 @@
-from zipfile import ZipFile
+import io
 from pathlib import Path
-import shutil
-from fastapi import UploadFile
-
-# zipファイルの解凍とtmpへの保存を行う
-# .
-# ├── uuid
-# │├── example.zip
-# │└── source
-# │    └── example
-# │        ├── B136.py
-# │        └── B136_memo.md
-# tmp/uuid に保存
-def save_upload_zip(upload_file: UploadFile, dest_path: Path) -> Path:
-    dest_path.mkdir(parents=True, exist_ok=True)
-    zip_path = dest_path / upload_file.filename
-    with open(zip_path, "wb") as f:
-        shutil.copyfileobj(upload_file.file, f)
-    return zip_path
+from zipfile import ZipFile
 
 
-def extract_zip(zip_path: Path, extract_to: Path) -> None:
-    with ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(extract_to)
+def extract_zip(zip_bytes: bytes, extract_to: Path) -> dict[str, str]:
+    """
+    zipファイルをディレクトリに解凍する
+    """
+    # 解凍に成功したファイル
+    saved_files = {}
 
-# Pythonのみ対応（今後拡張）
-def get_source_code(source_dir: Path) -> str:
-    code = ""
-    # LLMに渡せるようにレポジトリ内容を整形
-    for file in source_dir.rglob("*.py"):
-        with file.open("r", encoding="utf-8") as f:
-            code += f"\n# --- {file.name} ---\n"
-            code += f.read() + "\n"
+    with ZipFile(io.BytesIO(zip_bytes)) as zip_file:
+        for file_info in zip_file.infolist():
+            if not file_info.is_dir():
+                file_data = zip_file.read(file_info.filename)
+                try:
+                    # テキストファイルとしてデコード
+                    file_text = file_data.decode("utf-8")
+                except UnicodeDecodeError:
+                    # デコードできない場合はスキップ
+                    continue
 
-    return code
+                saved_files[file_info.filename] = file_text
+
+                # 解凍したファイルを保存
+                file_path = extract_to / file_info.filename
+                file_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(file_path, "w") as f:
+                    f.write(file_text)
+
+    return saved_files
