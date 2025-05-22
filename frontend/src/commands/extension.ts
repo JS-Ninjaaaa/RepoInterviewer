@@ -35,15 +35,12 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
   switch (message.type) {
     case "fetchFirstQuestion": {
       const zipBinary = await fetchFiles();
-      // zipファイルと難易度，質問数をバックエンドに送る
       try {
-        const QuestionInfo = await fetchFirstQuestion(zipBinary, message.payload); 
-        // テスト用レスポンス
-        const interveiw_id = "user123";
-        const question = testQuestions[0].question;
+        const questionInfo = await fetchFirstQuestion(zipBinary, message.payload); 
+        
         panel.webview.postMessage({
           type: "firstQuestion",
-          payload: { interveiw_id: interveiw_id, question: question }
+          payload: { questionInfo }
         });
         break;
       } catch (err: any) {
@@ -56,16 +53,12 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
     }
 
     case "fetchNextQuestion": {
-      // interview_id, question_idで次の質問を取得する
       try {
         const nextQuestionInfo = await fetchNextQuestion(message.payload); 
-        // テスト用レスポンス
-        const question_id = message.payload.question_id;
-        const question = testQuestions[question_id - 1].question;
 
         panel.webview.postMessage({
           type: "nextQuestion",
-          payload: { question_id: question_id, question: question }
+          payload: { nextQuestionInfo }
         });
         break;
       } catch (err: any) {
@@ -78,17 +71,12 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
     }
 
     case "fetchFeedBack": {
-      // interview_id, question_idで次の質問を取得する
       try {
-        const QuestionInfo = await fetchFeedBack(message.payload); 
-        // テスト用レスポンス
-        const question_id = message.payload.question_id;
-        const feedback = testFeedback[question_id - 1].response;
-        const score = 15;
+        const feedback = await fetchFeedBack(message.payload); 
 
         panel.webview.postMessage({
-          type: "FeedBack",
-          payload: { question_id: question_id, feedback: feedback, score: score }
+          type: "Feedback",
+          payload: { feedback }
         });
         break;
       } catch (err: any) {
@@ -103,14 +91,11 @@ async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequ
     case "fetchGeneralFeedback": {
       // interview_id, question_idで次の質問を取得する
       try {
-        const QuestionInfo = await fetchGeneralFeedback(message.payload); 
-        // テスト用レスポンス
-        const GeneralFeedback = testGeneralFeedback.general_review;
-        const scores = testGeneralFeedback.scores;
+        const generalFeedback = await fetchGeneralFeedback(message.payload); 
 
         panel.webview.postMessage({
           type: "GeneralFeedback",
-          payload: { scores: scores, GeneralFeedback: GeneralFeedback }
+          payload: { generalFeedback }
         });
         break;
       } catch (err: any) {
