@@ -23,11 +23,12 @@ print_result() {
 }
 
 # POST /interview
+# **開発用 軽いテストzipの**
 test_post_interview() {
   echo "Testing POST /interview"
   response=$(
     curl -s -w "\n%{http_code}" -X POST "$BASE_URL/interview" \
-    -F "source_code=@example/archive.zip" \
+    -F "source_code=@example_light/archive.zip" \
     -F "difficulty=easy" \
     -F "total_question=5"
   )
