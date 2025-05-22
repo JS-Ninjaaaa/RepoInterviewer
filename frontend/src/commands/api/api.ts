@@ -1,4 +1,4 @@
-const ENDPOINT = 'http://localhost:3001';
+import { apiEndPoint } from '../envSample';
 import { FirstQuestionResponse, NextQuestionResponse, FeedBackResponse, GeneralFeedbackResponse } from '../types/apiResponseValue';
 
 export async function fetchFirstQuestion(
@@ -15,7 +15,7 @@ export async function fetchFirstQuestion(
   formData.append('difficulty', payload.difficulty);
   formData.append('total_question', payload.total_question.toString());
 
-  const res = await fetch(`${ENDPOINT}/interview`, {
+  const res = await fetch(`${apiEndPoint}/interview`, {
     method: 'POST',
     body: formData
   });
@@ -34,7 +34,7 @@ export async function fetchFeedBack(
   const { interview_id, question_id, answer } = payload;
 
   // クエリパラメターの設定
-  const url = `${ENDPOINT}/${interview_id}`;
+  const url = `${apiEndPoint}/${interview_id}`;
 
   const res = await fetch(url, {
     method: 'POST',
@@ -60,7 +60,7 @@ export async function fetchNextQuestion(
 ): Promise<FeedBackResponse> {
   const { interview_id, question_id } = payload;
 
-  const url = `${ENDPOINT}/interview/${interview_id}?question_id=${question_id}`;
+  const url = `${apiEndPoint}/interview/${interview_id}?question_id=${question_id}`;
 
   const res = await fetch(url, {
     method: 'GET',
@@ -79,7 +79,7 @@ export async function fetchGeneralFeedback(
 ): Promise<GeneralFeedbackResponse> {
   const { interview_id } = payload;
 
-  const url = `${ENDPOINT}/${interview_id}`;
+  const url = `${apiEndPoint}/${interview_id}`;
 
   const res = await fetch(url, {
     method: 'GET',
