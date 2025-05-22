@@ -13,5 +13,8 @@ async def health_check():
 # llm接続のテスト
 @router.get("/llm")
 async def health_check_llm():
-    res = send_prompt("なぜ空は青いの？")
+    messages = [
+        {"role": "user", "content": "なぜ空は青いの？"},
+    ]
+    res = send_prompt(messages)
     return {"status": "ok", "result": res}

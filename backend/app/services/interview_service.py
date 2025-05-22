@@ -1,44 +1,53 @@
-from pathlib import Path
-from uuid import uuid4
-from fastapi import UploadFile
-from typing import Union
 import re
+from pathlib import Path
+from typing import Union
+from uuid import uuid4
 
-from ..utils.zip_handler import save_upload_zip, extract_zip, get_source_code
-from ..models.models import InterviewPostResponse, InterviewPostResponse1
-from .llm_service import send_prompt, build_question_prompt
+from ..schemas.schemas import (
+    InterviewPostErrorResponse,
+    InterviewPostRequest,
+    InterviewPostResponse,
+)
+from ..services.llm_service import (
+    format_source_code,
+    make_gen_question_prompt,
+    send_prompt,
+)
+from ..utils.zip_handler import extract_zip
+
 
 # POST interview用
-def process_interview_upload(
-    source_code: UploadFile,
-    difficulty: str,
-    total_question: int,
-) -> Union[InterviewPostResponse, InterviewPostResponse1]:
-    # 不正な難易度
-    if difficulty not in {"easy", "normal", "hard", "extreme"}:
-        return InterviewPostResponse1(error_message="Invalid difficulty level")
+async def set_up_interview(
+    request_body: InterviewPostRequest,
+) -> Union[InterviewPostResponse, InterviewPostErrorResponse]:
     # 面接IDの生成
     interview_id = str(uuid4())
-    session_dir = Path("tmp") / interview_id
-    # zip解凍
-    try:
-        # zipファイルごと保存
-        zip_path = save_upload_zip(source_code, session_dir)
-        # tmp/uuid/source以下に展開
-        extract_zip(zip_path, session_dir / "source")
-    except Exception as e:
-        return InterviewPostResponse1(error_message=f"ZIP処理に失敗: {str(e)}")
-    # ソースコード整形
-    try:
-        repository = get_source_code(session_dir / "source")
-    except Exception as e:
-        return InterviewPostResponse1(error_message=f"ソースコードを正しく処理できませんでした: {str(e)}")
-    # LLM question あとで実装する
-    question_prompt = build_question_prompt("ギャル",difficulty,total_question,repository)
-    res = send_prompt(question_prompt)
-    first_question = filter_question(res, 1)
 
-    return InterviewPostResponse(interview_id=interview_id, question=first_question)
+    # zipファイルを解凍して中身を保存する
+    zip_bytes = request_body.source_code
+    session_dir = Path("tmp") / interview_id
+    saved_files = extract_zip(zip_bytes, session_dir)
+
+    # LLMに渡すプロンプトを格納する配列
+    messages = []
+
+    # 質問を生成するプロンプト
+    formatted_code = format_source_code(saved_files)
+    gen_question_prompt = make_gen_question_prompt(request_body.difficulty, request_body.total_question, formatted_code)
+    messages.append({"role": "user", "content": gen_question_prompt})
+
+    # LLMにプロンプトを送る
+    response = send_prompt(messages)
+
+    # 以下をredisに保存する
+    # - 面接ID
+    # - キャラ設定
+    # - 質問内容
+
+    return InterviewPostResponse(
+        interview_id=interview_id,
+        question=response
+    )
 
 # 質問の絞り込み
 def filter_question(text: str,number :int) -> str:
