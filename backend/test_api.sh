@@ -1,8 +1,8 @@
 #!/bin/bash
+
 # macだとlocalhostでバグる
 BASE_URL="http://127.0.0.1:8000"
 
-# 共通関数
 is_json() {
   echo "$1" | jq empty > /dev/null 2>&1
 }
