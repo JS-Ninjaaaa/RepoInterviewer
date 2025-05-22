@@ -48,7 +48,14 @@ async def post_interview(
     except Exception as e:
         return InterviewPostErrorResponse(error_message=f"Invalid request body: {str(e)}")
 
-    return set_up_interview(request_body)
+    interview_id, first_question = set_up_interview(request_body)
+    if first_question == "":
+        return InterviewPostErrorResponse(error_message="Failed to set up interview")
+
+    return InterviewPostResponse(
+        interview_id=interview_id,
+        question=first_question,
+    )
 
 
 @router.post(
