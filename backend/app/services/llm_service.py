@@ -13,7 +13,7 @@ interview_settings = {
         "difficulty": "易しい",
     },
     "normal": {
-        "character": "先輩園ジニア",
+        "character": "先輩エンジニア",
         "difficulty": "普通",
     },
     "hard": {
@@ -22,7 +22,7 @@ interview_settings = {
     },
     "extreme": {
         "character": "冷酷非情なスーパー上司",
-        "difficulty": "超難しい",
+        "difficulty": "激ムズ",
     }
 }
 
@@ -51,7 +51,7 @@ def make_gen_question_prompt(difficulty: Difficulty, total_question: int, reposi
         f"""
         キャラクター: {setting['character']}
         難易度: {setting['difficulty']}
-
+        
         以下のソースコードをレビューしてください。
         キャラクターの口調で技術的な観点から{total_question}つの質問を作成してください。
         **必ずキャラの言葉遣いや話し方を強く反映させてください**。  
