@@ -75,13 +75,12 @@ def post_interview_interview_id(
             error_message=f"Invalid request body: {str(e)}"
         )
 
-    response = get_response(interview_id, request_body)
-
+    question_id, response_text, score = get_response(interview_id, request_body)
     return InterviewInterviewIdPostResponse(
-        question_id=request_body.question_id,
-        response=response,
+        question_id=question_id,
+        response=response_text,
+        score=score,
     )
-
 
 @router.get(
     "/{interview_id}",
