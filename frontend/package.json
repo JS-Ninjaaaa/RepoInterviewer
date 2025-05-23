@@ -1,6 +1,6 @@
 {
   "name": "repointerviewer",
-  "publisher": "hikari", 
+  "publisher": "hikari",
   "displayName": "Repointerviewer",
   "description": "A VSCode extension with a chat button",
   "version": "0.0.1",
@@ -12,12 +12,19 @@
   ],
   "main": "./build/commands/extension.js",
   "activationEvents": [
-  "*"
-],
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "repointerviewer.start",
+        "title": "Repointerviewer: Start"
+      }
+    ]
+  },
   "scripts": {
     "vscode:prepublish": "pnpm run compile",
     "compile": "tsc -b src/commands src/webview",
-    "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
@@ -26,6 +33,7 @@
     "vite:build": "tsc && vite build"
   },
   "devDependencies": {
+    "@eslint/js": "^9.27.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "~18.19.3",
     "@types/react": "^18.2.45",
@@ -37,11 +45,19 @@
     "@vitejs/plugin-react": "^4.2.1",
     "@vscode/test-cli": "^0.0.4",
     "@vscode/test-electron": "^2.3.8",
-    "eslint": "^8.54.0",
-    "typescript": "^5.3.2",
+    "concurrently": "^9.1.2",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.1.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1",
     "vite": "^5.0.10"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^7.1.0",
+    "jszip": "^3.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }
