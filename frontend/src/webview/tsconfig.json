@@ -1,22 +1,19 @@
 {
   "compilerOptions": {
-    "composite": true,                    // project references 用
-    "target": "ESNext",                   // 最新のJS機能をターゲット
-    "module": "ESNext",                   // ESM
-    "jsx": "react-jsx",                   // React 17+ の自動 JSX
-    "moduleResolution": "bundler",        // Vite/Rollup 向け
-    "esModuleInterop": true,              // default import を許可
+    "composite": true, // project references 用
+    "target": "ESNext", // 最新のJS機能をターゲット
+    "module": "ESNext", // ESM
+    "jsx": "react-jsx", // React 17+ の自動 JSX
+    "moduleResolution": "bundler", // Vite/Rollup 向け
+    "esModuleInterop": true, // default import を許可
     "allowSyntheticDefaultImports": true, // 同上
     "strict": true,
     "skipLibCheck": true,
-    "rootDir": "src",                     // ソースのルート
-    "outDir": "../../build/webview"       // ビルド成果物
+    "rootDir": "src", // ソースのルート
+    "outDir": "../../build/webview" // ビルド成果物
   },
   "include": [
-    "src/**/*"                            // React コード一式をすべて対象に
+    "src/**/*" // React コード一式をすべて対象に
   ],
-  "exclude": [
-    "vite.config.ts",
-    "node_modules"
-  ]
+  "exclude": ["vite.config.ts", "node_modules"]
 }
