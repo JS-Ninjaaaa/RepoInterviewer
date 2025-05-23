@@ -45,21 +45,36 @@ def set_up_interview(
 # POST /interview/{interview_id}
 def get_response(
     interview_id: str, request_body: InterviewInterviewIdPostRequest
-) -> str:
+) -> tuple[int, str, int]:
     # redisから会話履歴を取得する
-
-    # ユーザーからのメッセージを会話履歴に追加する
-
-    # 返答生成用のプロンプトを組み立てる
-
+    # {interview-id}-{question_id}にユーザーからのメッセージを追加する
+    history = append_interview_cache(
+        interview_id=interview_id,
+        question_id=request_body.question_id,
+        role="user",
+        message=request_body.message)
+    # 採点対象のレポジトリ内容を整理する
+    session_dir = Path("tmp") / interview_id
+    saved_files = load_text_files_from_directory(session_dir)
+    formatted_code = format_source_code(saved_files)
     # LLMにプロンプトを送る
+    feedback = generate_feedback(formatted_code, history) # 型エラー
+    if feedback is None or len(feedback) < 2:
+        return interview_id, "", 0
 
-    # LLMのメッセージを会話履歴に追加する
-
-    # redisに会話履歴を保存する
-
+    response_text, score_str = feedback
+    score = int(score_str)
+    # {interview-id}-{question_id}にLLMのメッセージを追加する
+    append_interview_cache(
+        interview_id=interview_id,
+        question_id=request_body.question_id,
+        role="model",
+        message=response_text
+    )
+    # {interview-id}にLLMのメッセージと点数を保存する
+    append_interview_id_cache(interview_id,response_text,score)
     # LLMのメッセージを返す
-    return ""
+    return request_body.question_id,response_text,score
 
 
 # GET /interview/{interview_id}
