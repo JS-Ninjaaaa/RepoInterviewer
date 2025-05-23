@@ -214,6 +214,10 @@ pip install -r requirements.txt
 
 </details>
 
+### 環境変数の設定
+
+`.env.sample` をコピーして `.env` を作成し、環境変数の値を記入する。
+
 ## 🚀 起動方法（開発）
 
 ```bash
