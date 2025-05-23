@@ -1,7 +1,7 @@
 from pathlib import Path
 from uuid import uuid4
 
-from ..repositories.repository import init_interview_info
+from ..repositories.redis_repo import create_interview_cache
 from ..schemas.schemas import (
     InterviewInterviewIdPostRequest,
     InterviewPostRequest,
@@ -32,17 +32,15 @@ def set_up_interview(
     if questions is None:
         return interview_id, ""
 
-    # 以下をredisに保存する
-    # - 面接ID
-    # - キャラ設定
-    # - 質問文
-    init_interview_info(
+    # 面接の情報をredisに保存する
+    create_interview_cache(
         interview_id=interview_id,
-        response_text=questions,
+        questions=questions,
         difficulty=request_body.difficulty,
         total_question=request_body.total_question,
     )
-    # 1番目の問題とUUIDを返す
+
+    # 面接IDと最初の質問文を返す
     return interview_id, questions[0]
 
 # POST /interview/{interview_id}
