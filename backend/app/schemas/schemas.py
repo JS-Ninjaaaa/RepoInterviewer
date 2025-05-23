@@ -14,6 +14,7 @@ class Difficulty(Enum):
     easy = "easy"
     normal = "normal"
     hard = "hard"
+    extreme = "extreme"
 
 
 class InterviewPostRequest(BaseModel):

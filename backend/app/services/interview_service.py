@@ -1,26 +1,22 @@
-import re
 from pathlib import Path
-from typing import Union
 from uuid import uuid4
 
+from ..repositories.repository import init_interview_info
 from ..schemas.schemas import (
     InterviewInterviewIdPostRequest,
-    InterviewPostErrorResponse,
     InterviewPostRequest,
-    InterviewPostResponse,
 )
-from ..services.llm_service import (
+from ..services.llm_service import generate_question
+from ..services.prompt_service import (
     format_source_code,
-    make_gen_question_prompt,
-    send_prompt,
 )
 from ..utils.zip_handler import extract_zip
-from ..repositories.repository import init_interview_info
+
 
 # POST /interview
 def set_up_interview(
     request_body: InterviewPostRequest,
-) -> Union[InterviewPostResponse, InterviewPostErrorResponse]:
+) -> tuple[str, str]:
     # 面接IDの生成
     interview_id = str(uuid4())
 
@@ -29,16 +25,12 @@ def set_up_interview(
     session_dir = Path("tmp") / interview_id
     saved_files = extract_zip(zip_bytes, session_dir)
 
-    # LLMに渡すプロンプトを格納する配列
-    messages = []
-
-    # 質問を生成するプロンプト
+    # 質問文を生成する
     formatted_code = format_source_code(saved_files)
-    gen_question_prompt = make_gen_question_prompt(request_body.difficulty, request_body.total_question, formatted_code)
-    messages.append({"role": "user", "content": gen_question_prompt})
+    questions = generate_question(formatted_code, request_body.difficulty, request_body.total_question)
 
-    # LLMにプロンプトを送る
-    response = send_prompt(messages)
+    if questions is None:
+        return interview_id, ""
 
     # 以下をredisに保存する
     # - 面接ID
@@ -46,15 +38,12 @@ def set_up_interview(
     # - 質問文
     init_interview_info(
         interview_id=interview_id,
-        response_text=response,
+        response_text=questions[0],
         difficulty=request_body.difficulty,
         total_question=request_body.total_question,
     )
 
-    return InterviewPostResponse(
-        interview_id=interview_id,
-        question=response
-    )
+    return interview_id, questions[0]
 
 # POST /interview/{interview_id}
 def get_response(interview_id: str, request_body: InterviewInterviewIdPostRequest) -> str:

@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 gunicorn
-ollama
 python-multipart
 redis>=4.5.0
 python-dotenv
+google-genai
