@@ -115,6 +115,6 @@ def generate_question(source_code: str, difficulty: Difficulty, total_question: 
         questions = json.loads(response.text)
     except json.JSONDecodeError:
         return None
-    
+
     return questions
 
