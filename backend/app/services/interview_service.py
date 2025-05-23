@@ -2,14 +2,10 @@ from pathlib import Path
 from uuid import uuid4
 
 from ..repositories.redis_repo import create_interview_cache
-from ..schemas.schemas import (
-    InterviewInterviewIdPostRequest,
-    InterviewPostRequest,
-)
+from ..schemas.schemas import (InterviewInterviewIdPostRequest,
+                               InterviewPostRequest)
 from ..services.llm_service import generate_question
-from ..services.prompt_service import (
-    format_source_code,
-)
+from ..services.prompt_service import format_source_code
 from ..utils.zip_handler import extract_zip
 
 
@@ -27,7 +23,9 @@ def set_up_interview(
 
     # 質問文を生成する
     formatted_code = format_source_code(saved_files)
-    questions = generate_question(formatted_code, request_body.difficulty, request_body.total_question)
+    questions = generate_question(
+        formatted_code, request_body.difficulty, request_body.total_question
+    )
 
     if questions is None:
         return interview_id, ""
@@ -43,8 +41,11 @@ def set_up_interview(
     # 面接IDと最初の質問文を返す
     return interview_id, questions[0]
 
+
 # POST /interview/{interview_id}
-def get_response(interview_id: str, request_body: InterviewInterviewIdPostRequest) -> str:
+def get_response(
+    interview_id: str, request_body: InterviewInterviewIdPostRequest
+) -> str:
     # redisから会話履歴を取得する
 
     # ユーザーからのメッセージを会話履歴に追加する
@@ -60,6 +61,7 @@ def get_response(interview_id: str, request_body: InterviewInterviewIdPostReques
     # LLMのメッセージを返す
     return ""
 
+
 # GET /interview/{interview_id}
 def get_question(interview_id: str, question_id: int) -> str:
     # redisから質問文の一覧を取得する
@@ -68,6 +70,7 @@ def get_question(interview_id: str, question_id: int) -> str:
 
     # 質問文を返す
     return ""
+
 
 # GET /interview/{interview_id}/result
 def get_interview_result(interview_id: str) -> tuple[list[int], str]:
