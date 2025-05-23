@@ -7,32 +7,46 @@ import { openWindow } from "./functions/openWebview";
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
-  const myStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 1000);
-  myStatusBarItem.text = 'Ⓜ️モード'; 
-  myStatusBarItem.tooltip = 'クリックして面接開始';
-  myStatusBarItem.command = 'repointerviewer.repointerviewer';
+  const myStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right,
+    1000,
+  );
+  myStatusBarItem.text = "Ⓜ️モード";
+  myStatusBarItem.tooltip = "クリックして面接開始";
+  myStatusBarItem.command = "repointerviewer.repointerviewer";
   myStatusBarItem.show();
 
   context.subscriptions.push(myStatusBarItem);
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("repointerviewer.repointerviewer", async() => {
-      const panel = await openWindow(context.extensionUri);
-      panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
-      
-      // reactからメッセージを受け取ったタイミングで実行される
-      panel.webview.onDidReceiveMessage(async (message: apiRequestValue) => {
-        handleWebviewMessage(panel,message); 
-      });
-    })
+    vscode.commands.registerCommand(
+      "repointerviewer.repointerviewer",
+      async () => {
+        const panel = await openWindow(context.extensionUri);
+        panel.webview.html = getWebviewContent(
+          panel.webview,
+          context.extensionUri,
+        );
+
+        // reactからメッセージを受け取ったタイミングで実行される
+        panel.webview.onDidReceiveMessage(async (message: apiRequestValue) => {
+          handleWebviewMessage(panel, message);
+        });
+      },
+    ),
   );
 }
 
 // Webviewに表示するHTMLの設定
-function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): string {
+function getWebviewContent(
+  webview: vscode.Webview,
+  extensionUri: vscode.Uri,
+): string {
   // build/webview/assets/index.js を読み込む
   const scriptUri = getUri(webview, extensionUri, [
-    "build", "webview", "index.js"
+    "build",
+    "webview",
+    "index.js",
   ]);
   const nonce = getNonce();
 

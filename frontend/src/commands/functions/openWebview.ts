@@ -3,8 +3,12 @@ import * as vscode from "vscode";
 let currentPanel: vscode.WebviewPanel | undefined;
 
 // 画面を二分割し，右側にwebviewを開く関数
-export async function openWindow(extensionUri: vscode.Uri): Promise<vscode.WebviewPanel> {
-  await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+export async function openWindow(
+  extensionUri: vscode.Uri,
+): Promise<vscode.WebviewPanel> {
+  await vscode.commands.executeCommand(
+    "workbench.action.files.newUntitledFile",
+  );
 
   if (currentPanel) {
     currentPanel.reveal();
@@ -20,14 +24,14 @@ export async function openWindow(extensionUri: vscode.Uri): Promise<vscode.Webvi
     {
       enableScripts: true,
       localResourceRoots: [
-        vscode.Uri.joinPath(extensionUri, 'build', 'webview')
-      ]
-    }
+        vscode.Uri.joinPath(extensionUri, "build", "webview"),
+      ],
+    },
   );
 
   currentPanel.onDidDispose(() => {
     currentPanel = undefined;
   });
-  
+
   return currentPanel;
 }
