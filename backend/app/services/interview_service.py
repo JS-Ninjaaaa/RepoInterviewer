@@ -35,9 +35,9 @@ def set_up_interview(
     # 面接の情報をredisに保存する
     create_interview_cache(
         interview_id=interview_id,
-        questions=questions,
         difficulty=request_body.difficulty,
         total_question=request_body.total_question,
+        questions=questions,
     )
 
     # 面接IDと最初の質問文を返す

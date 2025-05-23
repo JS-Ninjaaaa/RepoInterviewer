@@ -16,23 +16,33 @@ def get_redis_client():
 # redisに面接の情報を保存する
 def create_interview_cache(
     interview_id: str,
-    questions: list[str],
     difficulty: Difficulty,
-    total_question: int
+    total_question: int,
+    questions: list[str],
 ):
-    # 質問をセット
-    conversation_history = {
-        str(i): {
-            "question": questions[i],
-            "answer": None  # 初期状態では未回答
-        }
-        for i in range(0, total_question)
-    }
+    redis = get_redis_client()
+
+    # 面接全体の情報を保存する
     interview_data = {
         "difficulty": difficulty.value,
         "total_question": total_question,
-        "history": conversation_history
+        "results": [
+            {
+                "score": 0,
+                "comment": ""
+            }
+            for _ in range(total_question)
+        ]
     }
-    redis = get_redis_client()
-    # 有効時間は 1H とする
     redis.set(interview_id, json.dumps(interview_data), ex=3600)
+
+    # 各質問の会話履歴を保存する
+    for question_id in range(total_question):
+        question_data = [
+            {
+                "role": "model",
+                "content": questions[question_id]
+            }
+        ]
+        redis.set(f"{interview_id}-{question_id}", json.dumps(question_data), ex=3600)
+
