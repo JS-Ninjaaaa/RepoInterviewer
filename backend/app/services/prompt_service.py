@@ -1,4 +1,3 @@
-
 from pathlib import Path
 
 from ..schemas.schemas import Difficulty
@@ -22,13 +21,13 @@ def get_character_prompt(difficulty: Difficulty) -> str:
         file_name = "haru.txt"
     elif difficulty == Difficulty.extreme:
         file_name = "ren.txt"
-    
+
     parent_dir = Path(__file__).parent
     file_path = parent_dir / "prompts" / "system" / file_name
-    
+
     with open(file_path, "r", encoding="utf-8") as f:
         character_prompt = f.read()
-    
+
     return character_prompt
 
 

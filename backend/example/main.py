@@ -1,18 +1,21 @@
 # main.py
-import sys
 import os
-from data_loader import load_entries, load_player_scores, DataLoadError
-from ranker import calculate_ranking
+import sys
+
 from cli_formatter import format_ranking_to_csv
+from data_loader import DataLoadError, load_entries, load_player_scores
+from ranker import calculate_ranking
 
 # 定数
 EXPECTED_ARG_COUNT = 3  # スクリプト名 + 2つのファイルパス
 HEADER_RANKING_OUTPUT = "rank,player_id,handle_name,score"
 
+
 def print_error_and_exit(message: str):
     """標準エラー出力にメッセージを表示し、終了コード1でプログラムを終了する。"""
     sys.stderr.write(message + "\n")
     sys.exit(1)
+
 
 def main():
     """メイン処理"""
@@ -28,9 +31,13 @@ def main():
 
     # ファイル存在チェック (より明示的なエラーメッセージのため)
     if not os.path.exists(entry_file_path):
-        print_error_and_exit(f"エラー: エントリーファイル '{entry_file_path}' が見つかりません。")
+        print_error_and_exit(
+            f"エラー: エントリーファイル '{entry_file_path}' が見つかりません。"
+        )
     if not os.path.exists(score_log_file_path):
-        print_error_and_exit(f"エラー: プレイログファイル '{score_log_file_path}' が見つかりません。")
+        print_error_and_exit(
+            f"エラー: プレイログファイル '{score_log_file_path}' が見つかりません。"
+        )
 
     try:
         # 1. エントリーファイルの読み込み
@@ -45,7 +52,7 @@ def main():
 
         # 4. 結果の出力
         print(HEADER_RANKING_OUTPUT)  # ヘッダーは必ず出力
-        
+
         if ranked_list_data:
             output_csv_lines = format_ranking_to_csv(ranked_list_data)
             for line in output_csv_lines:
@@ -57,6 +64,7 @@ def main():
     except Exception as e:
         # 予期せぬエラーのキャッチ
         print_error_and_exit(f"予期せぬエラーが発生しました: {e}")
+
 
 if __name__ == "__main__":
     main()

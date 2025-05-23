@@ -1,13 +1,17 @@
 # data_loader.py
 import csv
 
+
 class DataLoadError(Exception):
     """ファイル読み込みやパースに関するカスタムエラー"""
+
     pass
+
 
 # ヘッダーの期待値
 EXPECTED_ENTRY_HEADER = ["player_id", "handle_name"]
 EXPECTED_SCORE_LOG_HEADER = ["create_timestamp", "player_id", "score"]
+
 
 def load_entries(file_path: str) -> dict:
     """
@@ -21,12 +25,14 @@ def load_entries(file_path: str) -> dict:
     """
     enrolled_players = {}
     try:
-        with open(file_path, 'r', encoding='utf-8', newline='') as f:
+        with open(file_path, "r", encoding="utf-8", newline="") as f:
             reader = csv.reader(f)
             try:
                 header = next(reader)
-            except StopIteration: # ファイルが空、またはヘッダーがない
-                raise DataLoadError(f"エラー: エントリーファイル '{file_path}' が空か、ヘッダー行がありません。")
+            except StopIteration:  # ファイルが空、またはヘッダーがない
+                raise DataLoadError(
+                    f"エラー: エントリーファイル '{file_path}' が空か、ヘッダー行がありません。"
+                )
 
             if header != EXPECTED_ENTRY_HEADER:
                 raise DataLoadError(
@@ -47,9 +53,13 @@ def load_entries(file_path: str) -> dict:
         return enrolled_players
     except FileNotFoundError:
         # main.pyでもチェックしているが、ここで明示的に補足も可能
-        raise DataLoadError(f"エラー: エントリーファイル '{file_path}' が見つかりません。")
-    except csv.Error as e: # CSVのパースエラー
-        raise DataLoadError(f"エラー: エントリーファイル '{file_path}' のCSV形式が不正です: {e}")
+        raise DataLoadError(
+            f"エラー: エントリーファイル '{file_path}' が見つかりません。"
+        )
+    except csv.Error as e:  # CSVのパースエラー
+        raise DataLoadError(
+            f"エラー: エントリーファイル '{file_path}' のCSV形式が不正です: {e}"
+        )
 
 
 def load_player_scores(file_path: str, enrolled_players: dict) -> dict:
@@ -65,12 +75,14 @@ def load_player_scores(file_path: str, enrolled_players: dict) -> dict:
     """
     player_max_scores = {}
     try:
-        with open(file_path, 'r', encoding='utf-8', newline='') as f:
+        with open(file_path, "r", encoding="utf-8", newline="") as f:
             reader = csv.reader(f)
             try:
                 header = next(reader)
-            except StopIteration: # ファイルが空、またはヘッダーがない
-                raise DataLoadError(f"エラー: プレイログファイル '{file_path}' が空か、ヘッダー行がありません。")
+            except StopIteration:  # ファイルが空、またはヘッダーがない
+                raise DataLoadError(
+                    f"エラー: プレイログファイル '{file_path}' が空か、ヘッダー行がありません。"
+                )
 
             if header != EXPECTED_SCORE_LOG_HEADER:
                 raise DataLoadError(
@@ -85,7 +97,7 @@ def load_player_scores(file_path: str, enrolled_players: dict) -> dict:
                         f"エラー: プレイログファイル '{file_path}' の {i}行目の列数が不正です。\n"
                         f"期待値: {len(EXPECTED_SCORE_LOG_HEADER)}, 実際値: {len(row)}"
                     )
-                
+
                 _timestamp, player_id, score_str = row  # create_timestampは集計に不要
 
                 if player_id not in enrolled_players:
@@ -93,7 +105,7 @@ def load_player_scores(file_path: str, enrolled_players: dict) -> dict:
 
                 try:
                     score = int(score_str)
-                    if score < 0: # スコアは0以上
+                    if score < 0:  # スコアは0以上
                         raise ValueError("スコアは0以上の整数である必要があります。")
                 except ValueError as e_val:
                     raise DataLoadError(
@@ -101,10 +113,17 @@ def load_player_scores(file_path: str, enrolled_players: dict) -> dict:
                     )
 
                 # 最高スコアを更新
-                if player_id not in player_max_scores or score > player_max_scores[player_id]:
+                if (
+                    player_id not in player_max_scores
+                    or score > player_max_scores[player_id]
+                ):
                     player_max_scores[player_id] = score
         return player_max_scores
     except FileNotFoundError:
-        raise DataLoadError(f"エラー: プレイログファイル '{file_path}' が見つかりません。")
+        raise DataLoadError(
+            f"エラー: プレイログファイル '{file_path}' が見つかりません。"
+        )
     except csv.Error as e:
-        raise DataLoadError(f"エラー: プレイログファイル '{file_path}' のCSV形式が不正です: {e}")
+        raise DataLoadError(
+            f"エラー: プレイログファイル '{file_path}' のCSV形式が不正です: {e}"
+        )

@@ -2,24 +2,16 @@ from typing import Union
 
 from fastapi import APIRouter, Form, UploadFile
 
-from ...schemas.schemas import (
-    Difficulty,
-    InterviewInterviewIdGetResponse,
-    InterviewInterviewIdPostErrorResponse,
-    InterviewInterviewIdPostRequest,
-    InterviewInterviewIdPostResponse,
-    InterviewInterviewIdResultGetErrorResponse,
-    InterviewInterviewIdResultGetResponse,
-    InterviewPostErrorResponse,
-    InterviewPostRequest,
-    InterviewPostResponse,
-)
-from ...services.interview_service import (
-    get_interview_result,
-    get_question,
-    get_response,
-    set_up_interview,
-)
+from ...schemas.schemas import (Difficulty, InterviewInterviewIdGetResponse,
+                                InterviewInterviewIdPostErrorResponse,
+                                InterviewInterviewIdPostRequest,
+                                InterviewInterviewIdPostResponse,
+                                InterviewInterviewIdResultGetErrorResponse,
+                                InterviewInterviewIdResultGetResponse,
+                                InterviewPostErrorResponse,
+                                InterviewPostRequest, InterviewPostResponse)
+from ...services.interview_service import (get_interview_result, get_question,
+                                           get_response, set_up_interview)
 
 router = APIRouter()
 
@@ -46,7 +38,9 @@ async def post_interview(
             total_question=total_question,
         )
     except Exception as e:
-        return InterviewPostErrorResponse(error_message=f"Invalid request body: {str(e)}")
+        return InterviewPostErrorResponse(
+            error_message=f"Invalid request body: {str(e)}"
+        )
 
     interview_id, first_question = set_up_interview(request_body)
     if first_question == "":
@@ -77,7 +71,9 @@ def post_interview_interview_id(
             message=body.message,
         )
     except Exception as e:
-        return InterviewInterviewIdPostErrorResponse(error_message=f"Invalid request body: {str(e)}")
+        return InterviewInterviewIdPostErrorResponse(
+            error_message=f"Invalid request body: {str(e)}"
+        )
 
     response = get_response(interview_id, request_body)
 
@@ -99,10 +95,8 @@ def get_interview_interview_id(
     指定された質問IDの質問文を取得
     """
     question = get_question(interview_id, question_id)
-    return InterviewInterviewIdGetResponse(
-        question_id=question_id,
-        question=question
-    )
+    return InterviewInterviewIdGetResponse(question_id=question_id, question=question)
+
 
 @router.get(
     "/{interview_id}/result",

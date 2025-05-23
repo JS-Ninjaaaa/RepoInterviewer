@@ -1,5 +1,6 @@
 # cli_formatter.py
 
+
 def format_ranking_to_csv(ranked_list_data: list) -> list:
     """
     ランキングデータリストをCSV文字列のリストに変換する（ヘッダーなし）。
@@ -11,6 +12,8 @@ def format_ranking_to_csv(ranked_list_data: list) -> list:
     """
     csv_lines = []
     for item in ranked_list_data:
-        line = f"{item['rank']},{item['player_id']},{item['handle_name']},{item['score']}"
+        line = (
+            f"{item['rank']},{item['player_id']},{item['handle_name']},{item['score']}"
+        )
         csv_lines.append(line)
     return csv_lines
