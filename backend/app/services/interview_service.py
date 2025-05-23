@@ -2,12 +2,12 @@ from pathlib import Path
 from uuid import uuid4
 
 from ..repositories.redis_repo import create_interview_cache,append_interview_cache,append_interview_id_cache
+from ..repositories.source_repo import get_source_code
 from ..schemas.schemas import (InterviewInterviewIdPostRequest,
                                InterviewPostRequest)
 from ..services.llm_service import generate_question, generate_feedback
 from ..services.prompt_service import format_source_code
 from ..utils.zip_handler import extract_zip
-from ..utils.file_handler import load_text_files_from_directory
 
 
 # POST /interview
@@ -56,7 +56,7 @@ def get_response(
         message=request_body.message)
     # 採点対象のレポジトリ内容を整理する
     session_dir = Path("tmp") / interview_id
-    saved_files = load_text_files_from_directory(session_dir)
+    saved_files = get_source_code(session_dir)
     formatted_code = format_source_code(saved_files)
     # LLMにプロンプトを送る
     feedback = generate_feedback(formatted_code, history) # 型エラー
