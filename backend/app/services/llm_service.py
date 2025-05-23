@@ -15,7 +15,9 @@ load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
+# 相応しくない内容を生成させないようにする設定
 safety_settings = [
+    # 一番制限が厳しい設定を指定
     types.SafetySetting(
         category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
         threshold=types.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE
