@@ -7,7 +7,8 @@ from google.genai import types
 
 from ..schemas.schemas import Difficulty
 from ..services.prompt_service import (get_character_prompt,
-                                       make_gen_question_prompt)
+                                       make_gen_question_prompt,
+                                       make_feedback_prompt)
 
 load_dotenv()
 
@@ -108,3 +109,45 @@ def generate_question(
         return None
 
     return questions
+
+# ソースコードとその問題に関するトーク履歴（ユーザーの回答）を元にLLMがFBする
+def generate_feedback(
+    source_code: str, history: list[dict[str, str]]
+) -> list[str] | None:
+    # モデル設定
+    character_prompt = get_character_prompt(Difficulty.easy)  # 難易度に応じて調整可能
+    gen_content_config = types.GenerateContentConfig(
+        max_output_tokens=1024,
+        response_mime_type="application/json",
+        response_schema=list[str],
+        safety_settings=safety_settings,
+        system_instruction=[types.Part.from_text(text=character_prompt)],
+        temperature=0.2,
+        top_p=0.95,
+    )
+
+    # プロンプトを生成
+    feedback_prompt = make_feedback_prompt(source_code, history)
+    contents = [
+        types.Content(
+            role="user",
+            parts=[types.Part.from_text(text=feedback_prompt)],
+        )
+    ]
+
+    # モデル呼び出し
+    model_id = get_model_id()
+    response = client.models.generate_content(
+        model=model_id,
+        contents=contents,
+        config=gen_content_config,
+    )
+
+    if response.text is None:
+        return None
+
+    # JSONとしてパース
+    try:
+        return json.loads(response.text)
+    except json.JSONDecodeError:
+        return None
