@@ -38,11 +38,11 @@ def set_up_interview(
     # - 質問文
     init_interview_info(
         interview_id=interview_id,
-        response_text=questions[0],
+        response_text=questions,
         difficulty=request_body.difficulty,
         total_question=request_body.total_question,
     )
-
+    # 1番目の問題とUUIDを返す
     return interview_id, questions[0]
 
 # POST /interview/{interview_id}
