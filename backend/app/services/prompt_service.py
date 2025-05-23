@@ -1,5 +1,5 @@
 
-from anyio import Path
+from pathlib import Path
 
 from ..schemas.schemas import Difficulty
 
