@@ -26,6 +26,7 @@
     "vscode:prepublish": "pnpm run compile",
     "compile": "tsc -b src/commands src/webview",
     "pretest": "pnpm run compile && pnpm run lint",
+    "format": "prettier --write src/",
     "lint": "eslint src --ext ts",
     "test": "vscode-test",
     "build": "pnpm commands:build && pnpm vite:build",
@@ -47,8 +48,10 @@
     "@vscode/test-electron": "^2.3.8",
     "concurrently": "^9.1.2",
     "eslint": "^9.27.0",
+    "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.1.0",
+    "prettier": "3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
     "vite": "^5.0.10"
