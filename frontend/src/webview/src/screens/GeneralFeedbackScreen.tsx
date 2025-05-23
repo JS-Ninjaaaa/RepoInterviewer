@@ -25,7 +25,7 @@ const FinelFeedBackScreen: React.FC<GeneralFeedbackScreenProps> = ({
   const navigate = useNavigate();
 
   const moveFirstScreen = () => {
-    navigate("/");
+    navigate('/start')
   };
 
   return (
