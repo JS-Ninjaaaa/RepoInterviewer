@@ -1,0 +1,44 @@
+from pathlib import Path
+
+from ..schemas.schemas import Difficulty
+
+
+def format_source_code(source_code: dict[str, str]) -> str:
+    formatted_code = ""
+    for file_name, code in source_code.items():
+        formatted_code += "-" * 10 + f" {file_name} " + "-" * 10 + "\n"
+        formatted_code += code + "\n"
+
+    return formatted_code
+
+
+def get_character_prompt(difficulty: Difficulty) -> str:
+    if difficulty == Difficulty.easy:
+        file_name = "yuzu.txt"
+    elif difficulty == Difficulty.normal:
+        file_name = "saki.txt"
+    elif difficulty == Difficulty.hard:
+        file_name = "haru.txt"
+    elif difficulty == Difficulty.extreme:
+        file_name = "ren.txt"
+
+    parent_dir = Path(__file__).parent
+    file_path = parent_dir / "prompts" / "system" / file_name
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        character_prompt = f.read()
+
+    return character_prompt
+
+
+def make_gen_question_prompt(source_code: str, total_question: int) -> str:
+    parent_dir = Path(__file__).parent
+    file_path = parent_dir / "prompts" / "user" / "gen_question.txt"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        prompt_template = f.read()
+
+    return prompt_template.format(
+        source_code=source_code,
+        total_question=total_question,
+    )
