@@ -1,11 +1,11 @@
 from fastapi import APIRouter
 
-from ...services.llm_client import send_prompt
+from ...services.llm_service import chat_once
 
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def health_check():
     return {"status": "ok"}
 
@@ -13,5 +13,5 @@ async def health_check():
 # llm接続のテスト
 @router.get("/llm")
 async def health_check_llm():
-    res = send_prompt("なぜ空は青いの？")
-    return {"status": "ok", "result": res}
+    response = chat_once("空はなぜ青いの？")
+    return {"status": "ok", "result": response}

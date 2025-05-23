@@ -1,6 +1,8 @@
+from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from app.api.endpoints import health, interview
+
 
 app = FastAPI()
 

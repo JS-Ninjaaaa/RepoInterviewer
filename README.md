@@ -1,7 +1,7 @@
 # RepoInterviewer
 
-**RepoInterviewer** は、ソースコードをアップロードすることで、LLMが模擬的なコードレビューや技術面接を実施してくれる対話型システムです。主にエンジニアの技術面接対策やコード理解支援を目的としており、VSCodeのPluginとして
-使用することができます。
+**RepoInterviewer** は、ソースコードをアップロードすることで、LLMが模擬的なコードレビューや技術面接を実施してくれる対話型システムです。
+主にエンジニアの技術面接対策やコード理解支援を目的としており、VSCodeのPluginとして使用することができます。
 
 ## 📦 主な特徴
 
@@ -12,8 +12,8 @@
 
 - **バックエンド**
   - **Webフレームワーク**：FastAPI（Python 3.11）
+  - **WSGIサーバー**：Gunicorn
   - **ASGIサーバー**：Uvicorn
-  - **LLMサーバー**：Ollama 
   - **コンテナ環境**：Docker（Python:3.11-slim）
 
 - **フロントエンド**
@@ -21,4 +21,4 @@
   - **ビルドツール**：Vite
   - **UI構成**：HTML / CSS / WebView（VS Code Extension 向け）
   - **パッケージ管理**：pnpm / Node.js
-
+  - **スタイリング**：Emotion
