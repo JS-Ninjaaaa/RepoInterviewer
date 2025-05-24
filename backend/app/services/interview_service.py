@@ -143,9 +143,11 @@ def get_question(interview_id: str, question_id: int) -> tuple[int, str]:
     if history is None:
         return 0, ""
     # 最初のmodel発言（つまり質問）を取得
-    question = next(
-        (item["content"] for item in history if item.get("role") == "model"), None
-    )
+    question = None
+    for item in history:
+        if item.get("role") == "model":
+            question = item["content"]
+            break
     # 問題文を取得できないため
     if question is None:
         return 0, ""
