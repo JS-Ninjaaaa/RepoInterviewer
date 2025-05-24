@@ -32,7 +32,7 @@ export const characters: Character[] = [
     quotes: ["この責務分離、もう一歩かな", "設計思想としては筋が通ってる"],
     image: haruPng,
     wholeImage: wholeHaruPng,
-    color: lightGreen,
+    color: blue,
   },
   {
     level: "hard",
@@ -43,7 +43,7 @@ export const characters: Character[] = [
     quotes: ["このコード、保守性ゼロ", "それ、Goの文法理解してる？"],
     image: sakiPng,
     wholeImage: wholeSakiPng,
-    color: blue,
+    color: lightGreen,
   },
   {
     level: "extreme",

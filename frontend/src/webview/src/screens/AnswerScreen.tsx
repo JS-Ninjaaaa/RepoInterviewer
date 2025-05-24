@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -13,21 +13,27 @@ import SendIcon from "@mui/icons-material/Send";
 import { theme } from "../theme";
 import type { apiRequestValue } from "../types/apiRequestValue";
 import type { FeedBackResponse, GeneralFeedbackResponse } from '../types/apiResponseValue';
-import type { chatMessage } from '../types/chatMessage';
+import type { chatMessage } from "../types/chatMessage";
+import { useLoading } from "./context/LoadingContext";
+import { useThinkingAnimation } from "./hooks/useThinkingAnimation";
 
 interface AnswerScreenProps {
   vscode: VSCodeAPI;
 }
 
 const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
+  const { showLoading, hideLoading } = useLoading();
+
   const location = useLocation();
   const currentCharacter = location.state.currentCharacter;
   const interviewId = location.state.interview_id;
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const [chatHistory, setChatHistory] = useState<chatMessage[]> ([
-    { type: 'question', text: location.state.question },
+  const [chatHistory, setChatHistory] = useState<chatMessage[]> ([{
+      type: 'question', 
+      text: location.state.question 
+    },
   ]); // 初期値は一問目
   const [chatInput, setChatInput] = useState<string>('');
   const [questionId, setQuestionId] = useState<number>(1);
@@ -38,6 +44,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
   const [interruptModalOpen, setInterruptModalOpen] = useState(false);
   const [skipModalOpen, setSkipModalOpen] = useState(false);
 
+  const { startThinking, stopThinking } = useThinkingAnimation(setChatHistory);
   const navigate = useNavigate();
 
   const handleInterrruptInterview = () => {
@@ -49,40 +56,50 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     fetchFeedback(); // 0点を返される
   };
 
-   // フィードバッグか，深堀かを判断する
-  const judgeContinueSameQuestion = (payload: FeedBackResponse) => {
-    const lastScore = payload.score;
+  // フィードバッグか，深堀かを判断する
+  const judgeContinueSameQuestion = useCallback(
+    (payload: FeedBackResponse) => {
+      stopThinking();
+      const lastScore = payload.score;
 
-    if (payload.continue_deep_question) { 
-      // フィードバックは来ず、次の深掘り質問が返る
-      setChatHistory((prev) => [
+      if (payload.continue_deep_question) { 
+        // フィードバックは来ず、次の深掘り質問が返る
+        setChatHistory(prev => [
+          ...prev,
+          { type: 'question', text: payload.response },
+        ]);
+        setDisplayEnterBox(true);
+      } else {
+        // 深掘りフェーズ終了
+        const total  = currentCharacter.totalQuestion;
+        const lastId = payload.question_id;       
+
+        setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
+              
+        setChatHistory(prev => [
         ...prev,
-        { type: 'question', text: payload.response }
+        { type: 'feedback', text: payload.response, score: lastScore },
       ]);
-      setDisplayEnterBox(true);
-    } else {
-      // 深掘りフェーズ終了
-      const total  = currentCharacter.totalQuestion;
-      const lastId = payload.question_id;       
-
-      setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
-            
-      setChatHistory((prev) => [
-      ...prev,
-        {
-          type: 'feedback',
-          text: payload.response,
-          score: lastScore   
-        }
-      ])
-    }
-  }
+      }
+    }, 
+    [
+      currentCharacter.totalQuestion,
+      setDisplayEnterBox,
+      setButtonDisplay,
+      stopThinking,
+    ]
+  );
 
   const fetchFeedback = () => {
-    setChatHistory([...chatHistory, { type: 'answer', text: chatInput }]);
+    setChatHistory((prev) => [...prev, 
+      { type: 'answer', text: chatInput },
+    ]);
+
+    startThinking();
+
     setDisplayEnterBox(false);
     setScrollTop(false);
-
+    
     // フィードバッグを要求するAPI
     const message: apiRequestValue = {
       type: "fetchFeedback",
@@ -98,6 +115,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
   };
 
   const fetchNextQuestion = () => {
+    startThinking();
     // 次の質問を要求するAPI
     const nextId = questionId + 1;
     const message: apiRequestValue = {
@@ -107,17 +125,24 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     vscode.postMessage(message);
   };
 
-  const moveGeneralFeedbackScreen = (payload: GeneralFeedbackResponse) => {
+  const moveGeneralFeedbackScreen = useCallback(
+    (payload: GeneralFeedbackResponse) => {
     // GeneralFeedbackを受け取る関数
-    navigate("/feedback", {
-      state: {
-        payload,
-        currentCharacter: currentCharacter,
-      },
-    });
-  };
+      navigate("/feedback", {
+        state: {
+          payload,
+          currentCharacter: currentCharacter,
+        },
+      });
+    },
+    [
+      navigate, 
+      currentCharacter
+    ]
+  );
 
   const fetchGeneralFeedback = () => {
+    showLoading('全部の回答をチェック中・・・');
     // 総評を要求するAPI
     const message: apiRequestValue = {
       type: "fetchGeneralFeedback",
@@ -127,34 +152,44 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
   };
 
   // extesnion.tsから送られるメッセージにより次の動作にハンドルする
-  const hendleExtensionMassage = (event: MessageEvent) => {
-    const { type, payload } = event.data;
-    if (type === "Feedback") {
-      judgeContinueSameQuestion(payload)
-    } else if (type === 'nextQuestion') {
+  const handleExtensionMassage = useCallback(
+    (event: MessageEvent) => {
+      const { type, payload } = event.data;
+      if (type === "Feedback") {
+        judgeContinueSameQuestion(payload)
+      } else if (type === 'nextQuestion') {
+        stopThinking();
 
-      setChatHistory(prev => [
-        ...prev,
-        { type: 'question', text: payload.question }
-      ]);
+        setChatHistory(prev => [
+          ...prev,
+          { type: 'question', text: payload.question }
+        ]);
 
-      setQuestionId(payload.question_id);
+        setQuestionId(payload.question_id);
 
-      setButtonDisplay("スキップ");
+        setButtonDisplay("スキップ");
 
-      setDisplayEnterBox(true);
-    } else if (type === "GeneralFeedback") {
-      moveGeneralFeedbackScreen(payload);
-    }
-  };
+        setDisplayEnterBox(true);
+      } else if (type === "GeneralFeedback") {
+        hideLoading();
+        moveGeneralFeedbackScreen(payload);
+      }
+    }, 
+    [
+      hideLoading, 
+      judgeContinueSameQuestion, 
+      moveGeneralFeedbackScreen, 
+      stopThinking
+    ]
+  );
 
   useEffect(() => {
-    window.addEventListener("message", hendleExtensionMassage);
+    window.addEventListener("message", handleExtensionMassage);
 
     return () => {
-      window.removeEventListener("message", hendleExtensionMassage);
+      window.removeEventListener("message", handleExtensionMassage);
     };
-  }, []);
+  }, [handleExtensionMassage]);
 
   // チャット履歴が更新されたとき、末尾にスクロール
   useEffect(() => {
@@ -164,7 +199,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     } else {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatHistory]);
+  }, [chatHistory, scrollTop]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -278,7 +313,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
                         alignItems: 'baseline',
                         flexDirection: 'row',
                         fontSize: '36px',
-                        color: currentCharacter.color[400]
+                        color: currentCharacter.color[600]
                       }}>
                         {msg.score}
                         <Typography sx={{ fontSize: '24px' }}>点</Typography>
@@ -289,6 +324,20 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
                     </Box>
                   </Box>
                 )}
+
+                {msg.type === 'thinking' && (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'left' }}>
+                    <Avatar
+                      src={currentCharacter?.image}
+                      alt={currentCharacter?.name}
+                      sx={{ width: 56, height: 56, m: 2 }}
+                    />
+                      <Typography sx={{ width: '120px', height: '24px',display: 'flex', alignItems: 'center', justifyContent: 'left', borderRadius: 2, bgcolor: currentCharacter.color[50], p: 2, fontSize: 16, color: currentCharacter.color[700] }}>
+                        {msg.text}
+                      </Typography>
+                    </Box>
+                )}
+
               </Box>
             ))}
           </Box>

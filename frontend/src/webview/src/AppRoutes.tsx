@@ -5,6 +5,8 @@ import { theme } from "./theme";
 import StartScreen from "./screens/startScreen/StartScreen";
 import AnswerScreen from "./screens/AnswerScreen";
 import GeneralFeedbackScreen from "./screens/GeneralFeedbackScreen";
+import { LoadingProvider, useLoading } from "./screens/context/LoadingContext";
+import { LoadingOverlay } from "./screens/components/LoadingOverlay";
 
 const vscode =
   typeof acquireVsCodeApi === "function"
@@ -15,9 +17,12 @@ const vscode =
         setState: () => {},
       };
 
-function AppRoutes() {
+const AppContent: React.FC = () => {
+  const { loading, message } = useLoading();
+
   return (
-    <ThemeProvider theme={theme}>
+    <>
+      <LoadingOverlay open={loading} message={message} />
       <MemoryRouter initialEntries={["/start"]}>
         <Routes>
           <Route path="/start" element={<StartScreen vscode={vscode} />} />
@@ -28,8 +33,16 @@ function AppRoutes() {
           />
         </Routes>
       </MemoryRouter>
-    </ThemeProvider>
+    </>
   );
 }
+
+const AppRoutes: React.FC = () => (
+  <ThemeProvider theme={theme}>
+    <LoadingProvider>
+      <AppContent />
+    </LoadingProvider>
+  </ThemeProvider>
+);
 
 export default AppRoutes;
