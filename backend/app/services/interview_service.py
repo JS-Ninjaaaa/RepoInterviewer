@@ -15,7 +15,11 @@ from ..schemas.schemas import (
     InterviewInterviewIdPostRequest,
     InterviewPostRequest,
 )
-from ..services.llm_service import generate_feedback, generate_question
+from ..services.llm_service import (
+    generate_feedback,
+    generate_general_review,
+    generate_question,
+)
 from ..services.prompt_service import format_source_code
 from ..utils.zip_handler import extract_zip
 
@@ -144,35 +148,57 @@ def get_question(interview_id: str, question_id: int) -> tuple[int, str]:
     history = get_chat_history(interview_id, question_id)
     if history is None:
         return 0, ""
+
     # 最初のmodel発言（つまり質問）を取得
     question = None
     for item in history:
         if item.get("role") == "model":
             question = item["content"]
             break
+
     # 問題文を取得できないため
     if question is None:
         return 0, ""
+
     # 質問文を返す
     return question_id, question
 
 
 # GET /interview/{interview_id}/result
-def get_interview_result(interview_id: str) -> tuple[int, str] :
+def get_interview_result(interview_id: str) -> tuple[list[int], str]:
     # redisから各質問のスコアと会話履歴を取得する
-    result = get_interview_data(interview_id)
-    if result is None:
-        return -1, ""
+    interview_data = get_interview_data(interview_id)
+    if interview_data is None:
+        return [], ""
+
+    interview_results = interview_data.get("results", [])
+
     # 各質問の最後の発言(LLMからのコメント)を取得する
     scores = []
-    comments = []
-    for item in result.get("results", []):
-        if item.get("comment"):
-            comments.append(item["comment"])
-        if item.get("score"):
-            scores.append(item["score"])
-    # LLMにプロンプトを送る
-        # TODO 総評生成プロンプト関数を実装する
-        # TODO 収集したコメントを用いて総評を生成
+
+    for result in interview_results.get("results", []):
+        if "score" in result:
+            scores.append(result["score"])
+
+    chat_histories = []
+    total_question = interview_data["total_question"]
+    for question_id in range(1, total_question + 1):
+        chat_history = get_chat_history(interview_id, question_id)
+        if chat_history is None:
+            continue
+
+        chat_histories.append(chat_history)
+
+    difficulty = Difficulty(interview_data["difficulty"])
+
+    # 収集したコメントを用いて総評を生成
+    general_review = generate_general_review(
+        difficulty=difficulty,
+        chat_histories=chat_histories,
+    )
+
+    if general_review is None:
+        return [], ""
+
     # 各質問のスコアと総評を返す
-    return scores, comments[0] # 合計点数 コメントの最初だけ返す　（テスト）
+    return scores, general_review

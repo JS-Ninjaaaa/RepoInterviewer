@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from ..schemas.schemas import Difficulty
@@ -55,3 +56,13 @@ def make_feedback_prompt(max_score: int, source_code: str) -> str:
         max_score=max_score,
         source_code=source_code,
     )
+
+
+def make_gen_general_review_prompt(chat_histories: list[dict]) -> str:
+    parent_dir = Path(__file__).parent
+    file_path = parent_dir / "prompts" / "user" / "gen_general_review.txt"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        prompt_template = f.read()
+
+    return prompt_template.format(chat_histories=json.dumps(chat_histories))
