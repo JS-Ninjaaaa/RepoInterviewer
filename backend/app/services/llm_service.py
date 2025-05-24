@@ -8,9 +8,11 @@ from pydantic import BaseModel
 
 from ..repositories.fake.redis_repo import get_interview_data
 from ..schemas.schemas import Difficulty
-from ..services.prompt_service import (get_character_prompt,
-                                       make_feedback_prompt,
-                                       make_gen_question_prompt)
+from ..services.prompt_service import (
+    get_character_prompt,
+    make_feedback_prompt,
+    make_gen_question_prompt,
+)
 
 load_dotenv()
 
