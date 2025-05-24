@@ -45,7 +45,7 @@ test_post_answer() {
     curl -s -w "\n%{http_code}" -X POST "$BASE_URL/interview/$INTERVIEW_ID" \
     -H "Content-Type: application/json" \
     -d '{
-      "question_id": 0,
+      "question_id": 1,
       "message": "スコアで降順、IDで昇順にソートした後、スコアが前のプレイヤーと変わるまで同じランクを割り当てています。"
     }'
   )
