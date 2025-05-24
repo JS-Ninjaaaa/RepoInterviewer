@@ -136,7 +136,6 @@ def generate_feedback(
     character_prompt = get_character_prompt(difficulty)
 
     # モデルの挙動を設定する
-    # XXX: 難易度が固定されてる
     gen_content_config = types.GenerateContentConfig(
         max_output_tokens=1024,
         response_mime_type="application/json",
