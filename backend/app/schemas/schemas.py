@@ -51,6 +51,8 @@ class InterviewInterviewIdGetResponse(BaseModel):
     question_id: int
     question: str
 
+class InterviewInterviewIdGetErrorResponse(BaseModel):
+    error_message: str
 
 class InterviewInterviewIdResultGetResponse(BaseModel):
     scores: List[int]
