@@ -5,17 +5,17 @@ import { spawn } from "child_process";
 import { mensetsuIgnoreFiles } from "./data/mensetsuignore";
 
 export async function fetchFiles(): Promise<Blob> {
-    const files = await getFilteredFiles(); // ファイルパスをすべて探す
-    const zip = new JSZip();     // ファイルをフィルターして中身を取り出しzipファイルにする
-    
-    for (const file of files) {
-    const bytes = await vscode.workspace.fs.readFile(file);
-    const content = new TextDecoder('utf-8').decode(bytes);
-    const rel = vscode.workspace.asRelativePath(file);
-    zip.file(rel, content);
-    }
-    
-    const blob = await zip.generateAsync({ type: 'blob' });
+  const files = await getFilteredFiles(); // ファイルパスをすべて探す
+  const zip = new JSZip();     // ファイルをフィルターして中身を取り出しzipファイルにする
+  
+  for (const file of files) {
+  const bytes = await vscode.workspace.fs.readFile(file);
+  const content = new TextDecoder('utf-8').decode(bytes);
+  const rel = vscode.workspace.asRelativePath(file);
+  zip.file(rel, content);
+  }
+  
+  const blob = await zip.generateAsync({ type: 'blob' });
   return blob;
 }
 
