@@ -2,6 +2,7 @@
 
 # macだとlocalhostでバグる
 BASE_URL="http://127.0.0.1:8000"
+INTERVIEW_ID="1571bf78-84ee-4d1a-9e76-3b2e518a18a7"
 
 is_json() {
   echo "$1" | jq empty > /dev/null 2>&1
@@ -23,14 +24,13 @@ print_result() {
 }
 
 # POST /interview
-# **開発用 軽いテストzipの**
 test_post_interview() {
   echo "Testing POST /interview"
   response=$(
     curl -s -w "\n%{http_code}" -X POST "$BASE_URL/interview" \
-    -F "source_code=@example_light/archive.zip" \
+    -F "source_code=@example/archive.zip" \
     -F "difficulty=easy" \
-    -F "total_question=5"
+    -F "total_question=3"
   )
 
   status_code=$(echo "$response" | tail -n1)
@@ -39,7 +39,21 @@ test_post_interview() {
 }
 
 # POST /interview/{interview_id}
-test_post_answer() { :; }
+test_post_answer() {
+  echo "Testing POST /interview/:interview_id"
+  response=$(
+    curl -s -w "\n%{http_code}" -X POST "$BASE_URL/interview/$INTERVIEW_ID" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "question_id": 1,
+      "message": "それぞれ早期の引数チェックと、内部的なエラー統一のために書いています。"
+    }'
+  )
+
+  status_code=$(echo "$response" | tail -n1)
+  body=$(echo "$response" | sed '$d')
+  print_result "$status_code" 200 "$body"
+}
 
 # GET /interview/{interview_id}?question_id=1
 test_get_question() { :; }
@@ -61,16 +75,13 @@ menu() {
         test_post_interview
         ;;
       "POST /interview/{interview_id}")
-        read -p "Enter interview_id: " interview_id
-        test_post_answer "$interview_id"
+        test_post_answer
         ;;
       "GET question")
-        read -p "Enter interview_id: " interview_id
-        test_get_question "$interview_id"
+        test_get_question
         ;;
       "GET result")
-        read -p "Enter interview_id: " interview_id
-        test_get_result "$interview_id"
+        test_get_result
         ;;
       "Run All Tests")
         test_post_interview
