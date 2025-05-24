@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import type { apiRequestValue } from "./types/apiRequestValue";
-import { handleWebviewMessage } from "./functions/handleWebview";
+import { handleWebviewMessage } from "./functions/handleWebviewMessage";
 import { getUri } from "./functions/utilities/getUri";
 import { getNonce } from "./functions/utilities/getNonce";
 import { openWindow } from "./functions/openWebview";

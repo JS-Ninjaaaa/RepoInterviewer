@@ -12,7 +12,7 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import { theme } from "../theme";
 import type { apiRequestValue } from "../types/apiRequestValue";
-import type { FeedBackResponse } from '../types/apiResponseValue';
+import type { FeedBackResponse, GeneralFeedbackResponse } from '../types/apiResponseValue';
 import type { chatMessage } from '../types/chatMessage';
 
 interface AnswerScreenProps {
@@ -107,7 +107,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     vscode.postMessage(message);
   };
 
-  const moveGeneralFeedbackScreen = (payload: apiRequestValue) => {
+  const moveGeneralFeedbackScreen = (payload: GeneralFeedbackResponse) => {
     // GeneralFeedbackを受け取る関数
     navigate("/feedback", {
       state: {
