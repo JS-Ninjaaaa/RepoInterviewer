@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict
+
 from ..schemas.schemas import Difficulty
 
 
@@ -43,19 +43,14 @@ def make_gen_question_prompt(source_code: str, total_question: int) -> str:
         total_question=total_question,
     )
 
-def make_feedback_prompt(source_code: str, history: List[Dict[str, str]]) -> str:
-    history_text = "\n".join(
-        f"{item['role']}: {item['content']}" for item in history
-    )
+
+def make_feedback_prompt(source_code: str) -> str:
 
     return f"""以下のソースコードに対するユーザーとのやりとり履歴を元に、
 コードの良い点・改善点を挙げ、100点満点で点数をつけてください。
 
 # ソースコード
 {source_code}
-
-# やりとり履歴
-{history_text}
 
 # 出力フォーマット
 次の形式の **JSON配列** で、必ず2要素のみを含めてください：
