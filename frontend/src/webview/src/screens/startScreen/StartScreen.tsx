@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button, ThemeProvider } from "@mui/material";
 import { characters } from "../../data/characters";
 import { theme } from "../../theme";
+import { useLoading } from '../context/LoadingContext';
 
 import type { apiRequestValue } from "../../types/apiRequestValue";
 import CharacterSelectCards from "./components/CharacterSelectCards";
@@ -21,12 +22,14 @@ declare global {
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
+  const { showLoading, hideLoading } = useLoading();
   const [characterIndex, setCharacterIndex] = useState(0);
   const currentCharacter = characters[characterIndex];
 
   const navigate = useNavigate();
 
   const handleStartInterview = () => {
+    showLoading('質問を生成中・・・');
     const msg: apiRequestValue = {
       type: 'fetchFirstQuestion',
       payload: {
@@ -41,6 +44,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
     const handler = (event: MessageEvent) => {
       const { type, payload } = event.data;
       if (type === 'firstQuestion') {
+        hideLoading();
         navigate('/answer', {
           state: {
             interview_id: payload.interview_id,
@@ -52,7 +56,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
     };
     window.addEventListener('message', handler);
     return () => window.removeEventListener('message', handler);
-  }, [currentCharacter, navigate]);
+  }, [currentCharacter, navigate, hideLoading]);
 
   return (
     <ThemeProvider theme={theme}>
