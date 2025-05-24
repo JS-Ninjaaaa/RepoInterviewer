@@ -36,7 +36,7 @@ export async function fetchFeedBack(
   const { interview_id, question_id, answer } = payload;
 
   // クエリパラメターの設定
-  const url = `${apiEndPoint}/${interview_id}`;
+  const url = `${apiEndPoint}/interview/${interview_id}`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -81,7 +81,7 @@ export async function fetchGeneralFeedback(payload: {
 }): Promise<GeneralFeedbackResponse> {
   const { interview_id } = payload;
 
-  const url = `${apiEndPoint}/${interview_id}`;
+  const url = `${apiEndPoint}/interview/${interview_id}/result`;
 
   const res = await fetch(url, {
     method: "GET",
