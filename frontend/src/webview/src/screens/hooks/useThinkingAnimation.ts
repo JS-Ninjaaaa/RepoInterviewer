@@ -13,21 +13,32 @@ export function useThinkingAnimation(
       clearInterval(intervalRef.current);
     }
 
-    // プレースホルダーを追加し、インデックスを ref に保存
+    // ５つのアニメーション状態
+    const states = [
+      "考え中",           // 1: 考え中
+      "考え中・",         // 2: ドット1
+      "考え中・・",       // 3: ドット2
+      "考え中・・・",     // 4: ドット3
+    ];
+
+    // プレースホルダーを追加し、インデックスを保存
     setChatHistory(prev => {
       const idx = prev.length;
       indexRef.current = idx;
-      return [...prev, { type: 'thinking', text: '考え中.' }];
+      return [...prev, { type: 'thinking', text: states[0] }];
     });
 
-    // 1〜4 のドットをループ
-    let dotCount = 1;
+    // アニメーション用のカウンタ
+    let animIndex = 0;
+
     intervalRef.current = window.setInterval(() => {
-      dotCount = (dotCount % 3) + 1;
+      if (indexRef.current === null) return;
+      // 次の状態へ
+      animIndex = (animIndex + 1) % states.length;
       setChatHistory(curr =>
         curr.map((m, i) =>
           i === indexRef.current
-            ? { type: 'thinking', text: `考え中${'・'.repeat(dotCount)}` }
+            ? { type: 'thinking', text: states[animIndex] }
             : m
         )
       );
@@ -35,7 +46,6 @@ export function useThinkingAnimation(
   }, [setChatHistory]);
 
   const stopThinking = useCallback(() => {
-    // interval をクリア
     if (intervalRef.current !== null) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
