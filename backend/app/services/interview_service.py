@@ -1,16 +1,20 @@
-from idlelib.macosx import hideTkConsole
 from pathlib import Path
 from uuid import uuid4
 
 # 開発モードで fake_repoを使う（Redis）
-from ..repositories.production.redis_repo import (create_interview_cache,
-                                                  get_chat_history,
-                                                  get_interview_data,
-                                                  update_chat_history,
-                                                  update_interview_result)
+from ..repositories.fake.redis_repo import (
+    create_interview_cache,
+    get_chat_history,
+    get_interview_data,
+    update_chat_history,
+    update_interview_result,
+)
 from ..repositories.production.source_repo import get_source_code
-from ..schemas.schemas import (Difficulty, InterviewInterviewIdPostRequest,
-                               InterviewPostRequest)
+from ..schemas.schemas import (
+    Difficulty,
+    InterviewInterviewIdPostRequest,
+    InterviewPostRequest,
+)
 from ..services.llm_service import generate_feedback, generate_question
 from ..services.prompt_service import format_source_code
 from ..utils.zip_handler import extract_zip
