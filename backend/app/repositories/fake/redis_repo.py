@@ -1,14 +1,16 @@
 import os
 
 import redis
+
 from ...schemas.schemas import Difficulty
 
 global_interview_id = "1571bf78-84ee-4d1a-9e76-3b2e518a18a7"
 
 questions = [
+    "ranker.pyのcalculate_ranking関数で、同じスコアのプレイヤーがいる場合のランキングってどうやって決めてるんだっけ？",
+    "data_loader.pyのload_entries関数で、ファイルが空の場合にエラーをraiseしてるけど、それ以外にどんな時にエラーが発生する可能性があると思う？",
+    "main.pyで、try-except構文を使ってエラーハンドリングしてるけど、具体的にどんなエラーを想定してるか説明してみて☆",
     "data_loader.pyのload_entries関数で、ファイルが見つからない時のエラー処理、main.pyでもやってるけど、これって重複じゃない？",
-    "現在位置を更新するロジック、もっと短く書ける気がするんだけど、どうかな？例えば、辞書とか使ってさ☆",
-    "ループの中で毎回`choco_in_location`にアクセスしてるけど、これって計算量的にどう？もっと速くする方法ないかな？",
 ]
 
 
@@ -47,7 +49,7 @@ def get_interview_data(
     interview_id: str,
 ) -> dict | None:
     return {
-        "difficulty": "normal",
+        "difficulty": "easy",
         "total_question": len(questions),
         "results": [{"score": 0, "comment": ""} for _ in range(len(questions))],
     }
