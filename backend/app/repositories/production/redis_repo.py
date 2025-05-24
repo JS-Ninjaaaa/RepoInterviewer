@@ -98,7 +98,6 @@ def update_chat_history(
     return chat_history
 
 
-
 # スコアとコメントを更新
 def update_interview_result(
     interview_id: str,
@@ -111,7 +110,7 @@ def update_interview_result(
     if response is None:
         raise ValueError(f"面接のデータが見つかりません: {interview_id}")
 
-    interview_data = json.loads(response)
+    interview_data = json.loads(str(response))
     if not isinstance(interview_data, dict):
         raise ValueError(f"面接データの型が不正です: {type(interview_data)}")
 
