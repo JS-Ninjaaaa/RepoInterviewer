@@ -9,7 +9,5 @@
     "outDir": "../../build/commands",
     "rootDir": "./"
   },
-  "include": [
-    "**/*.ts"
-  ]
+  "include": ["**/*.ts"]
 }
