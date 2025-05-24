@@ -1,25 +1,17 @@
 from typing import Union
 
-from fastapi import APIRouter, Form, UploadFile
+from fastapi import APIRouter, Form, HTTPException, UploadFile
 
-from ...schemas.schemas import (
-    Difficulty,
-    InterviewInterviewIdGetResponse,
-    InterviewInterviewIdPostErrorResponse,
-    InterviewInterviewIdPostRequest,
-    InterviewInterviewIdPostResponse,
-    InterviewInterviewIdResultGetErrorResponse,
-    InterviewInterviewIdResultGetResponse,
-    InterviewPostErrorResponse,
-    InterviewPostRequest,
-    InterviewPostResponse,
-)
-from ...services.interview_service import (
-    get_interview_result,
-    get_question,
-    get_response,
-    set_up_interview,
-)
+from ...schemas.schemas import (Difficulty, InterviewInterviewIdGetResponse,
+                                InterviewInterviewIdPostErrorResponse,
+                                InterviewInterviewIdPostRequest,
+                                InterviewInterviewIdPostResponse,
+                                InterviewInterviewIdResultGetErrorResponse,
+                                InterviewInterviewIdResultGetResponse,
+                                InterviewPostErrorResponse,
+                                InterviewPostRequest, InterviewPostResponse)
+from ...services.interview_service import (get_interview_result, get_question,
+                                           get_response, set_up_interview)
 
 router = APIRouter()
 
@@ -110,8 +102,15 @@ def get_interview_interview_id(
     """
     指定された質問IDの質問文を取得
     """
-    question = get_question(interview_id, question_id)
-    return InterviewInterviewIdGetResponse(question_id=question_id, question=question)
+    found_question_id, found_question_text = get_question(interview_id, question_id)
+    if found_question_text == "" and found_question_id == 0:
+        raise HTTPException(
+            status_code=404,
+        )
+
+    return InterviewInterviewIdGetResponse(
+        question_id=found_question_id, question=found_question_text
+    )
 
 
 @router.get(

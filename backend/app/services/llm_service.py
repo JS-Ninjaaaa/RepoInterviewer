@@ -7,11 +7,9 @@ from google.genai import types
 from pydantic import BaseModel
 
 from ..schemas.schemas import Difficulty
-from ..services.prompt_service import (
-    get_character_prompt,
-    make_feedback_prompt,
-    make_gen_question_prompt,
-)
+from ..services.prompt_service import (get_character_prompt,
+                                       make_feedback_prompt,
+                                       make_gen_question_prompt)
 
 load_dotenv()
 
