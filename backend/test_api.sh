@@ -56,7 +56,16 @@ test_post_answer() {
 }
 
 # GET /interview/{interview_id}?question_id=1
-test_get_question() { :; }
+test_get_question() {
+  echo "Testing GET /interview/:interview_id?question_id=1"
+  response=$(
+    curl -s -w "\n%{http_code}" -X GET "$BASE_URL/interview/$INTERVIEW_ID?question_id=1"
+  )
+
+  status_code=$(echo "$response" | tail -n1)
+  body=$(echo "$response" | sed '$d')
+  print_result "$status_code" 200 "$body"
+}
 
 # GET /interview/{interview_id}/result
 test_get_result() { :; }

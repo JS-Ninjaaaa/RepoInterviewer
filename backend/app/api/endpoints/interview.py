@@ -2,16 +2,24 @@ from typing import Union
 
 from fastapi import APIRouter, Form, HTTPException, UploadFile
 
-from ...schemas.schemas import (Difficulty, InterviewInterviewIdGetResponse,
-                                InterviewInterviewIdPostErrorResponse,
-                                InterviewInterviewIdPostRequest,
-                                InterviewInterviewIdPostResponse,
-                                InterviewInterviewIdResultGetErrorResponse,
-                                InterviewInterviewIdResultGetResponse,
-                                InterviewPostErrorResponse,
-                                InterviewPostRequest, InterviewPostResponse)
-from ...services.interview_service import (get_interview_result, get_question,
-                                           get_response, set_up_interview)
+from ...schemas.schemas import (
+    Difficulty,
+    InterviewInterviewIdGetResponse,
+    InterviewInterviewIdPostErrorResponse,
+    InterviewInterviewIdPostRequest,
+    InterviewInterviewIdPostResponse,
+    InterviewInterviewIdResultGetErrorResponse,
+    InterviewInterviewIdResultGetResponse,
+    InterviewPostErrorResponse,
+    InterviewPostRequest,
+    InterviewPostResponse,
+)
+from ...services.interview_service import (
+    get_interview_result,
+    get_question,
+    get_response,
+    set_up_interview,
+)
 
 router = APIRouter()
 
