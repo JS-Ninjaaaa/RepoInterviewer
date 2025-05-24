@@ -1,5 +1,6 @@
 from pathlib import Path
 from uuid import uuid4
+
 # 開発モードで fake_repoを使う（Redis）
 from ..repositories.fake.redis_repo import (
     create_interview_cache,
@@ -34,7 +35,9 @@ def set_up_interview(
     # 質問文を生成する
     formatted_code = format_source_code(saved_files)
     questions = generate_question(
-        formatted_code, request_body.difficulty, request_body.total_question
+        formatted_code,
+        request_body.difficulty,
+        request_body.total_question,
     )
 
     if questions is None:
@@ -96,7 +99,7 @@ def get_feedback(
     formatted_code = format_source_code(saved_files)
 
     # LLMにプロンプトを送ってFBを生成する（**テストでも本番でも動く**）
-    feedback = generate_feedback(formatted_code, chat_history)
+    feedback = generate_feedback(interview_id, formatted_code, chat_history)
     if feedback is None:
         return 0, ""
 

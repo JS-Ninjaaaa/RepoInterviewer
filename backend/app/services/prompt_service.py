@@ -14,13 +14,13 @@ def format_source_code(source_code: dict[str, str]) -> str:
 
 def get_character_prompt(difficulty: Difficulty) -> str:
     if difficulty == Difficulty.easy:
-        file_name = "yuzu.txt"
+        file_name = "easy.txt"
     elif difficulty == Difficulty.normal:
-        file_name = "saki.txt"
+        file_name = "normal.txt"
     elif difficulty == Difficulty.hard:
-        file_name = "haru.txt"
+        file_name = "hard.txt"
     elif difficulty == Difficulty.extreme:
-        file_name = "ren.txt"
+        file_name = "extreme.txt"
 
     parent_dir = Path(__file__).parent
     file_path = parent_dir / "prompts" / "system" / file_name
@@ -44,7 +44,7 @@ def make_gen_question_prompt(source_code: str, total_question: int) -> str:
     )
 
 
-def make_feedback_prompt(source_code: str) -> str:
+def make_feedback_prompt(max_score: int, source_code: str) -> str:
     parent_dir = Path(__file__).parent
     file_path = parent_dir / "prompts" / "user" / "gen_feedback.txt"
 
@@ -52,5 +52,6 @@ def make_feedback_prompt(source_code: str) -> str:
         prompt_template = f.read()
 
     return prompt_template.format(
+        max_score=max_score,
         source_code=source_code,
     )
