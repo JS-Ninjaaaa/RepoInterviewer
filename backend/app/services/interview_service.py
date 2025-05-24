@@ -158,19 +158,21 @@ def get_question(interview_id: str, question_id: int) -> tuple[int, str]:
 
 
 # GET /interview/{interview_id}/result
-def get_interview_result(interview_id: str) -> tuple[list[int], str]:
+def get_interview_result(interview_id: str) -> tuple[int, str] :
     # redisから各質問のスコアと会話履歴を取得する
     result = get_interview_data(interview_id)
     if result is None:
-        return 0, ""
+        return -1, ""
     # 各質問の最後の発言(LLMからのコメント)を取得する
+    scores = []
     comments = []
-    for item in result:
+    for item in result.get("results", []):
         if item.get("comment"):
-            comments.append(item["content"])
-    # 総評生成用のプロンプトを組み立てる
-
+            comments.append(item["comment"])
+        if item.get("score"):
+            scores.append(item["score"])
     # LLMにプロンプトを送る
-
+        # TODO 総評生成プロンプト関数を実装する
+        # TODO 収集したコメントを用いて総評を生成
     # 各質問のスコアと総評を返す
-    return [], ""
+    return scores, comments[0] # 合計点数 コメントの最初だけ返す　（テスト）
