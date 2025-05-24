@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "arjun.swagger-viewer",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
+    ]
+}

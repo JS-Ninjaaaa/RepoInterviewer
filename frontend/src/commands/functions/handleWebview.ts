@@ -1,24 +1,35 @@
 import * as vscode from "vscode";
-import { fetchFirstQuestion, fetchNextQuestion, fetchFeedBack, fetchGeneralFeedback } from "../api/api";
+import {
+  fetchFirstQuestion,
+  fetchNextQuestion,
+  fetchFeedBack,
+  fetchGeneralFeedback,
+} from "../api/api";
 import { fetchFiles } from "./fetchFiles";
 import { apiRequestValue } from "../types/apiRequestValue";
 
-export async function handleWebviewMessage(panel: vscode.WebviewPanel, message: apiRequestValue) {
+export async function handleWebviewMessage(
+  panel: vscode.WebviewPanel,
+  message: apiRequestValue,
+) {
   switch (message.type) {
     case "fetchFirstQuestion": {
       const zipBinary = await fetchFiles();
       try {
-        const questionInfo = await fetchFirstQuestion(zipBinary, message.payload); 
-        
+        const questionInfo = await fetchFirstQuestion(
+          zipBinary,
+          message.payload,
+        );
+
         panel.webview.postMessage({
           type: "firstQuestion",
-          payload: { questionInfo }
+          payload: { questionInfo },
         });
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
           type: "error",
-          payload: err || "不明なエラー"
+          payload: err || "不明なエラー",
         });
         return null;
       }
@@ -26,17 +37,17 @@ export async function handleWebviewMessage(panel: vscode.WebviewPanel, message: 
 
     case "fetchNextQuestion": {
       try {
-        const nextQuestionInfo = await fetchNextQuestion(message.payload); 
+        const nextQuestionInfo = await fetchNextQuestion(message.payload);
 
         panel.webview.postMessage({
           type: "nextQuestion",
-          payload: { nextQuestionInfo }
+          payload: { nextQuestionInfo },
         });
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
           type: "error",
-          payload: err || "不明なエラー"
+          payload: err || "不明なエラー",
         });
         return null;
       }
@@ -44,17 +55,17 @@ export async function handleWebviewMessage(panel: vscode.WebviewPanel, message: 
 
     case "fetchFeedback": {
       try {
-        const feedback = await fetchFeedBack(message.payload); 
+        const feedback = await fetchFeedBack(message.payload);
 
         panel.webview.postMessage({
           type: "Feedback",
-          payload: { feedback }
+          payload: { feedback },
         });
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
           type: "error",
-          payload: err || "不明なエラー"
+          payload: err || "不明なエラー",
         });
         return null;
       }
@@ -63,17 +74,17 @@ export async function handleWebviewMessage(panel: vscode.WebviewPanel, message: 
     case "fetchGeneralFeedback": {
       // interview_id, question_idで次の質問を取得する
       try {
-        const generalFeedback = await fetchGeneralFeedback(message.payload); 
+        const generalFeedback = await fetchGeneralFeedback(message.payload);
 
         panel.webview.postMessage({
           type: "GeneralFeedback",
-          payload: { generalFeedback }
+          payload: { generalFeedback },
         });
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
           type: "error",
-          payload: err || "不明なエラー"
+          payload: err || "不明なエラー",
         });
         return null;
       }
