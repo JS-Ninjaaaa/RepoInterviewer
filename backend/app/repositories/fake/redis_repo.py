@@ -1,6 +1,7 @@
 import os
 
 import redis
+
 from ...schemas.schemas import Difficulty
 
 global_interview_id = "1571bf78-84ee-4d1a-9e76-3b2e518a18a7"
