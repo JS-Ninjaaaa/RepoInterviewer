@@ -1,20 +1,16 @@
 from idlelib.macosx import hideTkConsole
 from pathlib import Path
 from uuid import uuid4
+
 # 開発モードで fake_repoを使う（Redis）
-from ..repositories.production.redis_repo import (
-    create_interview_cache,
-    get_chat_history,
-    get_interview_data,
-    update_chat_history,
-    update_interview_result,
-)
+from ..repositories.production.redis_repo import (create_interview_cache,
+                                                  get_chat_history,
+                                                  get_interview_data,
+                                                  update_chat_history,
+                                                  update_interview_result)
 from ..repositories.production.source_repo import get_source_code
-from ..schemas.schemas import (
-    Difficulty,
-    InterviewInterviewIdPostRequest,
-    InterviewPostRequest,
-)
+from ..schemas.schemas import (Difficulty, InterviewInterviewIdPostRequest,
+                               InterviewPostRequest)
 from ..services.llm_service import generate_feedback, generate_question
 from ..services.prompt_service import format_source_code
 from ..utils.zip_handler import extract_zip
@@ -137,11 +133,10 @@ def get_chat_response():
 
 
 # GET /interview/{interview_id}
-def get_question(interview_id: str, question_id: int
-)-> tuple[int, str]:
+def get_question(interview_id: str, question_id: int) -> tuple[int, str]:
     # 配列番号と指定の問題番号を一致させる
     if question_id < 1:
-        print("error",flush=True)
+        print("error", flush=True)
         return 0, ""
     # [question_id]の問題に関するやり取りを取得
     history = get_chat_history(interview_id, question_id)
@@ -149,8 +144,7 @@ def get_question(interview_id: str, question_id: int
         return 0, ""
     # 最初のmodel発言（つまり質問）を取得
     question = next(
-        (item["content"] for item in history if item.get("role") == "model"),
-        None
+        (item["content"] for item in history if item.get("role") == "model"), None
     )
     # 問題文を取得できないため
     if question is None:
