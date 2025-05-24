@@ -30,7 +30,7 @@ test_post_interview() {
     curl -s -w "\n%{http_code}" -X POST "$BASE_URL/interview" \
     -F "source_code=@example/archive.zip" \
     -F "difficulty=easy" \
-    -F "total_question=3"
+    -F "total_question=4"
   )
 
   status_code=$(echo "$response" | tail -n1)
@@ -46,7 +46,7 @@ test_post_answer() {
     -H "Content-Type: application/json" \
     -d '{
       "question_id": 1,
-      "message": "それぞれ早期の引数チェックと、内部的なエラー統一のために書いています。"
+      "message": "スコアで降順、IDで昇順にソートした後、スコアが前のプレイヤーと変わるまで同じランクを割り当てています。"
     }'
   )
 

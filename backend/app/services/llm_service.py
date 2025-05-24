@@ -6,6 +6,7 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel
 
+from ..repositories.fake.redis_repo import get_interview_data
 from ..schemas.schemas import Difficulty
 from ..services.prompt_service import (get_character_prompt,
                                        make_feedback_prompt,
@@ -121,11 +122,18 @@ def generate_question(
 
 # 質問文と回答を元にFBを生成する
 def generate_feedback(
+    interview_id: str,
     source_code: str,
     chat_history: list[dict[str, str]],
 ) -> dict | None:
+    interview_data = get_interview_data(interview_id)
+    if interview_data is None:
+        return None
+
+    difficulty = Difficulty(interview_data["difficulty"])
+    character_prompt = get_character_prompt(difficulty)
+
     # モデルの挙動を設定する
-    character_prompt = get_character_prompt(Difficulty.easy)
     gen_content_config = types.GenerateContentConfig(
         max_output_tokens=1024,
         response_mime_type="application/json",
@@ -136,8 +144,12 @@ def generate_feedback(
         top_p=0.95,
     )
 
+    total_question = interview_data["total_question"]
+    # FIXME: 100で割り切れない場合に合計が100にならない
+    max_score = 100 // total_question
+
     # 評価用のプロンプトを生成する
-    feedback_prompt = make_feedback_prompt(source_code)
+    feedback_prompt = make_feedback_prompt(max_score, source_code)
 
     contents = []  # LLMに渡すデータ
     for message in chat_history:
@@ -148,7 +160,8 @@ def generate_feedback(
                 parts=[types.Part.from_text(text=message["content"])],
             )
         )
-    # 評価用のプロンプトを追加する
+
+    # FB生成用のプロンプトを追加する
     contents.append(
         types.Content(
             role="user",
