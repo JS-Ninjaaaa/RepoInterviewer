@@ -86,20 +86,20 @@ def get_interview_data(
     return interview_data
 
 
+# 会話履歴を更新（上書き）
 def update_chat_history(
     interview_id: str,
     question_id: int,
     chat_history: list[dict[str, str]],
 ) -> list[dict[str, str]]:
     redis_client = get_redis_client()
-
-    # Redisに上書き保存
     key = f"{interview_id}-{question_id}"
-    redis_client.hset(key, "history", json.dumps(chat_history))
-
+    redis_client.set(key, json.dumps({"history": chat_history}), ex=3600)
     return chat_history
 
 
+
+# スコアとコメントを更新
 def update_interview_result(
     interview_id: str,
     question_id: int,
@@ -107,20 +107,13 @@ def update_interview_result(
     comment: str,
 ) -> dict:
     redis_client = get_redis_client()
-
     response = redis_client.get(interview_id)
     if response is None:
-        raise ValueError(
-            f"面接のデータが見つかりませんでした: {interview_id}-{question_id}"
-        )
+        raise ValueError(f"面接のデータが見つかりません: {interview_id}")
 
-    # 面接全体の情報を更新する
-    interview_data = json.loads(str(response))
+    interview_data = json.loads(response)
     if not isinstance(interview_data, dict):
         raise ValueError(f"面接データの型が不正です: {type(interview_data)}")
-
-    if "results" not in interview_data:
-        raise ValueError("面接データに 'results' がありません")
 
     results = interview_data.get("results", [])
     if len(results) <= question_id:
@@ -128,11 +121,7 @@ def update_interview_result(
 
     results[question_id]["score"] = score
     results[question_id]["comment"] = comment
+    interview_data["results"] = results
 
-    redis_client.hset(
-        interview_id,
-        "results",
-        json.dumps(results),
-    )
-
-    return results
+    redis_client.set(interview_id, json.dumps(interview_data), ex=3600)
+    return interview_data
