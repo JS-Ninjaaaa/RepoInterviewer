@@ -136,8 +136,11 @@ def get_interview_interview_id_result(
     """
     各質問の点数と総評を取得
     """
-    # 各質問の点数と総評を取得する
     scores, general_review = get_interview_result(interview_id)
+    if scores == -1 and general_review == "":
+        return InterviewInterviewIdResultGetErrorResponse(
+            error_message="総評を取得できませんでした"
+        )
 
     return InterviewInterviewIdResultGetResponse(
         scores=scores,
