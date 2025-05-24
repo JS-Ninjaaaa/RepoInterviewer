@@ -2,7 +2,7 @@ from pathlib import Path
 from uuid import uuid4
 
 # 開発モードで fake_repoを使う（Redis）
-from ..repositories.fake.redis_repo import (
+from ..repositories.production.redis_repo import (
     create_interview_cache,
     get_chat_history,
     get_interview_data,
@@ -173,10 +173,9 @@ def get_interview_result(interview_id: str) -> tuple[list[int], str]:
 
     interview_results = interview_data.get("results", [])
 
-    # 各質問の最後の発言(LLMからのコメント)を取得する
     scores = []
-
-    for result in interview_results.get("results", []):
+    # ダミー除外
+    for result in interview_results[1:]:
         if "score" in result:
             scores.append(result["score"])
 

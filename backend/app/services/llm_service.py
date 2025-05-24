@@ -199,10 +199,9 @@ def generate_general_review(
     chat_histories: list[dict],
 ) -> str | None:
     character_prompt = get_character_prompt(difficulty)
+    # ✨ 最小修正案
     gen_content_config = types.GenerateContentConfig(
         max_output_tokens=1024,
-        response_mime_type="text/plain",
-        response_schema=str,
         safety_settings=safety_settings,
         system_instruction=[types.Part.from_text(text=character_prompt)],
         temperature=0.2,
