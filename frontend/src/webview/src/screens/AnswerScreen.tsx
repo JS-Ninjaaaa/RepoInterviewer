@@ -145,7 +145,6 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
       setDisplayEnterBox(true);
     } else if (type === "GeneralFeedback") {
       moveGeneralFeedbackScreen(payload);
-    } else {
     }
   };
 
