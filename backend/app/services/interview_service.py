@@ -2,7 +2,7 @@ from pathlib import Path
 from uuid import uuid4
 
 # 開発モードで fake_repoを使う（Redis）
-from ..repositories.fake.redis_repo import (
+from ..repositories.production.redis_repo import (
     create_interview_cache,
     get_chat_history,
     get_interview_data,
@@ -15,7 +15,11 @@ from ..schemas.schemas import (
     InterviewInterviewIdPostRequest,
     InterviewPostRequest,
 )
-from ..services.llm_service import generate_feedback, generate_question
+from ..services.llm_service import (
+    generate_feedback,
+    generate_general_review,
+    generate_question,
+)
 from ..services.prompt_service import format_source_code
 from ..utils.zip_handler import extract_zip
 
@@ -140,23 +144,22 @@ def get_chat_response():
 
 # GET /interview/{interview_id}
 def get_question(interview_id: str, question_id: int) -> tuple[int, str]:
-    # 配列番号と指定の問題番号を一致させる
-    if question_id < 1:
-        print("error", flush=True)
-        return 0, ""
     # [question_id]の問題に関するやり取りを取得
     history = get_chat_history(interview_id, question_id)
     if history is None:
         return 0, ""
+
     # 最初のmodel発言（つまり質問）を取得
     question = None
     for item in history:
         if item.get("role") == "model":
             question = item["content"]
             break
+
     # 問題文を取得できないため
     if question is None:
         return 0, ""
+
     # 質問文を返す
     return question_id, question
 
@@ -164,12 +167,37 @@ def get_question(interview_id: str, question_id: int) -> tuple[int, str]:
 # GET /interview/{interview_id}/result
 def get_interview_result(interview_id: str) -> tuple[list[int], str]:
     # redisから各質問のスコアと会話履歴を取得する
+    interview_data = get_interview_data(interview_id)
+    if interview_data is None:
+        return [], ""
 
-    # 各質問の最後の発言(LLMからのコメント)を取得する
+    interview_results = interview_data.get("results", [])
 
-    # 総評生成用のプロンプトを組み立てる
+    scores = []
+    # ダミー除外
+    for result in interview_results[1:]:
+        if "score" in result:
+            scores.append(result["score"])
 
-    # LLMにプロンプトを送る
+    chat_histories = []
+    total_question = interview_data["total_question"]
+    for question_id in range(1, total_question + 1):
+        chat_history = get_chat_history(interview_id, question_id)
+        if chat_history is None:
+            continue
+
+        chat_histories.append(chat_history)
+
+    difficulty = Difficulty(interview_data["difficulty"])
+
+    # 収集したコメントを用いて総評を生成
+    general_review = generate_general_review(
+        difficulty=difficulty,
+        chat_histories=chat_histories,
+    )
+
+    if general_review is None:
+        return [], ""
 
     # 各質問のスコアと総評を返す
-    return [], ""
+    return scores, general_review

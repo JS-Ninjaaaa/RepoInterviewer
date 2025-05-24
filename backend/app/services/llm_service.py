@@ -11,6 +11,7 @@ from ..schemas.schemas import Difficulty
 from ..services.prompt_service import (
     get_character_prompt,
     make_feedback_prompt,
+    make_gen_general_review_prompt,
     make_gen_question_prompt,
 )
 
@@ -191,3 +192,35 @@ def generate_feedback(
 
 def generate_chat_response():
     pass
+
+
+def generate_general_review(
+    difficulty: Difficulty,
+    chat_histories: list[dict],
+) -> str | None:
+    character_prompt = get_character_prompt(difficulty)
+    # ✨ 最小修正案
+    gen_content_config = types.GenerateContentConfig(
+        max_output_tokens=1024,
+        safety_settings=safety_settings,
+        system_instruction=[types.Part.from_text(text=character_prompt)],
+        temperature=0.2,
+        top_p=0.95,
+    )
+
+    gen_general_review_prompt = make_gen_general_review_prompt(chat_histories)
+
+    contents = [
+        types.Content(
+            role="user", parts=[types.Part.from_text(text=gen_general_review_prompt)]
+        )
+    ]
+
+    model_id = get_model_id()
+    response = client.models.generate_content(
+        model=model_id,
+        contents=contents,
+        config=gen_content_config,
+    )
+
+    return response.text
