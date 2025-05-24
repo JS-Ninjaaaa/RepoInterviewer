@@ -27,35 +27,32 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
   const navigate = useNavigate();
 
   const handleStartInterview = () => {
-    const message: apiRequestValue = {
-      type: "fetchFirstQuestion",
+    const msg: apiRequestValue = {
+      type: 'fetchFirstQuestion',
       payload: {
         difficulty: currentCharacter.level,
-        total_question: currentCharacter.totalQuestion,
-      },
+        total_question: currentCharacter.totalQuestion
+      }
     };
-    vscode.postMessage(message);
-  };
-
-  const fetchfirstQuestion = (event: MessageEvent) => {
-    const { type, payload } = event.data;
-    if (type === "firstQuestion") {
-      navigate("/answer", {
-        state: {
-          ...payload,
-          currentCharacter: currentCharacter, // currentCharacterは選択中のキャラクター情報
-        },
-      });
-    } else {
-    }
+    vscode.postMessage(msg);
   };
 
   useEffect(() => {
-    window.addEventListener("message", fetchfirstQuestion);
-    return () => {
-      window.removeEventListener("message", fetchfirstQuestion);
+    const handler = (event: MessageEvent) => {
+      const { type, payload } = event.data;
+      if (type === 'firstQuestion') {
+        navigate('/answer', {
+          state: {
+            interview_id: payload.interview_id,
+            question: payload.question,
+            currentCharacter  // ← ここには必ず最新の currentCharacter が入る
+          }
+        });
+      }
     };
-  }, []);
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, [currentCharacter, navigate]);
 
   return (
     <ThemeProvider theme={theme}>

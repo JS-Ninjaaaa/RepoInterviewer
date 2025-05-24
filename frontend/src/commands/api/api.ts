@@ -1,4 +1,4 @@
-import { apiEndPoint } from "../envSample";
+import { apiEndPoint } from '../env';
 import {
   FirstQuestionResponse,
   NextQuestionResponse,
@@ -7,17 +7,15 @@ import {
 } from "../types/apiResponseValue";
 
 export async function fetchFirstQuestion(
-  zipBinary: Uint8Array,
-  payload: { difficulty: string; total_question: number },
+  zipBlob: Blob,
+  payload: { difficulty: string; total_question: number }
 ): Promise<FirstQuestionResponse> {
   const formData = new FormData();
 
   // ZIPファイルを Blob に変換して送信
-  const zipBlob = new Blob([zipBinary], { type: "application/zip" });
-  formData.append("source_code", zipBlob, "data.zip");
-
-  formData.append("difficulty", payload.difficulty);
-  formData.append("total_question", payload.total_question.toString());
+  formData.append('source_code', zipBlob, 'data.zip');
+  formData.append('difficulty', payload.difficulty);
+  formData.append('total_question', payload.total_question.toString());
 
   const res = await fetch(`${apiEndPoint}/interview`, {
     method: "POST",
@@ -32,11 +30,9 @@ export async function fetchFirstQuestion(
   return result;
 }
 
-export async function fetchFeedBack(payload: {
-  interview_id: string;
-  question_id: number;
-  answer: string;
-}): Promise<NextQuestionResponse> {
+export async function fetchFeedBack(
+  payload: { interview_id: string; question_id: number; answer: string; }
+): Promise<FeedBackResponse> {
   const { interview_id, question_id, answer } = payload;
 
   // クエリパラメターの設定
@@ -61,10 +57,9 @@ export async function fetchFeedBack(payload: {
   return result;
 }
 
-export async function fetchNextQuestion(payload: {
-  interview_id: string;
-  question_id: number;
-}): Promise<FeedBackResponse> {
+export async function fetchNextQuestion(
+  payload: { interview_id: string; question_id: number }
+): Promise<NextQuestionResponse> {
   const { interview_id, question_id } = payload;
 
   const url = `${apiEndPoint}/interview/${interview_id}?question_id=${question_id}`;

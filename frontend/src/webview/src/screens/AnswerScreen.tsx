@@ -12,6 +12,8 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import { theme } from "../theme";
 import type { apiRequestValue } from "../types/apiRequestValue";
+import type { FeedBackResponse, GeneralFeedbackResponse } from '../types/apiResponseValue';
+import type { chatMessage } from '../types/chatMessage';
 
 interface AnswerScreenProps {
   vscode: VSCodeAPI;
@@ -24,15 +26,14 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const [chatHistory, setChatHistory] = useState<string[]>([
-    location.state.question,
+  const [chatHistory, setChatHistory] = useState<chatMessage[]> ([
+    { type: 'question', text: location.state.question },
   ]); // 初期値は一問目
-  const [chatInput, setChatInput] = useState<string>("");
+  const [chatInput, setChatInput] = useState<string>('');
   const [questionId, setQuestionId] = useState<number>(1);
   const [buttonDisplay, setButtonDisplay] = useState<string>("スキップ");
   const [displayEnterBox, setDisplayEnterBox] = useState<boolean>(true);
   const [scrollTop, setScrollTop] = useState<boolean>(true);
-  const [scoreList, setScoreList] = useState<number[]>([]);
 
   const [interruptModalOpen, setInterruptModalOpen] = useState(false);
   const [skipModalOpen, setSkipModalOpen] = useState(false);
@@ -40,16 +41,45 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
   const navigate = useNavigate();
 
   const handleInterrruptInterview = () => {
-    navigate("/");
+    navigate('/start');
   };
 
   const handleQuestionSkip = () => {
     setSkipModalOpen(false);
-    fetchFeedback();
+    fetchFeedback(); // 0点を返される
   };
 
+   // フィードバッグか，深堀かを判断する
+  const judgeContinueSameQuestion = (payload: FeedBackResponse) => {
+    const lastScore = payload.score;
+
+    if (payload.continue_deep_question) { 
+      // フィードバックは来ず、次の深掘り質問が返る
+      setChatHistory((prev) => [
+        ...prev,
+        { type: 'question', text: payload.response }
+      ]);
+      setDisplayEnterBox(true);
+    } else {
+      // 深掘りフェーズ終了
+      const total  = currentCharacter.totalQuestion;
+      const lastId = payload.question_id;       
+
+      setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
+            
+      setChatHistory((prev) => [
+      ...prev,
+        {
+          type: 'feedback',
+          text: payload.response,
+          score: lastScore   
+        }
+      ])
+    }
+  }
+
   const fetchFeedback = () => {
-    setChatHistory([...chatHistory, chatInput]);
+    setChatHistory([...chatHistory, { type: 'answer', text: chatInput }]);
     setDisplayEnterBox(false);
     setScrollTop(false);
 
@@ -77,7 +107,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     vscode.postMessage(message);
   };
 
-  const moveGeneralFeedbackScreen = (payload: apiRequestValue) => {
+  const moveGeneralFeedbackScreen = (payload: GeneralFeedbackResponse) => {
     // GeneralFeedbackを受け取る関数
     navigate("/feedback", {
       state: {
@@ -100,16 +130,13 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
   const hendleExtensionMassage = (event: MessageEvent) => {
     const { type, payload } = event.data;
     if (type === "Feedback") {
-      const total = currentCharacter.totalQuestion;
-      const lastId = payload.question_id;
+      judgeContinueSameQuestion(payload)
+    } else if (type === 'nextQuestion') {
 
-      setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
-
-      setChatHistory((prev) => [...prev, payload.feedback]);
-
-      setScoreList((prev) => [...prev, payload.score]);
-    } else if (type === "nextQuestion") {
-      setChatHistory((prev) => [...prev, payload.question]);
+      setChatHistory(prev => [
+        ...prev,
+        { type: 'question', text: payload.question }
+      ]);
 
       setQuestionId(payload.question_id);
 
@@ -169,13 +196,11 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
         >
           {/* チャット履歴 */}
           <Box>
-            {chatHistory.map((text, index) => (
+            {chatHistory.map((msg, index) => (
               <Box key={index}>
-                {index === chatHistory.length - 1 ? (
-                  <Box ref={bottomRef} sx={{ mt: 2 }} />
-                ) : null}
-                {index % 3 === 0 ? (
-                  // 質問
+                {index === chatHistory.length - 1 && <Box ref={bottomRef} sx={{ mt: 2 }} />}
+
+                {msg.type === 'question' && (
                   <Box sx={{ my: 2 }}>
                     <Box
                       sx={{
@@ -192,99 +217,76 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
                         alt={currentCharacter?.name}
                         sx={{ width: 56, height: 56, m: 2 }}
                       />
-                      <Box
-                        sx={{
-                          backgroundColor: currentCharacter?.color[400],
-                          textAlign: "right",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          color: "white",
-                          minWidth: "120px",
-                          width: "24%",
-                          height: "36px",
-                        }}
-                      >
-                        <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
-                          {" "}
-                          {Math.floor(index / 3) + 1} of{" "}
-                          {currentCharacter?.total_question}
+                      <Box sx={{
+                        backgroundColor: currentCharacter?.color[400],
+                        textAlign: 'right',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        color: 'white',
+                        minWidth: '120px',
+                        width: '24%',
+                        height: '36px'
+                      }}>
+                        <Typography sx={{ fontSize: 20, fontWeight: 'bold' }}>
+                          {`${questionId} of ${currentCharacter?.totalQuestion}`}
                         </Typography>
                       </Box>
                     </Box>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Typography
-                        sx={{
-                          fontSize: 16,
-                          bgcolor: currentCharacter.color[50],
-                          p: 2,
-                          borderRadius: 2,
-                        }}
-                      >
-                        {text}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Typography sx={{ fontSize: 16, bgcolor: currentCharacter.color[50], p: 2, borderRadius: 2 }}>
+                        {msg.text}
                       </Typography>
                     </Box>
                   </Box>
-                ) : index % 3 === 1 ? (
-                  // 奇数：ユーザー側
-                  <Box sx={{ my: 2, width: "100%" }}>
-                    {/* アバターを右に寄せる */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        width: "100%",
-                      }}
-                    >
+                )}
+
+                {msg.type === 'answer' && (
+                  <Box sx={{ my: 2, width: '100%' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
                       <Avatar
                         alt={currentCharacter?.name}
                         sx={{ width: 56, height: 56, m: 2 }}
                       />
                     </Box>
-                    <Box sx={{ display: "flex", width: "100%" }}>
-                      <Box
-                        sx={{
-                          bgcolor: currentCharacter.color[50],
-                          p: 2,
-                          borderRadius: 2,
-                          width: "100%",
-                        }}
-                      >
-                        <Typography sx={{ fontSize: 16 }}>{text}</Typography>
+                    <Box sx={{ display: 'flex', width: '100%' }}>
+                      <Box sx={{ bgcolor: currentCharacter.color[50], p: 2, borderRadius: 2, width: '100%' }}>
+                        <Typography sx={{ fontSize: 16 }}>
+                          {msg.text}
+                        </Typography>
                       </Box>
                     </Box>
                   </Box>
-                ) : (
-                  // フィードバック
+                )}
+
+                {msg.type === 'feedback' && (
                   <Box sx={{ my: 2 }}>
                     <Avatar
                       src={currentCharacter?.image}
                       alt={currentCharacter?.name}
                       sx={{ width: 56, height: 56, m: 2 }}
                     />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        bgcolor: currentCharacter.color[50],
-                        p: 2,
-                        borderRadius: 2,
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          display: "flex",
-                          alignItems: "baseline",
-                          flexDirection: "row",
-                          fontSize: "36px",
-                          color: currentCharacter.color[400],
-                        }}
-                      >
-                        {scoreList[Math.floor(index / 3)]}
-                        <Typography sx={{ fontSize: "24px" }}>点</Typography>
+                    <Box sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      bgcolor: currentCharacter.color[50],
+                      p: 2,
+                      borderRadius: 2
+                    }}>
+                      <Typography sx={{
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        flexDirection: 'row',
+                        fontSize: '36px',
+                        color: currentCharacter.color[400]
+                      }}>
+                        {msg.score}
+                        <Typography sx={{ fontSize: '24px' }}>点</Typography>
                       </Typography>
-                      <Typography sx={{ fontSize: "16px" }}>{text}</Typography>
+                      <Typography sx={{ fontSize: '16px' }}>
+                        {msg.text}
+                      </Typography>
                     </Box>
                   </Box>
                 )}

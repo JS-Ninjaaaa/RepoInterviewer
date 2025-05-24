@@ -12,10 +12,9 @@ const FinelFeedBackScreen: React.FC<GeneralFeedbackScreenProps> = ({
   vscode,
 }) => {
   const location = useLocation();
-
-  const currentCharacter = location.state.currentCharacter;
-  const generalFeedback = location.state.payload.gneralFeedback;
-  const scores = location.state.payload.scores;
+  
+  const { currentCharacter, payload } = location.state;
+  const { General_review: generalFeedback, scores } = payload;
 
   let totalScore: number = 0;
   for (let i = 0; i < scores.length; i++) {
@@ -25,7 +24,7 @@ const FinelFeedBackScreen: React.FC<GeneralFeedbackScreenProps> = ({
   const navigate = useNavigate();
 
   const moveFirstScreen = () => {
-    navigate("/");
+    navigate('/start')
   };
 
   return (

@@ -14,16 +14,16 @@ export async function handleWebviewMessage(
 ) {
   switch (message.type) {
     case "fetchFirstQuestion": {
-      const zipBinary = await fetchFiles();
+      const zipBlob: Blob = await fetchFiles();
       try {
         const questionInfo = await fetchFirstQuestion(
-          zipBinary,
-          message.payload,
-        );
-
+          zipBlob, 
+          message.payload
+        ); 
+        
         panel.webview.postMessage({
           type: "firstQuestion",
-          payload: { questionInfo },
+          payload:  questionInfo, 
         });
         break;
       } catch (err: unknown) {
@@ -41,7 +41,7 @@ export async function handleWebviewMessage(
 
         panel.webview.postMessage({
           type: "nextQuestion",
-          payload: { nextQuestionInfo },
+          payload: nextQuestionInfo,
         });
         break;
       } catch (err: unknown) {
@@ -55,11 +55,17 @@ export async function handleWebviewMessage(
 
     case "fetchFeedback": {
       try {
-        const feedback = await fetchFeedBack(message.payload);
+        const feedback = await fetchFeedBack(message.payload); 
+        
+        // APIからcontinue_deep_questionを返されなかったら
+        if (typeof feedback.continue_deep_question === "undefined") {
+
+          feedback.continue_deep_question = false;
+        }
 
         panel.webview.postMessage({
           type: "Feedback",
-          payload: { feedback },
+          payload: feedback,
         });
         break;
       } catch (err: unknown) {
@@ -78,7 +84,7 @@ export async function handleWebviewMessage(
 
         panel.webview.postMessage({
           type: "GeneralFeedback",
-          payload: { generalFeedback },
+          payload: generalFeedback,
         });
         break;
       } catch (err: unknown) {
