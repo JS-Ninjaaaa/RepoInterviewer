@@ -140,12 +140,13 @@ def get_chat_response():
 def get_question(interview_id: str, question_id: int
 )-> tuple[int, str]:
     # 配列番号と指定の問題番号を一致させる
-    question_id -= 1
-    if question_id < 0:
+    if question_id < 1:
         print("error",flush=True)
         return 0, ""
     # [question_id]の問題に関するやり取りを取得
     history = get_chat_history(interview_id, question_id)
+    if history is None:
+        return 0, ""
     # 最初のmodel発言（つまり質問）を取得
     question = next(
         (item["content"] for item in history if item.get("role") == "model"),

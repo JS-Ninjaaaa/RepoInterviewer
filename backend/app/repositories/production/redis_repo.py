@@ -31,15 +31,15 @@ def create_interview_cache(
                 "score": 0,
                 "comment": "",
             }
-            for _ in range(total_question)
+            for _ in range(total_question+1)
         ],
     }
     redis_client.set(interview_id, json.dumps(interview_data), ex=3600)
 
     # 各質問の会話履歴を保存する
-    for question_id in range(total_question):
+    for question_id in range(1,total_question + 1):
         question_data = {
-            "history": [{"role": "model", "content": questions[question_id]}]
+            "history": [{"role": "model", "content": questions[question_id - 1]}]
         }
         redis_client.set(
             f"{interview_id}-{question_id}",
