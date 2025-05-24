@@ -45,16 +45,12 @@ def make_gen_question_prompt(source_code: str, total_question: int) -> str:
 
 
 def make_feedback_prompt(source_code: str) -> str:
+    parent_dir = Path(__file__).parent
+    file_path = parent_dir / "prompts" / "user" / "gen_feedback.txt"
 
-    return f"""以下のソースコードに対するユーザーとのやりとり履歴を元に、
-コードの良い点・改善点を挙げ、100点満点で点数をつけてください。
+    with open(file_path, "r", encoding="utf-8") as f:
+        prompt_template = f.read()
 
-# ソースコード
-{source_code}
-
-# 出力フォーマット
-次の形式の **JSON配列** で、必ず2要素のみを含めてください：
-["フィードバック（日本語）", "点数（0〜100の整数、文字列として）"]
-
-⚠️ フォーマットが正しくない場合、処理エラーになります。
-"""
+    return prompt_template.format(
+        source_code=source_code,
+    )
