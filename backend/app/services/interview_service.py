@@ -1,6 +1,6 @@
 from pathlib import Path
 from uuid import uuid4
-
+# 開発モードで fake_repoを使う（Redis）
 from ..repositories.fake.redis_repo import (
     create_interview_cache,
     get_chat_history,
@@ -95,7 +95,7 @@ def get_feedback(
     saved_files = get_source_code(session_dir)
     formatted_code = format_source_code(saved_files)
 
-    # LLMにプロンプトを送ってFBを生成する
+    # LLMにプロンプトを送ってFBを生成する（**テストでも本番でも動く**）
     feedback = generate_feedback(formatted_code, chat_history)
     if feedback is None:
         return 0, ""
