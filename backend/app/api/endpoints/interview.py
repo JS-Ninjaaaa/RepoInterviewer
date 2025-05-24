@@ -124,25 +124,18 @@ def get_interview_interview_id(
 @router.get(
     "/{interview_id}/result",
     response_model=InterviewInterviewIdResultGetResponse,
-    responses={"500": {"model": InterviewInterviewIdResultGetErrorResponse}},
+    responses={500: {"model": InterviewInterviewIdResultGetErrorResponse}},
     tags=["InterviewAPI"],
 )
-def get_interview_interview_id_result(
-    interview_id: str,
-) -> Union[
-    InterviewInterviewIdResultGetResponse,
-    InterviewInterviewIdResultGetErrorResponse,
-]:
-    """
-    各質問の点数と総評を取得
-    """
+def get_interview_interview_id_result(interview_id: str):
     scores, general_review = get_interview_result(interview_id)
-    if scores == [] and general_review == "":
-        return InterviewInterviewIdResultGetErrorResponse(
-            error_message="総評を取得できませんでした"
-        )
 
-    return InterviewInterviewIdResultGetResponse(
-        scores=scores,
-        general_review=general_review,
-    )
+    if scores == [] and general_review == "":
+        raise HTTPException(
+            status_code=500,
+            detail="総評を取得できませんでした",
+        )
+    return {
+        "scores": scores,
+        "general_review": general_review,
+    }
