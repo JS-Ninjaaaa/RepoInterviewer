@@ -5,6 +5,7 @@ from fastapi import APIRouter, Form, UploadFile
 from ...schemas.schemas import (
     Difficulty,
     InterviewInterviewIdGetResponse,
+    InterviewInterviewIdGetErrorResponse,
     InterviewInterviewIdPostErrorResponse,
     InterviewInterviewIdPostRequest,
     InterviewInterviewIdPostResponse,
@@ -110,8 +111,13 @@ def get_interview_interview_id(
     """
     指定された質問IDの質問文を取得
     """
-    question = get_question(interview_id, question_id)
-    return InterviewInterviewIdGetResponse(question_id=question_id, question=question)
+    found_question_id, found_question_text = get_question(interview_id, question_id)
+    if found_question_text == "" and found_question_id == 0 :
+        return InterviewInterviewIdGetErrorResponse(
+            error_message="指定された質問が見つかりませんでした"
+        )
+
+    return InterviewInterviewIdGetResponse(question_id=found_question_id, question=found_question_text)
 
 
 @router.get(

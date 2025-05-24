@@ -136,9 +136,11 @@ def get_chat_response():
 
 
 # GET /interview/{interview_id}
-def get_question(interview_id: str, question_id: int) -> str:
+def get_question(interview_id: str, question_id: int
+)-> tuple[int, str]:
     # redisから質問文の一覧を取得する
-
+    if question_id == "":
+        return 0, ""
     # question_idに対応する質問文を取得する
 
     # 質問文を返す
