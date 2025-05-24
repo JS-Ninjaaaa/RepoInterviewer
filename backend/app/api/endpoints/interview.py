@@ -2,16 +2,24 @@ from typing import Union
 
 from fastapi import APIRouter, Form, UploadFile
 
-from ...schemas.schemas import (Difficulty, InterviewInterviewIdGetResponse,
-                                InterviewInterviewIdPostErrorResponse,
-                                InterviewInterviewIdPostRequest,
-                                InterviewInterviewIdPostResponse,
-                                InterviewInterviewIdResultGetErrorResponse,
-                                InterviewInterviewIdResultGetResponse,
-                                InterviewPostErrorResponse,
-                                InterviewPostRequest, InterviewPostResponse)
-from ...services.interview_service import (get_interview_result, get_question,
-                                           get_response, set_up_interview)
+from ...schemas.schemas import (
+    Difficulty,
+    InterviewInterviewIdGetResponse,
+    InterviewInterviewIdPostErrorResponse,
+    InterviewInterviewIdPostRequest,
+    InterviewInterviewIdPostResponse,
+    InterviewInterviewIdResultGetErrorResponse,
+    InterviewInterviewIdResultGetResponse,
+    InterviewPostErrorResponse,
+    InterviewPostRequest,
+    InterviewPostResponse,
+)
+from ...services.interview_service import (
+    get_interview_result,
+    get_question,
+    get_response,
+    set_up_interview,
+)
 
 router = APIRouter()
 
@@ -39,12 +47,14 @@ async def post_interview(
         )
     except Exception as e:
         return InterviewPostErrorResponse(
-            error_message=f"Invalid request body: {str(e)}"
+            error_message=f"リクエストボディが不正です: {str(e)}"
         )
 
     interview_id, first_question = set_up_interview(request_body)
     if first_question == "":
-        return InterviewPostErrorResponse(error_message="Failed to set up interview")
+        return InterviewPostErrorResponse(
+            error_message="面接のセットアップに失敗しました"
+        )
 
     return InterviewPostResponse(
         interview_id=interview_id,
@@ -72,15 +82,22 @@ def post_interview_interview_id(
         )
     except Exception as e:
         return InterviewInterviewIdPostErrorResponse(
-            error_message=f"Invalid request body: {str(e)}"
+            error_message=f"リクエストボディが不正です: {str(e)}"
         )
 
-    question_id, response_text, score = get_response(interview_id, request_body)
+    score, comment = get_response(interview_id, request_body)
+
+    if score == 0 and comment == "":
+        return InterviewInterviewIdPostErrorResponse(
+            error_message="応答の生成に失敗しました"
+        )
+
     return InterviewInterviewIdPostResponse(
-        question_id=question_id,
-        response=response_text,
+        question_id=request_body.question_id,
         score=score,
+        response=comment,
     )
+
 
 @router.get(
     "/{interview_id}",

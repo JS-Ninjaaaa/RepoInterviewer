@@ -39,8 +39,8 @@ class InterviewInterviewIdPostRequest(BaseModel):
 
 class InterviewInterviewIdPostResponse(BaseModel):
     question_id: int
-    response: str
     score: int
+    response: str
 
 
 class InterviewInterviewIdPostErrorResponse(BaseModel):
