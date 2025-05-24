@@ -1,7 +1,8 @@
+from idlelib.macosx import hideTkConsole
 from pathlib import Path
 from uuid import uuid4
 # 開発モードで fake_repoを使う（Redis）
-from ..repositories.fake.redis_repo import (
+from ..repositories.production.redis_repo import (
     create_interview_cache,
     get_chat_history,
     get_interview_data,
@@ -138,13 +139,23 @@ def get_chat_response():
 # GET /interview/{interview_id}
 def get_question(interview_id: str, question_id: int
 )-> tuple[int, str]:
-    # redisから質問文の一覧を取得する
-    if question_id == "":
+    # 配列番号と指定の問題番号を一致させる
+    question_id -= 1
+    if question_id < 0:
+        print("error",flush=True)
         return 0, ""
-    # question_idに対応する質問文を取得する
-
+    # [question_id]の問題に関するやり取りを取得
+    history = get_chat_history(interview_id, question_id)
+    # 最初のmodel発言（つまり質問）を取得
+    question = next(
+        (item["content"] for item in history if item.get("role") == "model"),
+        None
+    )
+    # 問題文を取得できないため
+    if question is None:
+        return 0, ""
     # 質問文を返す
-    return ""
+    return question_id, question
 
 
 # GET /interview/{interview_id}/result
