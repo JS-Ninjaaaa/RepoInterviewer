@@ -1,10 +1,20 @@
 from pathlib import Path
 from uuid import uuid4
-
-from ..repositories.redis_repo import create_interview_cache
-from ..schemas.schemas import (InterviewInterviewIdPostRequest,
-                               InterviewPostRequest)
-from ..services.llm_service import generate_question
+# 開発モードで fake_repoを使う（Redis）
+from ..repositories.fake.redis_repo import (
+    create_interview_cache,
+    get_chat_history,
+    get_interview_data,
+    update_chat_history,
+    update_interview_result,
+)
+from ..repositories.production.source_repo import get_source_code
+from ..schemas.schemas import (
+    Difficulty,
+    InterviewInterviewIdPostRequest,
+    InterviewPostRequest,
+)
+from ..services.llm_service import generate_feedback, generate_question
 from ..services.prompt_service import format_source_code
 from ..utils.zip_handler import extract_zip
 
@@ -44,22 +54,85 @@ def set_up_interview(
 
 # POST /interview/{interview_id}
 def get_response(
-    interview_id: str, request_body: InterviewInterviewIdPostRequest
-) -> str:
+    interview_id: str,
+    request_body: InterviewInterviewIdPostRequest,
+) -> tuple[int, str]:  # 点数, コメント
+    interview_data = get_interview_data(interview_id)
+    if interview_data is None:
+        raise ValueError("面接データが見つかりません")
+
+    difficulty = Difficulty(interview_data["difficulty"])
+
+    match difficulty:
+        case Difficulty.easy | Difficulty.normal:
+            return get_feedback(interview_id, request_body)
+        case Difficulty.hard | Difficulty.extreme:
+            raise NotImplementedError()
+
+
+# 初級〜中級のFBを取得する
+def get_feedback(
+    interview_id: str,
+    request_body: InterviewInterviewIdPostRequest,
+) -> tuple[int, str]:  # 点数, コメント
     # redisから会話履歴を取得する
+    question_id = request_body.question_id
+    chat_history = get_chat_history(interview_id, question_id)
 
-    # ユーザーからのメッセージを会話履歴に追加する
+    if chat_history is None:
+        return 0, ""
 
-    # 返答生成用のプロンプトを組み立てる
+    # 会話履歴にユーザーのメッセージを追加する
+    chat_history.append(
+        {
+            "role": "user",
+            "content": request_body.message,
+        }
+    )
 
-    # LLMにプロンプトを送る
+    # 採点対象のレポジトリ内容を整理する
+    session_dir = Path("tmp") / interview_id
+    saved_files = get_source_code(session_dir)
+    formatted_code = format_source_code(saved_files)
 
-    # LLMのメッセージを会話履歴に追加する
+    # LLMにプロンプトを送ってFBを生成する（**テストでも本番でも動く**）
+    feedback = generate_feedback(formatted_code, chat_history)
+    if feedback is None:
+        return 0, ""
+
+    score = feedback["score"]
+    comment = feedback["comment"]
+
+    # 会話履歴にLLMのメッセージを追加する
+    chat_history.append(
+        {
+            "role": "model",
+            "content": comment,
+        }
+    )
 
     # redisに会話履歴を保存する
+    update_chat_history(
+        interview_id=interview_id,
+        question_id=question_id,
+        chat_history=chat_history,
+    )
 
-    # LLMのメッセージを返す
-    return ""
+    # redisに評価結果を追加する
+    update_interview_result(
+        interview_id=interview_id,
+        question_id=question_id,
+        score=score,
+        comment=comment,
+    )
+
+    # 点数とコメントを返す
+    return score, comment
+
+
+# 上級〜激詰の応答を取得する
+def get_chat_response():
+    pass
 
 
 # GET /interview/{interview_id}

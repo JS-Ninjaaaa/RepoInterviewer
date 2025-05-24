@@ -42,3 +42,15 @@ def make_gen_question_prompt(source_code: str, total_question: int) -> str:
         source_code=source_code,
         total_question=total_question,
     )
+
+
+def make_feedback_prompt(source_code: str) -> str:
+    parent_dir = Path(__file__).parent
+    file_path = parent_dir / "prompts" / "user" / "gen_feedback.txt"
+
+    with open(file_path, "r", encoding="utf-8") as f:
+        prompt_template = f.read()
+
+    return prompt_template.format(
+        source_code=source_code,
+    )
