@@ -2,13 +2,13 @@ import { amber, lightGreen, blue, deepPurple } from "@mui/material/colors";
 import { Character } from "../types/character";
 
 import yuzuPng from "../assets/images/yuzu.png";
+import haruPng from "../assets/images/haru.png";
 import sakiPng from "../assets/images/saki.png";
-import haruPng from "../assets/images/Haru.png";
 import renPng from "../assets/images/ren.png";
 
 import wholeYuzuPng from "../assets/images/wholeYuzu.png";
-import wholeSakiPng from "../assets/images/wholeSaki.png";
 import wholeHaruPng from "../assets/images/wholeHaru.png";
+import wholeSakiPng from "../assets/images/wholeSaki.png";
 import wholeRenPng from "../assets/images/wholeRen.png";
 
 export const characters: Character[] = [
@@ -26,24 +26,24 @@ export const characters: Character[] = [
   {
     level: "normal",
     totalQuestion: 5,
-    name: "サキ",
-    text: "Saki",
+    name: "ハル",
+    text: "Haru",
     title: "先輩エンジニア",
     quotes: ["この責務分離、もう一歩かな", "設計思想としては筋が通ってる"],
     image: haruPng,
     wholeImage: wholeHaruPng,
-    color: blue,
+    color: lightGreen,
   },
   {
     level: "hard",
     totalQuestion: 2,
-    name: "ハル",
-    text: "Haru",
+    name: "サキ",
+    text: "Saki",
     title: "辛口メンター",
     quotes: ["このコード、保守性ゼロ", "それ、Goの文法理解してる？"],
     image: sakiPng,
     wholeImage: wholeSakiPng,
-    color: lightGreen,
+    color: blue,
   },
   {
     level: "extreme",
