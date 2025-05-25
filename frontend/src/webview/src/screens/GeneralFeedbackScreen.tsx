@@ -81,10 +81,10 @@ const FinelFeedBackScreen: React.FC<GeneralFeedbackScreenProps> = ({
             borderRadius: 2,
             fontSize: 20,
             p: 2,
-            mb: "60px",
+            mb: "30px",
           }}
         >
-          <Typography sx={{}}>{general_review}</Typography>
+          <Typography sx={{ whiteSpace: "pre-wrap" }}>{general_review}</Typography>
         </Box>
       </Box>
       <Box
@@ -94,6 +94,7 @@ const FinelFeedBackScreen: React.FC<GeneralFeedbackScreenProps> = ({
           gap: "5%",
           justifyContent: "center",
           alignItems: "center",
+          mb:'30px',
         }}
       >
         <XIcon
