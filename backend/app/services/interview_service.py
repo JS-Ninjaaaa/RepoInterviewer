@@ -95,7 +95,7 @@ def get_feedback(
     chat_history = get_chat_history(interview_id, question_id)
 
     if chat_history is None:
-        return 0, ""
+        return 0, "", False
 
     # 会話履歴にユーザーのメッセージを追加する
     chat_history.append(
@@ -112,7 +112,7 @@ def get_feedback(
     # LLMにプロンプトを送ってFBを生成する（**テストでも本番でも動く**）
     feedback = generate_feedback(interview_id, formatted_code, chat_history)
     if feedback is None:
-        return 0, ""
+        return 0, "", False
 
     score = feedback["score"]
     comment = feedback["comment"]
