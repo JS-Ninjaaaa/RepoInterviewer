@@ -12,7 +12,7 @@ export interface FeedBackResponse {
   question_id: number;
   response: string;
   score: number;   
-  continue_deep_question: boolean;
+  continue_question: boolean;
 }
 
 export interface GeneralFeedbackResponse {
