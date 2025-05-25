@@ -62,7 +62,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
       stopThinking();
       const lastScore = payload.score;
 
-      if (payload.continue_deep_question) { 
+      if (payload.continue_question) { 
         // フィードバックは来ず、次の深掘り質問が返る
         setChatHistory(prev => [
           ...prev,
