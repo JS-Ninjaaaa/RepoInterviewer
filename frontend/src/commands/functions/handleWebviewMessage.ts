@@ -57,10 +57,10 @@ export async function handleWebviewMessage(
       try {
         const feedback = await fetchFeedBack(message.payload); 
         
-        // APIからcontinue_deep_questionを返されなかったら
-        if (typeof feedback.continue_deep_question === "undefined") {
+        // APIからcontinue_questionを返されなかったら
+        if (typeof feedback.continue_question === "undefined") {
 
-          feedback.continue_deep_question = false;
+          feedback.continue_question = false;
         }
 
         panel.webview.postMessage({
