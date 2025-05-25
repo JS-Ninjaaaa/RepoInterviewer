@@ -42,6 +42,7 @@ class InterviewInterviewIdPostResponse(BaseModel):
     question_id: int
     score: int
     response: str
+    continue_question: bool
 
 
 class InterviewInterviewIdPostErrorResponse(BaseModel):
