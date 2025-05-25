@@ -144,10 +144,6 @@ def increment_counter_and_update_history(
     question_id: int,
     new_entries: list[dict[str, str]],
 ) -> tuple[int, list[dict[str, str]]]:
-    """
-    counter を 1 増やし、履歴を更新して保存する
-    Returns: 新しい counter 値と、更新後の履歴
-    """
     redis_client = get_redis_client()
     key = f"{interview_id}-{question_id}"
     raw = redis_client.get(key)
@@ -156,10 +152,19 @@ def increment_counter_and_update_history(
 
     data = json.loads(raw)
 
-    counter = data.get("counter", 1)
+    # 明示的なチェック
+    raw_counter = data.get("counter")
+    if raw_counter is None:
+        raise ValueError(f"counterが存在しません: {interview_id}-{question_id}")
+    counter = int(raw_counter)
+
     history = data.get("history", [])
 
-    # 履歴を追加してカウントをインクリメント
+    if counter >= 4:
+        raise ValueError(
+            f"この質問はすでに終了しています: {interview_id}-{question_id}"
+        )
+
     history.extend(new_entries)
     counter += 1
 
