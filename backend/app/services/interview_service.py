@@ -71,7 +71,7 @@ def set_up_interview(
 def get_response(
     interview_id: str,
     request_body: InterviewInterviewIdPostRequest,
-) -> tuple[int, str]:  # 点数, コメント
+) -> tuple[int, str, bool]:  # 点数, コメント，深掘りモード
     interview_data = get_interview_data(interview_id)
     if interview_data is None:
         raise ValueError("面接データが見つかりません")
@@ -82,14 +82,14 @@ def get_response(
         case Difficulty.easy | Difficulty.normal:
             return get_feedback(interview_id, request_body)
         case Difficulty.hard | Difficulty.extreme:
-            raise NotImplementedError()
+            raise get_chat_response(interview_id, request_body)
 
 
 # 初級〜中級のFBを取得する
 def get_feedback(
     interview_id: str,
     request_body: InterviewInterviewIdPostRequest,
-) -> tuple[int, str]:  # 点数, コメント
+) -> tuple[int, str, bool]:  # 点数, コメント，フラグ
     # redisから会話履歴を取得する
     question_id = request_body.question_id
     chat_history = get_chat_history(interview_id, question_id)
@@ -141,12 +141,15 @@ def get_feedback(
         comment=comment,
     )
 
-    # 点数とコメントを返す
-    return score, comment
+    # 点数とコメントを返す（深掘りモードオフ）
+    return score, comment, False
 
 
 # 上級〜激詰の応答を取得する
-def get_chat_response():
+def get_chat_response(
+    interview_id: str,
+    request_body: InterviewInterviewIdPostRequest,
+) -> tuple[int, str, bool]:
     pass
 
 
