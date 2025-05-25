@@ -24,7 +24,7 @@ export const characters: Character[] = [
     color: amber,
   },
   {
-    level: "nomal",
+    level: "normal",
     totalQuestion: 5,
     name: "サキ",
     text: "Saki",
