@@ -20,6 +20,7 @@ def create_interview_cache(
     difficulty: Difficulty,
     total_question: int,
     questions: list[str],
+    deep_question_mode: bool,
 ):
     redis_client = get_redis_client()
 
@@ -39,9 +40,12 @@ def create_interview_cache(
 
     # 各質問の会話履歴を保存する
     for question_id in range(1, total_question + 1):
-        question_data = {
-            "history": [{"role": "model", "content": questions[question_id - 1]}]
-        }
+        history = [{"role": "model", "content": questions[question_id - 1]}]
+        # 上級・激詰の場合，深掘りカウンターを用意
+        if deep_question_mode:
+            question_data = {"counter": 1, "history": history}
+        else:
+            question_data = {"history": history}
         redis_client.set(
             f"{interview_id}-{question_id}",
             json.dumps(question_data),
@@ -94,7 +98,15 @@ def update_chat_history(
 ) -> list[dict[str, str]]:
     redis_client = get_redis_client()
     key = f"{interview_id}-{question_id}"
-    redis_client.set(key, json.dumps({"history": chat_history}), ex=3600)
+    raw = redis_client.get(key)
+    data = json.loads(raw) if raw else {}
+
+    # counterが存在する場合は維持
+    updated_data = {"history": chat_history}
+    if "counter" in data:
+        updated_data["counter"] = data["counter"]
+
+    redis_client.set(key, json.dumps(updated_data), ex=3600)
     return chat_history
 
 
@@ -124,3 +136,38 @@ def update_interview_result(
 
     redis_client.set(interview_id, json.dumps(interview_data), ex=3600)
     return interview_data
+
+
+# 深掘り用
+def increment_counter_and_update_history(
+    interview_id: str,
+    question_id: int,
+    new_entries: list[dict[str, str]],
+) -> tuple[int, list[dict[str, str]]]:
+    redis_client = get_redis_client()
+    key = f"{interview_id}-{question_id}"
+    raw = redis_client.get(key)
+    if raw is None:
+        raise ValueError(f"{key} のデータが存在しません")
+
+    data = json.loads(raw)
+
+    # 明示的なチェック
+    raw_counter = data.get("counter")
+    if raw_counter is None:
+        raise ValueError(f"counterが存在しません: {interview_id}-{question_id}")
+    counter = int(raw_counter)
+
+    history = data.get("history", [])
+
+    if counter >= 4:
+        raise ValueError(
+            f"この質問はすでに終了しています: {interview_id}-{question_id}"
+        )
+
+    history.extend(new_entries)
+    counter += 1
+
+    redis_client.set(key, json.dumps({"counter": counter, "history": history}), ex=3600)
+
+    return counter, history
