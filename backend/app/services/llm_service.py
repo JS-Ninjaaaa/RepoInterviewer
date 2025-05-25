@@ -6,7 +6,7 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel
 
-from ..repositories.fake.redis_repo import get_interview_data
+from ..repositories.production.redis_repo import get_interview_data
 from ..schemas.schemas import Difficulty
 from ..services.prompt_service import (
     get_character_prompt,
