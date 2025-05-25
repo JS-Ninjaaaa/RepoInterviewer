@@ -23,6 +23,7 @@ export async function openWindow(
     vscode.ViewColumn.Two, // ← 右側に表示！
     {
       enableScripts: true,
+      retainContextWhenHidden: true,
       localResourceRoots: [
         vscode.Uri.joinPath(extensionUri, "build", "webview"),
       ],
