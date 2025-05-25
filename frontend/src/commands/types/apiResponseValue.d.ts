@@ -17,5 +17,5 @@ export interface FeedBackResponse {
 
 export interface GeneralFeedbackResponse {
   scores: number[];
-  General_review: string;
+  general_review: string;
 }
