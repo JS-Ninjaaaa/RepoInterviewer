@@ -41,9 +41,6 @@ paths:
                     type: string
                   question:
                     type: string
-                  continue_question:
-                    type: boolean
-                    description: この質問への回答がまだ続く場合は true
         '400':
           description: Bad Request
         '500':
