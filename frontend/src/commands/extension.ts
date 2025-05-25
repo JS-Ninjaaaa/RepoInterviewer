@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.StatusBarAlignment.Right,
     1000,
   );
-  myStatusBarItem.text = "Ⓜ️モード";
+  myStatusBarItem.text = "🟢 Repo";
   myStatusBarItem.tooltip = "クリックして面接開始";
   myStatusBarItem.command = "repointerviewer.repointerviewer";
   myStatusBarItem.show();
