@@ -6,6 +6,7 @@ from ..repositories.production.redis_repo import (
     create_interview_cache,
     get_chat_history,
     get_interview_data,
+    increment_counter_and_update_history,
     update_chat_history,
     update_interview_result,
 )
@@ -16,6 +17,7 @@ from ..schemas.schemas import (
     InterviewPostRequest,
 )
 from ..services.llm_service import (
+    generate_chat_response,
     generate_feedback,
     generate_general_review,
     generate_question,
@@ -35,7 +37,12 @@ def set_up_interview(
     zip_bytes = request_body.source_code
     session_dir = Path("tmp") / interview_id
     saved_files = extract_zip(zip_bytes, session_dir)
-
+    # 難易度によって返すフラグを変える
+    match request_body.difficulty:
+        case Difficulty.hard | Difficulty.extreme:
+            continue_question = True
+        case _:
+            continue_question = False
     # 質問文を生成する
     formatted_code = format_source_code(saved_files)
     questions = generate_question(
@@ -53,6 +60,7 @@ def set_up_interview(
         difficulty=request_body.difficulty,
         total_question=request_body.total_question,
         questions=questions,
+        deep_question_mode=continue_question,  # 難易度に応じてredisに追加
     )
 
     # 面接IDと最初の質問文を返す
@@ -63,7 +71,7 @@ def set_up_interview(
 def get_response(
     interview_id: str,
     request_body: InterviewInterviewIdPostRequest,
-) -> tuple[int, str]:  # 点数, コメント
+) -> tuple[int, str, bool]:  # 点数, コメント，深掘りモード
     interview_data = get_interview_data(interview_id)
     if interview_data is None:
         raise ValueError("面接データが見つかりません")
@@ -74,14 +82,14 @@ def get_response(
         case Difficulty.easy | Difficulty.normal:
             return get_feedback(interview_id, request_body)
         case Difficulty.hard | Difficulty.extreme:
-            raise NotImplementedError()
+            return get_chat_response(interview_id, request_body)
 
 
 # 初級〜中級のFBを取得する
 def get_feedback(
     interview_id: str,
     request_body: InterviewInterviewIdPostRequest,
-) -> tuple[int, str]:  # 点数, コメント
+) -> tuple[int, str, bool]:  # 点数, コメント，フラグ
     # redisから会話履歴を取得する
     question_id = request_body.question_id
     chat_history = get_chat_history(interview_id, question_id)
@@ -96,7 +104,6 @@ def get_feedback(
             "content": request_body.message,
         }
     )
-
     # 採点対象のレポジトリ内容を整理する
     session_dir = Path("tmp") / interview_id
     saved_files = get_source_code(session_dir)
@@ -133,13 +140,64 @@ def get_feedback(
         comment=comment,
     )
 
-    # 点数とコメントを返す
-    return score, comment
+    # 点数とコメントを返す（深掘りモードオフ）
+    return score, comment, False
 
 
 # 上級〜激詰の応答を取得する
-def get_chat_response():
-    pass
+# TODO 3回のループが終わると点数をアップデートしたい
+def get_chat_response(
+    interview_id: str,
+    request_body: InterviewInterviewIdPostRequest,
+) -> tuple[int, str, bool]:
+    question_id = request_body.question_id
+    history = get_chat_history(interview_id, question_id)
+    if history is None:
+        return 0, "", True
+
+    # 直近の user 発言を履歴に追加
+    user_entry = {"role": "user", "content": request_body.message}
+    history.append(user_entry)
+
+    # コード整形
+    session_dir = Path("tmp") / interview_id
+    formatted_code = format_source_code(get_source_code(session_dir))
+
+    # 逐次採点
+    feedback = generate_chat_response(interview_id, formatted_code, history)
+    if feedback is None:
+        return 0, "", True
+
+    score = feedback["score"]
+    comment = feedback["comment"]
+    model_entry = {"role": "model", "content": comment}
+
+    # 更新する履歴
+    new_entries = [user_entry, model_entry]
+
+    # 履歴とcounterを更新（+1）
+    updated_counter, updated_history = increment_counter_and_update_history(
+        interview_id, question_id, new_entries
+    )
+
+    if updated_counter > 4:
+        raise ValueError(f"この質問はすでに終了済みです: question_id={question_id}")
+
+    if updated_counter == 4:
+        feedback = generate_feedback(interview_id, formatted_code, updated_history)
+        if feedback is None:
+            return 0, "", True
+
+        score = feedback["score"]
+        comment = feedback["comment"]
+
+        updated_history.append({"role": "model", "content": comment})
+        update_chat_history(interview_id, question_id, updated_history)
+        update_interview_result(interview_id, question_id, score, comment)
+
+        return score, comment, False
+
+    return score, comment, True
 
 
 # GET /interview/{interview_id}
