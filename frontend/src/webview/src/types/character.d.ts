@@ -1,7 +1,7 @@
 import type { Color } from "@mui/material";
 
 export interface Character {
-  level: "easy" | "nomal" | "hard" | "extreme";
+  level: "easy" | "normal" | "hard" | "extreme";
   totalQuestion: number;
   name: string;
   text: string;
