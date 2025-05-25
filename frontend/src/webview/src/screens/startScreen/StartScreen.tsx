@@ -7,6 +7,7 @@ import { useLoading } from '../context/LoadingContext';
 
 import type { apiRequestValue } from "../../types/apiRequestValue";
 import CharacterSelectCards from "./components/CharacterSelectCards";
+import Header from "./components/Header";
 
 interface StartScreenProps {
   vscode: VSCodeAPI;
@@ -70,6 +71,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           minWidth: "320px",
         }}
       >
+        <Header currentCharacter={currentCharacter}/>
         <Typography variant="h5" sx={{ fontWeight: "bold", mt: "20%" }}>
           面接官選択
         </Typography>
