@@ -14,7 +14,7 @@ const FinelFeedBackScreen: React.FC<GeneralFeedbackScreenProps> = ({
   const location = useLocation();
   
   const { currentCharacter, payload } = location.state;
-  const { General_review: General_review, scores } = payload;
+  const { general_review, scores } = payload;
 
   let totalScore: number = 0;
   for (let i = 0; i < scores.length; i++) {
@@ -84,7 +84,7 @@ const FinelFeedBackScreen: React.FC<GeneralFeedbackScreenProps> = ({
             mb: "60px",
           }}
         >
-          <Typography sx={{}}>{General_review}</Typography>
+          <Typography sx={{}}>{general_review}</Typography>
         </Box>
       </Box>
       <Box
