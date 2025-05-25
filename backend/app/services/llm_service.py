@@ -96,7 +96,6 @@ def generate_question(
         temperature=0.1,
         top_p=0.95,
     )
-
     # 質問文を生成するプロンプトを作成する
     gen_question_prompt = make_gen_question_prompt(source_code, total_question)
     contents = [

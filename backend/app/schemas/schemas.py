@@ -26,6 +26,7 @@ class InterviewPostRequest(BaseModel):
 class InterviewPostResponse(BaseModel):
     interview_id: str
     question: str
+    continue_question: bool  # 激詰・上級ならtrue
 
 
 class InterviewPostErrorResponse(BaseModel):
