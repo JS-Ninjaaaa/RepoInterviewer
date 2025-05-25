@@ -35,7 +35,14 @@ def set_up_interview(
     zip_bytes = request_body.source_code
     session_dir = Path("tmp") / interview_id
     saved_files = extract_zip(zip_bytes, session_dir)
-
+    # 難易度によって返すフラグを変える
+    if (
+        request_body.difficulty == Difficulty.hard
+        or request_body.difficulty == Difficulty.extreme
+    ):
+        continue_question = True
+    else:
+        continue_question = False
     # 質問文を生成する
     formatted_code = format_source_code(saved_files)
     questions = generate_question(
@@ -56,7 +63,7 @@ def set_up_interview(
     )
 
     # 面接IDと最初の質問文を返す
-    return interview_id, questions[0]
+    return interview_id, questions[0], continue_question
 
 
 # POST /interview/{interview_id}
