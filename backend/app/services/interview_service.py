@@ -6,6 +6,7 @@ from ..repositories.production.redis_repo import (
     create_interview_cache,
     get_chat_history,
     get_interview_data,
+    increment_counter_and_update_history,
     update_chat_history,
     update_interview_result,
 )
@@ -16,6 +17,7 @@ from ..schemas.schemas import (
     InterviewPostRequest,
 )
 from ..services.llm_service import (
+    generate_chat_response,
     generate_feedback,
     generate_general_review,
     generate_question,
@@ -82,7 +84,7 @@ def get_response(
         case Difficulty.easy | Difficulty.normal:
             return get_feedback(interview_id, request_body)
         case Difficulty.hard | Difficulty.extreme:
-            raise get_chat_response(interview_id, request_body)
+            return get_chat_response(interview_id, request_body)
 
 
 # 初級〜中級のFBを取得する
@@ -104,7 +106,6 @@ def get_feedback(
             "content": request_body.message,
         }
     )
-
     # 採点対象のレポジトリ内容を整理する
     session_dir = Path("tmp") / interview_id
     saved_files = get_source_code(session_dir)
@@ -146,11 +147,78 @@ def get_feedback(
 
 
 # 上級〜激詰の応答を取得する
+# TODO 3回のループが終わると点数をアップデートしたい
 def get_chat_response(
     interview_id: str,
     request_body: InterviewInterviewIdPostRequest,
 ) -> tuple[int, str, bool]:
-    pass
+    question_id = request_body.question_id
+    history = get_chat_history(interview_id, question_id)
+    if history is None:
+        return 0, "", True
+
+    # 直近の user 発言を履歴に追加
+    user_entry = {"role": "user", "content": request_body.message}
+    history.append(user_entry)
+
+    # コード整形
+    session_dir = Path("tmp") / interview_id
+    formatted_code = format_source_code(get_source_code(session_dir))
+
+    # 逐次採点
+    feedback = generate_chat_response(interview_id, formatted_code, history)
+    if feedback is None:
+        return 0, "", True
+
+    score = feedback["score"]
+    comment = feedback["comment"]
+    model_entry = {"role": "model", "content": comment}
+
+    # 更新する履歴
+    new_entries = [user_entry, model_entry]
+
+    # 履歴とcounterを更新（+1）
+    updated_counter, updated_history = increment_counter_and_update_history(
+        interview_id, question_id, new_entries
+    )
+    print(updated_counter)
+    # counter == 3 のときのみ Redis にスコア・コメント保存（総合）
+    if updated_counter == 4:
+        # LLMにプロンプトを送ってFBを生成する（**テストでも本番でも動く**）
+        feedback = generate_feedback(interview_id, formatted_code, updated_history)
+        if feedback is None:
+            return 0, ""
+
+        score = feedback["score"]
+        comment = feedback["comment"]
+
+        # 会話履歴にLLMのメッセージを追加する
+        updated_history.append(
+            {
+                "role": "model",
+                "content": comment,
+            }
+        )
+
+        # redisに会話履歴を保存する
+        update_chat_history(
+            interview_id=interview_id,
+            question_id=question_id,
+            chat_history=updated_history,
+        )
+
+        # redisに評価結果を追加する
+        update_interview_result(
+            interview_id=interview_id,
+            question_id=question_id,
+            score=score,
+            comment=comment,
+        )
+        return score, comment, False
+    elif updated_counter < 4:
+        return score, comment, True
+    else:
+        raise ValueError(f"Unexpected counter value: {updated_counter}")
 
 
 # GET /interview/{interview_id}
