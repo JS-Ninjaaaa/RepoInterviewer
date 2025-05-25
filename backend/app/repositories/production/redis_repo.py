@@ -98,7 +98,15 @@ def update_chat_history(
 ) -> list[dict[str, str]]:
     redis_client = get_redis_client()
     key = f"{interview_id}-{question_id}"
-    redis_client.set(key, json.dumps({"history": chat_history}), ex=3600)
+    raw = redis_client.get(key)
+    data = json.loads(raw) if raw else {}
+
+    # counterが存在する場合は維持
+    updated_data = {"history": chat_history}
+    if "counter" in data:
+        updated_data["counter"] = data["counter"]
+
+    redis_client.set(key, json.dumps(updated_data), ex=3600)
     return chat_history
 
 
