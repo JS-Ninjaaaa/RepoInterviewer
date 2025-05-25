@@ -20,6 +20,7 @@ def create_interview_cache(
     difficulty: Difficulty,
     total_question: int,
     questions: list[str],
+    deep_question_mode: bool,
 ):
     redis_client = get_redis_client()
 
@@ -39,9 +40,12 @@ def create_interview_cache(
 
     # 各質問の会話履歴を保存する
     for question_id in range(1, total_question + 1):
-        question_data = {
-            "history": [{"role": "model", "content": questions[question_id - 1]}]
-        }
+        history = [{"role": "model", "content": questions[question_id - 1]}]
+        # 上級・激詰の場合，深掘りカウンターを用意
+        if deep_question_mode:
+            question_data = {"counter": 1, "history": history}
+        else:
+            question_data = {"history": history}
         redis_client.set(
             f"{interview_id}-{question_id}",
             json.dumps(question_data),
