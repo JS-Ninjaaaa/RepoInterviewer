@@ -318,7 +318,10 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
                         {msg.score}
                         <Typography sx={{ fontSize: '24px' }}>点</Typography>
                       </Typography>
-                      <Typography sx={{ fontSize: '16px' }}>
+                      <Typography sx={{ 
+                        fontSize: '16px', 
+                        whiteSpace: "pre-wrap" 
+                      }}>
                         {msg.text}
                       </Typography>
                     </Box>
