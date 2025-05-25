@@ -6,8 +6,9 @@ from google import genai
 from google.genai import types
 from pydantic import BaseModel
 
-from ..repositories.fake.redis_repo import get_interview_data
+from ..repositories.production.redis_repo import get_interview_data
 from ..schemas.schemas import Difficulty
+from ..services.prompt_service import make_deep_question_prompt  # 深掘り
 from ..services.prompt_service import (
     get_character_prompt,
     make_feedback_prompt,
@@ -189,8 +190,70 @@ def generate_feedback(
         return None
 
 
-def generate_chat_response():
-    pass
+def generate_chat_response(
+    interview_id: str,
+    source_code: str,
+    chat_history: list[dict[str, str]],
+) -> dict | None:
+    interview_data = get_interview_data(interview_id)
+    if interview_data is None:
+        return None
+
+    difficulty = Difficulty(interview_data["difficulty"])
+    character_prompt = get_character_prompt(difficulty)
+
+    # モデルの挙動を設定する
+    gen_content_config = types.GenerateContentConfig(
+        max_output_tokens=1024,
+        response_mime_type="application/json",
+        response_schema=InterviewFeedback,
+        safety_settings=safety_settings,
+        system_instruction=[types.Part.from_text(text=character_prompt)],
+        temperature=0.2,
+        top_p=0.95,
+    )
+
+    total_question = interview_data["total_question"]
+    # FIXME: 100で割り切れない場合に合計が100にならない
+    max_score = 100 // total_question
+    # TODO: 深掘り即席プロンプトなので修正する
+    # 評価用のプロンプトを生成する
+    feedback_prompt = make_deep_question_prompt(max_score, source_code)
+
+    contents = []  # LLMに渡すデータ
+    for message in chat_history:
+        # 会話履歴を追加する
+        contents.append(
+            types.Content(
+                role=message["role"],
+                parts=[types.Part.from_text(text=message["content"])],
+            )
+        )
+
+    # FB生成用のプロンプトを追加する
+    contents.append(
+        types.Content(
+            role="user",
+            parts=[types.Part.from_text(text=feedback_prompt)],
+        )
+    )
+
+    # LLMにプロンプトを送信してFBを生成する
+    model_id = get_model_id()
+    feedback = client.models.generate_content(
+        model=model_id,
+        contents=contents,
+        config=gen_content_config,
+    )
+
+    if feedback.text is None:
+        return None
+
+    # JSONとして解釈する
+    try:
+        return json.loads(feedback.text)
+    except json.JSONDecodeError:
+        return None
 
 
 def generate_general_review(

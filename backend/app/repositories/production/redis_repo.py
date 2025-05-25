@@ -128,3 +128,33 @@ def update_interview_result(
 
     redis_client.set(interview_id, json.dumps(interview_data), ex=3600)
     return interview_data
+
+
+# 深掘り用
+def increment_counter_and_update_history(
+    interview_id: str,
+    question_id: int,
+    new_entries: list[dict[str, str]],
+) -> tuple[int, list[dict[str, str]]]:
+    """
+    counter を 1 増やし、履歴を更新して保存する
+    Returns: 新しい counter 値と、更新後の履歴
+    """
+    redis_client = get_redis_client()
+    key = f"{interview_id}-{question_id}"
+    raw = redis_client.get(key)
+    if raw is None:
+        raise ValueError(f"{key} のデータが存在しません")
+
+    data = json.loads(raw)
+
+    counter = data.get("counter", 1)
+    history = data.get("history", [])
+
+    # 履歴を追加してカウントをインクリメント
+    history.extend(new_entries)
+    counter += 1
+
+    redis_client.set(key, json.dumps({"counter": counter, "history": history}), ex=3600)
+
+    return counter, history
