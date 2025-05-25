@@ -38,13 +38,11 @@ def set_up_interview(
     session_dir = Path("tmp") / interview_id
     saved_files = extract_zip(zip_bytes, session_dir)
     # 難易度によって返すフラグを変える
-    if (
-        request_body.difficulty == Difficulty.hard
-        or request_body.difficulty == Difficulty.extreme
-    ):
-        continue_question = True  # 深掘りモードON
-    else:
-        continue_question = False
+    match request_body.difficulty:
+        case Difficulty.hard | Difficulty.extreme:
+            continue_question = True
+        case _:
+            continue_question = False
     # 質問文を生成する
     formatted_code = format_source_code(saved_files)
     questions = generate_question(
@@ -62,11 +60,11 @@ def set_up_interview(
         difficulty=request_body.difficulty,
         total_question=request_body.total_question,
         questions=questions,
-        deep_question_mode=continue_question,
+        deep_question_mode=continue_question,  # 難易度に応じてredisに追加
     )
 
     # 面接IDと最初の質問文を返す
-    return interview_id, questions[0], continue_question
+    return interview_id, questions[0]
 
 
 # POST /interview/{interview_id}
@@ -181,44 +179,25 @@ def get_chat_response(
     updated_counter, updated_history = increment_counter_and_update_history(
         interview_id, question_id, new_entries
     )
-    print(updated_counter)
-    # counter == 3 のときのみ Redis にスコア・コメント保存（総合）
+
+    if updated_counter > 4:
+        raise ValueError(f"この質問はすでに終了済みです: question_id={question_id}")
+
     if updated_counter == 4:
-        # LLMにプロンプトを送ってFBを生成する（**テストでも本番でも動く**）
         feedback = generate_feedback(interview_id, formatted_code, updated_history)
         if feedback is None:
-            return 0, ""
+            return 0, "", True
 
         score = feedback["score"]
         comment = feedback["comment"]
 
-        # 会話履歴にLLMのメッセージを追加する
-        updated_history.append(
-            {
-                "role": "model",
-                "content": comment,
-            }
-        )
+        updated_history.append({"role": "model", "content": comment})
+        update_chat_history(interview_id, question_id, updated_history)
+        update_interview_result(interview_id, question_id, score, comment)
 
-        # redisに会話履歴を保存する
-        update_chat_history(
-            interview_id=interview_id,
-            question_id=question_id,
-            chat_history=updated_history,
-        )
-
-        # redisに評価結果を追加する
-        update_interview_result(
-            interview_id=interview_id,
-            question_id=question_id,
-            score=score,
-            comment=comment,
-        )
         return score, comment, False
-    elif updated_counter < 4:
-        return score, comment, True
-    else:
-        raise ValueError(f"Unexpected counter value: {updated_counter}")
+
+    return score, comment, True
 
 
 # GET /interview/{interview_id}
