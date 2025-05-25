@@ -50,17 +50,13 @@ async def post_interview(
             error_message=f"リクエストボディが不正です: {str(e)}"
         )
 
-    interview_id, first_question, continue_question = set_up_interview(request_body)
+    interview_id, first_question = set_up_interview(request_body)
     if first_question == "":
         return InterviewPostErrorResponse(
             error_message="面接のセットアップに失敗しました"
         )
 
-    return InterviewPostResponse(
-        interview_id=interview_id,
-        question=first_question,
-        continue_question=continue_question,
-    )
+    return InterviewPostResponse(interview_id=interview_id, question=first_question)
 
 
 @router.post(
