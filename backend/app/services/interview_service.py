@@ -40,7 +40,7 @@ def set_up_interview(
         request_body.difficulty == Difficulty.hard
         or request_body.difficulty == Difficulty.extreme
     ):
-        continue_question = True
+        continue_question = True  # 深掘りモードON
     else:
         continue_question = False
     # 質問文を生成する
@@ -60,6 +60,7 @@ def set_up_interview(
         difficulty=request_body.difficulty,
         total_question=request_body.total_question,
         questions=questions,
+        deep_question_mode=continue_question,
     )
 
     # 面接IDと最初の質問文を返す
