@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "composite": true,
+    "declaration": true,
     "strict": true,
     "esModuleInterop": true,
     "module": "commonjs",
@@ -9,5 +10,9 @@
     "outDir": "../../build/commands",
     "rootDir": "./"
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "../../build"
+  ]
 }
