@@ -64,7 +64,7 @@ function getWebviewContent(
                     font-src ${webview.cspSource};">
     </head>
     <body>
-      <div id="app"></div>
+      <div id="root"></div>
       <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
     </body>
     </html>`;
