@@ -54,13 +54,11 @@
     "prettier": "3.5.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.1",
-    "vite": "^5.0.10",
-    "vite-plugin-vscode-webview-hmr": "1.0.1"
+    "vite": "^5.0.10"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@fontsource/roboto": "5.2.5",
     "@mui/icons-material": "7.1.0",
     "@mui/material": "^7.1.0",
     "jszip": "^3.10.1",
