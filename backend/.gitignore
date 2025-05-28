@@ -5,7 +5,6 @@ include/
 tmp/
 
 *.pyc
-*.txt
 
 .env
 
