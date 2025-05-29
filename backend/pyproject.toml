@@ -1,0 +1,23 @@
+[project]
+name = "repo-interviewer-backend"
+version = "0.1.0"
+description = "技術面接の練習ができるVS Code拡張機能のバックエンド"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.12",
+    "google-genai>=1.17.0",
+    "gunicorn>=23.0.0",
+    "python-dotenv>=1.1.0",
+    "python-multipart>=0.0.20",
+    "redis>=6.2.0",
+    "uvicorn[standard]>=0.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "taskipy>=1.14.1",
+]
+
+[tool.taskipy.tasks]
+start = "gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --reload"
