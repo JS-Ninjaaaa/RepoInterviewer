@@ -1,20 +1,19 @@
 import json
 import os
 
-from dotenv import load_dotenv
-from google import genai
-from google.genai import types
-from pydantic import BaseModel
-
-from ..repositories.production.redis_repo import get_interview_data
-from ..schemas.schemas import Difficulty
-from ..services.prompt_service import make_deep_question_prompt  # 深掘り
-from ..services.prompt_service import (
+from app.repositories.production.redis_repo import get_interview_data
+from app.schemas.schemas import Difficulty
+from app.services.prompt_service import (
     get_character_prompt,
+    make_deep_question_prompt,  # 深掘り
     make_feedback_prompt,
     make_gen_general_review_prompt,
     make_gen_question_prompt,
 )
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+from pydantic import BaseModel
 
 load_dotenv()
 
