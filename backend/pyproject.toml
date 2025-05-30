@@ -16,14 +16,21 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "black>=25.1.0",
+    "isort>=6.0.1",
     "taskipy>=1.14.1",
 ]
 
 [tool.taskipy.tasks]
 start = "gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --reload"
 
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
 [tool.isort]
 profile = "black"
+line-length = 88
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 0
