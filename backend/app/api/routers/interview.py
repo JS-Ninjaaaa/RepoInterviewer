@@ -1,8 +1,6 @@
 from typing import Union
 
-from fastapi import APIRouter, Form, HTTPException, UploadFile
-
-from ...schemas.schemas import (
+from app.schemas.schemas import (
     Difficulty,
     InterviewInterviewIdGetResponse,
     InterviewInterviewIdPostErrorResponse,
@@ -14,12 +12,13 @@ from ...schemas.schemas import (
     InterviewPostRequest,
     InterviewPostResponse,
 )
-from ...services.interview_service import (
+from app.services.interview_service import (
     get_interview_result,
     get_question,
     get_response,
     set_up_interview,
 )
+from fastapi import APIRouter, Form, HTTPException, UploadFile
 
 router = APIRouter()
 

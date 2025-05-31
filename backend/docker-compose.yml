@@ -6,8 +6,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
