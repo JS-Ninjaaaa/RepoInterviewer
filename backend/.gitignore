@@ -3,9 +3,9 @@ bin/
 lib/
 include/
 tmp/
+.venv/
 
 *.pyc
-*.txt
 
 .env
 

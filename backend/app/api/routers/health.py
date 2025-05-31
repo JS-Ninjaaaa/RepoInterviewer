@@ -1,6 +1,5 @@
+from app.services.llm_service import chat_once
 from fastapi import APIRouter
-
-from ...services.llm_service import chat_once
 
 router = APIRouter()
 

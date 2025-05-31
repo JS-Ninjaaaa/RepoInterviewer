@@ -1,8 +1,10 @@
 from pathlib import Path
 from uuid import uuid4
 
+from app.helpers.zip_helper import extract_zip
+
 # 開発モードで fake_repoを使う（Redis）
-from ..repositories.production.redis_repo import (
+from app.repositories.production.redis_repo import (
     create_interview_cache,
     get_chat_history,
     get_interview_data,
@@ -10,20 +12,19 @@ from ..repositories.production.redis_repo import (
     update_chat_history,
     update_interview_result,
 )
-from ..repositories.production.source_repo import get_source_code
-from ..schemas.schemas import (
+from app.repositories.production.source_repo import get_source_code
+from app.schemas.schemas import (
     Difficulty,
     InterviewInterviewIdPostRequest,
     InterviewPostRequest,
 )
-from ..services.llm_service import (
+from app.services.llm_service import (
     generate_chat_response,
     generate_feedback,
     generate_general_review,
     generate_question,
 )
-from ..services.prompt_service import format_source_code
-from ..utils.zip_handler import extract_zip
+from app.services.prompt_service import format_source_code
 
 
 # POST /interview
