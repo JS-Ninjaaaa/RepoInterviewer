@@ -17,6 +17,7 @@ metadata:
   name: backend-stg
 run:
   location: projects/$PROJECT_ID/locations/asia-northeast1
+  service: backend-stg
 
 ---
 
@@ -26,3 +27,4 @@ metadata:
   name: backend-prod
 run:
   location: projects/$PROJECT_ID/locations/asia-northeast1
+  service: backend-prod
