@@ -7,7 +7,7 @@ class InterviewQuestion:
 
     Attributes:
         interview_id (str): 面接ID
-        question_id (int): 質問ID
+        question_id (str): 質問ID
         difficulty (Difficulty): 難易度
         max_score (int): 最大スコア
         score (int): スコア
