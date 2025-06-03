@@ -28,7 +28,7 @@ test_post_interview() {
   echo "Testing POST /interview"
   response=$(
     curl -s -w "\n%{http_code}" -X POST "$BASE_URL/interview" \
-    -F "source_code=@example/archive.zip" \
+    -F "source_code=@example/yumemi/archive.zip" \
     -F "difficulty=easy" \
     -F "total_question=4"
   )
