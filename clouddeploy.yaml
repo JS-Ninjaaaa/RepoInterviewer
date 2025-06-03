@@ -8,8 +8,6 @@ serialPipeline:
       profiles: [staging]
     - targetId: backend-prod
       profiles: [production]
-artifactStorage:
-  location: gs://repointerviewer-clouddeploy-artifacts 
 
 ---
 
