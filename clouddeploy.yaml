@@ -2,7 +2,6 @@ apiVersion: deploy.cloud.google.com/v1
 kind: DeliveryPipeline
 metadata:
   name: repointerviewer-pipeline
-description: RepoInterviewer deployment pipeline
 serialPipeline:
   stages:
     - targetId: backend-stg
@@ -16,7 +15,6 @@ apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
   name: backend-stg
-description: Staging environment
 run:
   location: projects/$PROJECT_ID/locations/asia-northeast1
 
@@ -26,6 +24,5 @@ apiVersion: deploy.cloud.google.com/v1
 kind: Target
 metadata:
   name: backend-prod
-description: Production environment
 run:
   location: projects/$PROJECT_ID/locations/asia-northeast1
