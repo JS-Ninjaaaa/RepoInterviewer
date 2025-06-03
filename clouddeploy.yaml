@@ -16,7 +16,7 @@ kind: Target
 metadata:
   name: backend-stg
 run:
-  location: projects/$PROJECT_ID/locations/asia-northeast1
+  location: projects/repointerviewer/locations/asia-northeast1
   service: backend-stg
 
 ---
@@ -26,5 +26,5 @@ kind: Target
 metadata:
   name: backend-prod
 run:
-  location: projects/$PROJECT_ID/locations/asia-northeast1
+  location: projects/repointerviewer/locations/asia-northeast1
   service: backend-prod
