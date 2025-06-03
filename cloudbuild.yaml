@@ -1,8 +1,5 @@
-# trigger by github 
-# docker build & push artifact registry
-# cloudbuild.yaml
 steps:
-  # Build & Push Docker image
+  # Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build', '-t',
@@ -10,6 +7,7 @@ steps:
       './backend'
     ]
 
+  # Push Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
@@ -25,10 +23,11 @@ steps:
         export GOOGLE_API_KEY=$(gcloud secrets versions access latest --secret="google-api-key")
         export MODEL_NAME=$(gcloud secrets versions access latest --secret="model-name")
         export REDIS_HOST=$(gcloud secrets versions access latest --secret="redis-host")
-
-        # Set envs for skaffold.yaml through substitutions or via profiles (recommended)
         gcloud deploy releases create release-$(date +%s) \
           --delivery-pipeline=repointerviewer-pipeline \
           --region=asia-northeast1 \
           --source=. \
           --skaffold-file=skaffold.yaml
+
+options:
+  logging: CLOUD_LOGGING_ONLY
