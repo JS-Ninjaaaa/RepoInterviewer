@@ -14,13 +14,6 @@ class InterviewQuestion:
         chat_history (ChatHistory): 会話履歴
     """
 
-    interview_id: str
-    question_id: str
-    difficulty: Difficulty
-    max_score: int
-    score: int = 0
-    chat_history: ChatHistory
-
     def __init__(
         self,
         interview_id: str,

@@ -1,6 +1,7 @@
 class ChatMessage:
-    role: str
-    message: str
+    def __init__(self, role: str, message: str):
+        self.role = role
+        self.message = message
 
 
 class ChatHistory:
@@ -9,8 +10,6 @@ class ChatHistory:
     Attributes:
         chat_history (list[ChatMessage]): 会話履歴
     """
-
-    chat_history: list[ChatMessage]
 
     def __init__(self, messages: list[ChatMessage] = None):
         """コンストラクタ
