@@ -20,7 +20,7 @@ steps:
     args:
       - -c
       - |
-        export PROJECT_ID=${_PROJECT_ID}
+        export PROJECT_ID=repointerviewer
         export GOOGLE_API_KEY=$(gcloud secrets versions access latest --secret="google-api-key")
         export MODEL_NAME=$(gcloud secrets versions access latest --secret="model-name")
         export REDIS_HOST=$(gcloud secrets versions access latest --secret="redis-host-stg")
