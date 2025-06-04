@@ -1,0 +1,14 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: backend-prod
+  namespace: default
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+spec:
+  template:
+    spec:
+      containers:
+        - image: asia-northeast1-docker.pkg.dev/repointerviewer/repointerviewer/backend
+          ports:
+            - containerPort: 8080
