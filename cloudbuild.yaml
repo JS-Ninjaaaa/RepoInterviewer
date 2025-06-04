@@ -1,11 +1,9 @@
-substitutions:
-  _PROJECT_ID: repointerviewer
 steps:
   # Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build', '-t',
-      'asia-northeast1-docker.pkg.dev/${_PROJECT_ID}/repointerviewer/backend',
+      'asia-northeast1-docker.pkg.dev/repointerviewer/repointerviewer/backend',
       './backend'
     ]
 
@@ -13,7 +11,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
-      'asia-northeast1-docker.pkg.dev/${_PROJECT_ID}/repointerviewer/backend'
+      'asia-northeast1-docker.pkg.dev/repointerviewer/repointerviewer/backend'
     ]
 
   # Release via Cloud Deploy
@@ -30,7 +28,7 @@ steps:
         gcloud deploy releases create release-$(date +%s) \
           --delivery-pipeline=repointerviewer-pipeline \
           --region=asia-northeast1 \
-          --project=${PROJECT_ID} \
+          --project=repointerviewer \
           --source=. \
           --skaffold-file=skaffold.yaml
 
