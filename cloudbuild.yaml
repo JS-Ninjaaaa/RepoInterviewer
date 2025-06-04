@@ -20,15 +20,17 @@ steps:
     args:
       - -c
       - |
+        # 環境変数を設定
         export PROJECT_ID=repointerviewer
-        export GOOGLE_API_KEY=$(gcloud secrets versions access latest --secret="google-api-key")
-        export MODEL_NAME=$(gcloud secrets versions access latest --secret="model-name")
-        export REDIS_HOST=$(gcloud secrets versions access latest --secret="redis-host-stg")
+        export GOOGLE_API_KEY=$(gcloud secrets versions access latest --secret="google-api-key" --project=${PROJECT_ID}) # --project を明示的に追加
+        export MODEL_NAME=$(gcloud secrets versions access latest --secret="model-name" --project=${PROJECT_ID}) # --project を明示的に追加
+        export REDIS_HOST=$(gcloud secrets versions access latest --secret="redis-host-stg" --project=${PROJECT_ID}) # --project を明示的に追加
 
+        # gcloud コマンド全体を一つの文字列として渡す
         gcloud deploy releases create release-$(date +%s) \
           --delivery-pipeline=repointerviewer-pipeline \
           --region=asia-northeast1 \
-          --project=repointerviewer \
+          --project=${PROJECT_ID} \ # ここで環境変数を展開させる
           --source=. \
           --skaffold-file=skaffold.yaml
 
