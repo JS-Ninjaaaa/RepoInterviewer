@@ -8,7 +8,7 @@ React + TypeScript + Vite を用いたアプリです。VisualStudioCodeの拡�
 
 ## 起動方法
 
-1. frontendディレクトリ（ターミナル）で以下のコマンドを実行するとReactのコードが拡張機能で扱えるJavaScript + HTMLにビルドされます。
+1. frontendディレクトリ（ターミナル）で以下のコマンドを実行するとwebviewディレクトリのTypeScriptのコードが拡張機能で扱えるJavaScript + HTMLにビルドされます。
 
 ```sh
   pnpm run build
@@ -21,6 +21,3 @@ React + TypeScript + Vite を用いたアプリです。VisualStudioCodeの拡�
 
 
 3. 画面下部のステータスバーに表示される「RepoInterviewer」のアイコンを押して拡張機能を起動します。コマンドパレットで「repointerviewer.start」と入力して起動させることも可能です。
-
-![status_bar](image.png)
-![command_palette](image-1.png)
