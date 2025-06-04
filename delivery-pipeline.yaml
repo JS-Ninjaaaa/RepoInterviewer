@@ -1,0 +1,10 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: repointerviewer-pipeline
+serialPipeline:
+  stages:
+    - targetId: backend-stg
+      profiles: [staging]
+    - targetId: backend-prod
+      profiles: [production]
