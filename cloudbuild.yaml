@@ -27,7 +27,7 @@ steps:
         gcloud deploy releases create release-$(date +%s) \
           --delivery-pipeline=repointerviewer-pipeline \
           --region=asia-northeast1 \
-          --project=${PROJECT_ID} \ # ここで環境変数を展開させる
+          --project=${PROJECT_ID} \
           --source=. \
           --skaffold-file=skaffold.yaml
 
