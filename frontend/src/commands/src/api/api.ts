@@ -1,10 +1,10 @@
-import { apiEndPoint } from '../env';
+import { apiEndPoint } from '@/env';
 import {
   FirstQuestionResponse,
   NextQuestionResponse,
   FeedBackResponse,
   GeneralFeedbackResponse,
-} from "../types/api-response-value";
+} from "@/types/api-response-value";
 
 export async function fetchFirstQuestion(
   zipBlob: Blob,
