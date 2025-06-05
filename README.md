@@ -21,4 +21,4 @@
   - **ビルドツール**：Vite
   - **UI構成**：HTML / CSS / WebView（VS Code Extension 向け）
   - **パッケージ管理**：pnpm / Node.js
-  - **スタイリング**：Emotion / MUI
+  - **スタイリング**：MUI
