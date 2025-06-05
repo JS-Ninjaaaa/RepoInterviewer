@@ -6,10 +6,10 @@ import haruPng from "../assets/images/haru.png";
 import sakiPng from "../assets/images/saki.png";
 import renPng from "../assets/images/ren.png";
 
-import wholeYuzuPng from "../assets/images/wholeYuzu.png";
-import wholeHaruPng from "../assets/images/wholeHaru.png";
-import wholeSakiPng from "../assets/images/wholeSaki.png";
-import wholeRenPng from "../assets/images/wholeRen.png";
+import wholeYuzuPng from "../assets/images/whole-yuzu.png";
+import wholeHaruPng from "../assets/images/whole-haru.png";
+import wholeSakiPng from "../assets/images/whole-saki.png";
+import wholeRenPng from "../assets/images/whole-ren.png";
 
 export const characters: Character[] = [
   {

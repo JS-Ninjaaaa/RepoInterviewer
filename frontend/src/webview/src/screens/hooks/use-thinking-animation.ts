@@ -1,5 +1,5 @@
 import { useRef, useCallback } from 'react';
-import type { chatMessage } from '../../types/chatMessage';
+import type { chatMessage } from '../../types/chat-message';
 
 export function useThinkingAnimation(
   setChatHistory: React.Dispatch<React.SetStateAction<chatMessage[]>>

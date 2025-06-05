@@ -5,7 +5,7 @@ import { characters } from "../../data/characters";
 import { theme } from "../../theme";
 import { useLoading } from '../context/LoadingContext';
 
-import type { apiRequestValue } from "../../types/apiRequestValue";
+import type { apiRequestValue } from "../../types/api-request-value";
 import CharacterSelectCards from "./components/CharacterSelectCards";
 import Header from "./components/Header";
 
