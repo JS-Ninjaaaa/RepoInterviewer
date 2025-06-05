@@ -4,7 +4,7 @@ React + TypeScript + Vite を用いたアプリです。VisualStudioCodeの拡�
 
 ## 環境変数の設定
 
-`env-sample.ts` をコピーして `env.sample` を作成しバックエンドのエンドポイントを記述してください。
+`env-sample.ts` をコピーして `env.ts` を作成しバックエンドのエンドポイントを記述してください。
 
 ## 起動方法
 
