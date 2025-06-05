@@ -1,5 +1,3 @@
-// src/types/chatMessage.ts
-
 export type chatMessage =
   | {
       type: 'question'

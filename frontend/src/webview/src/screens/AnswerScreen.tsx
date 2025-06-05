@@ -10,12 +10,12 @@ import {
   Modal,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { theme } from "../theme";
-import type { apiRequestValue } from "../types/api-request-value";
-import type { FeedBackResponse, GeneralFeedbackResponse } from '../types/api-response-value';
-import type { chatMessage } from "../types/chat-message";
-import { useLoading } from "./context/LoadingContext";
-import { useThinkingAnimation } from "./hooks/use-thinking-animation";
+import { theme } from "@/theme";
+import type { apiRequestValue } from "@/types/api-request-value";
+import type { FeedBackResponse, GeneralFeedbackResponse } from '@/types/api-response-value';
+import type { chatMessage } from "@/types/chat-message";
+import { useLoading } from "@/screens/context/LoadingContext";
+import { useThinkingAnimation } from "@/screens/hooks/use-thinking-animation";
 
 interface AnswerScreenProps {
   vscode: VSCodeAPI;
