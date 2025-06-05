@@ -1,4 +1,11 @@
 class ChatMessage:
+    """会話のメッセージ
+
+    Attributes:
+        role (str): メッセージの発言者
+        message (str): メッセージの内容
+    """
+
     def __init__(self, role: str, message: str):
         self.role = role
         self.message = message
@@ -26,11 +33,3 @@ class ChatHistory:
             message (ChatMessage): 追加するメッセージ
         """
         self.chat_history.append(message)
-
-    def get_history(self) -> list[ChatMessage]:
-        """会話履歴を取得する
-
-        Returns:
-            list[ChatMessage]: 会話履歴
-        """
-        return self.chat_history
