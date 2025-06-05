@@ -1,9 +1,9 @@
 steps:
-  # Build Docker image
+  # Build Docker image with unique tag (SHORT_SHA)
   - name: 'gcr.io/cloud-builders/docker'
     args: [
-      'build', '-t',
-      'asia-northeast1-docker.pkg.dev/repointerviewer/repointerviewer/backend',
+      'build',
+      '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/repointerviewer/backend:$SHORT_SHA',
       './backend'
     ]
 
@@ -11,10 +11,10 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
-      'asia-northeast1-docker.pkg.dev/repointerviewer/repointerviewer/backend'
+      'asia-northeast1-docker.pkg.dev/$PROJECT_ID/repointerviewer/backend:$SHORT_SHA'
     ]
 
-  # Release via Cloud Deploy
+  # Create a release with image reference
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: bash
     args:
@@ -24,12 +24,17 @@ steps:
         export GOOGLE_API_KEY=$(gcloud secrets versions access latest --secret="google-api-key" --project=${PROJECT_ID}) 
         export MODEL_NAME=$(gcloud secrets versions access latest --secret="model-name" --project=${PROJECT_ID}) 
         export REDIS_HOST=$(gcloud secrets versions access latest --secret="redis-host-stg" --project=${PROJECT_ID})
+
         gcloud deploy releases create release-$(date +%s) \
           --delivery-pipeline=repointerviewer-pipeline \
           --region=asia-northeast1 \
           --project=${PROJECT_ID} \
           --source=. \
-          --skaffold-file=skaffold.yaml
+          --skaffold-file=skaffold.yaml \
+          --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend:$SHORT_SHA
+
+substitutions:
+  _REGION: asia-northeast1
 
 options:
   logging: CLOUD_LOGGING_ONLY
