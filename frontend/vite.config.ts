@@ -24,7 +24,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/webview/src') // 必要に応じてパスを調整
+      '@': path.resolve(__dirname, 'src/webview/src') 
     }
   },
 });
