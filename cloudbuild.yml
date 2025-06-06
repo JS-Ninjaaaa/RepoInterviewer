@@ -1,0 +1,50 @@
+steps:
+  # Private Submodule にアクセスするための GitHub Token 設定
+  - name: 'gcr.io/cloud-builders/git'
+    entrypoint: 'bash'
+    args:
+      - -c
+      - |
+        git config --global url."https://oauth2:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+        git submodule update --init --recursive
+
+  # Docker image build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/repointerviewer/backend:$SHORT_SHA',
+      './backend'
+    ]
+
+  # Docker image push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'asia-northeast1-docker.pkg.dev/$PROJECT_ID/repointerviewer/backend:$SHORT_SHA'
+    ]
+
+  # Cloud Deploy release 作成
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        export PROJECT_ID=repointerviewer
+        gcloud deploy releases create release-$(date +%s) \
+          --delivery-pipeline=repointerviewer-pipeline \
+          --region=asia-northeast1 \
+          --project=${PROJECT_ID} \
+          --source=.gcp_infra \
+          --skaffold-file=skaffold.yaml \
+          --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend:$SHORT_SHA
+
+substitutions:
+  _REGION: asia-northeast1
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/$PROJECT_ID/secrets/github-token/versions/latest
+      env: GITHUB_TOKEN
+
+options:
+  logging: CLOUD_LOGGING_ONLY
