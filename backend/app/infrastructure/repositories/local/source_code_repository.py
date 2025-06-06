@@ -61,7 +61,7 @@ class LocalSourceCodeRepository(SourceCodeRepository):
                     with file.open("r", encoding="utf-8") as f:
                         # LLMに渡せるようにファイルの内容を整形
                         relative_path = file.relative_to(source_dir)
-                        source_code[relative_path] = f.read()
+                        source_code[str(relative_path)] = f.read()
                 except UnicodeDecodeError:
                     # デコードできない場合はスキップ
                     continue
