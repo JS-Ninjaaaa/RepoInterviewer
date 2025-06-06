@@ -1,5 +1,5 @@
 steps:
-  # Private Submodule にアクセスするための GitHub Token 設定
+  # GitHub Token を使って private submodule を clone
   - name: 'gcr.io/cloud-builders/git'
     entrypoint: 'bash'
     args:
@@ -38,13 +38,13 @@ steps:
           --skaffold-file=skaffold.yaml \
           --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend:$SHORT_SHA
 
-substitutions:
-  _REGION: asia-northeast1
-
 availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/github-token/versions/latest
       env: GITHUB_TOKEN
+
+substitutions:
+  _REGION: asia-northeast1
 
 options:
   logging: CLOUD_LOGGING_ONLY
