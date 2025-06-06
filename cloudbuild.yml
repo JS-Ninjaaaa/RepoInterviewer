@@ -4,7 +4,7 @@ steps:
     args:
       - -c
       - |
-        git config --global url."https://oauth2:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+        git config --global url."https://oauth2:$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
         git submodule update --init --recursive
 
   - name: 'gcr.io/cloud-builders/docker'
