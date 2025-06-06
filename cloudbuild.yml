@@ -1,5 +1,4 @@
 steps:
-  # GitHub Token を使って private submodule を clone
   - name: 'gcr.io/cloud-builders/git'
     entrypoint: 'bash'
     args:
@@ -8,7 +7,6 @@ steps:
         git config --global url."https://oauth2:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
         git submodule update --init --recursive
 
-  # Docker image build
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
@@ -16,14 +14,12 @@ steps:
       './backend'
     ]
 
-  # Docker image push
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'push',
       'asia-northeast1-docker.pkg.dev/$PROJECT_ID/repointerviewer/backend:$SHORT_SHA'
     ]
 
-  # Cloud Deploy release 作成
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: bash
     args:
@@ -43,6 +39,7 @@ availableSecrets:
     - versionName: projects/$PROJECT_ID/secrets/github-token/versions/latest
       env: GITHUB_TOKEN
 
+# substitutions セクションでは GITHUB_TOKEN を使わない！
 substitutions:
   _REGION: asia-northeast1
 
