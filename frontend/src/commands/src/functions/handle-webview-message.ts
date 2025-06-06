@@ -6,11 +6,11 @@ import {
   fetchGeneralFeedback,
 } from "@/api/api";
 import { fetchFiles } from "@/functions/fetch-files";
-import { apiRequestValue } from "@/types/api-request-value";
+import { ApiRequestValue } from "@/types/api-request-value";
 
 export async function handleWebviewMessage(
   panel: vscode.WebviewPanel,
-  message: apiRequestValue,
+  message: ApiRequestValue,
 ) {
   switch (message.type) {
     case "fetchFirstQuestion": {

@@ -1,4 +1,4 @@
-export type chatMessage =
+export type ChatMessage =
   | {
       type: 'question'
       text: string
