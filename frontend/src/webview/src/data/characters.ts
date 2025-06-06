@@ -1,5 +1,5 @@
 import { amber, lightGreen, blue, deepPurple } from "@mui/material/colors";
-import { Character } from "@/types/character";
+import { character } from "@/types/character";
 
 import yuzuPng from "@/assets/images/yuzu.png";
 import haruPng from "@/assets/images/haru.png";
@@ -11,7 +11,7 @@ import wholeHaruPng from "@/assets/images/whole-haru.png";
 import wholeSakiPng from "@/assets/images/whole-saki.png";
 import wholeRenPng from "@/assets/images/whole-ren.png";
 
-export const characters: Character[] = [
+export const characters: character[] = [
   {
     level: "easy",
     totalQuestion: 5,

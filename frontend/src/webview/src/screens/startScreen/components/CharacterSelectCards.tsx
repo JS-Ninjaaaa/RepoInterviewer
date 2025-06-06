@@ -100,7 +100,7 @@ const CharacterSelectCards = ({
           {currentCharacter.title}
         </Typography>
 
-        {currentCharacter.quotes.map((q, i) => (
+        {currentCharacter.quotes.map((q: string, i:number) => (
           <Typography
             key={i}
             variant="caption"

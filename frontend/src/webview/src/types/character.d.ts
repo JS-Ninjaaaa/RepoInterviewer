@@ -1,6 +1,6 @@
 import type { Color } from "@mui/material";
 
-export interface Character {
+export interface character {
   level: "easy" | "normal" | "hard" | "extreme";
   totalQuestion: number;
   name: string;
