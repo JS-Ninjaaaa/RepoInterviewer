@@ -39,14 +39,6 @@ class InterviewQuestion:
         self.max_score = max_score
         self.chat_history = chat_history
 
-    def get_chat_history(self) -> ChatHistory:
-        """会話履歴を取得する
-
-        Returns:
-            ChatHistory: 会話履歴
-        """
-        return self.chat_history
-
     def append_chat_history(self, message: ChatMessage):
         """会話履歴にメッセージを追加する
 
@@ -68,6 +60,17 @@ class InterviewQuestion:
     @classmethod
     def from_dict(cls, data: dict) -> InterviewQuestion:
         """辞書からインスタンスを生成する"""
+        if "interview_id" not in data:
+            raise ValueError("interview_idが存在しません")
+        if "question_id" not in data:
+            raise ValueError("question_idが存在しません")
+        if "difficulty" not in data:
+            raise ValueError("difficultyが存在しません")
+        if "max_score" not in data:
+            raise ValueError("max_scoreが存在しません")
+        if "chat_history" not in data:
+            raise ValueError("chat_historyが存在しません")
+
         return cls(
             interview_id=data["interview_id"],
             question_id=data["question_id"],

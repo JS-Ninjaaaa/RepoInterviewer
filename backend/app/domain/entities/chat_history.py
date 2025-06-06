@@ -20,6 +20,12 @@ class ChatMessage:
     @classmethod
     def from_dict(cls, data: dict) -> ChatMessage:
         """辞書からインスタンスを生成する"""
+        if "role" not in data:
+            raise ValueError("roleが存在しません")
+
+        if "content" not in data:
+            raise ValueError("contentが存在しません")
+
         return cls(
             role=data["role"],
             message=data["content"],
