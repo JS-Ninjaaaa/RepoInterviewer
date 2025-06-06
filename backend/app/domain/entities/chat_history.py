@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class ChatMessage:
     """会話のメッセージ
 
@@ -9,6 +12,18 @@ class ChatMessage:
     def __init__(self, role: str, message: str):
         self.role = role
         self.message = message
+
+    def to_dict(self) -> dict:
+        """辞書に変換する"""
+        return {"role": self.role, "content": self.message}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> ChatMessage:
+        """辞書からインスタンスを生成する"""
+        return cls(
+            role=data["role"],
+            message=data["content"],
+        )
 
 
 class ChatHistory:
@@ -33,3 +48,14 @@ class ChatHistory:
             message (ChatMessage): 追加するメッセージ
         """
         self.chat_history.append(message)
+
+    def to_dict(self) -> dict:
+        """辞書に変換する"""
+        return [message.to_dict() for message in self.chat_history]
+
+    @classmethod
+    def from_dict(cls, data: dict) -> ChatHistory:
+        """辞書からインスタンスを生成する"""
+        return cls(
+            messages=[ChatMessage.from_dict(message) for message in data],
+        )

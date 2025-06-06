@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from app.domain.entities.chat_history import ChatHistory, ChatMessage
 from app.domain.entities.difficulty import Difficulty
 
@@ -52,3 +54,24 @@ class InterviewQuestion:
             message (ChatMessage): 追加するメッセージ
         """
         self.chat_history.append_message(message)
+
+    def to_dict(self) -> dict:
+        """辞書に変換する"""
+        return {
+            "interview_id": self.interview_id,
+            "question_id": self.question_id,
+            "difficulty": self.difficulty.value,
+            "max_score": self.max_score,
+            "chat_history": self.chat_history.to_dict(),
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> InterviewQuestion:
+        """辞書からインスタンスを生成する"""
+        return cls(
+            interview_id=data["interview_id"],
+            question_id=data["question_id"],
+            difficulty=Difficulty(data["difficulty"]),
+            max_score=data["max_score"],
+            chat_history=ChatHistory.from_dict(data["chat_history"]),
+        )
