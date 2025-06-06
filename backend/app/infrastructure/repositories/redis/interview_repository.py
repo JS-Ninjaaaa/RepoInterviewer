@@ -27,13 +27,16 @@ class RedisInterviewRepository(InterviewRepository):
     def create_interview(self, questions: list[InterviewQuestion]) -> None:
         """面接を作成する"""
         redis_client = self.get_redis_client()
+        pipeline = redis_client.pipeline()
 
         for question in questions:
-            redis_client.set(
+            pipeline.set(
                 name=f"{question.interview_id}-{question.question_id}",
                 value=json.dumps(question.to_dict()),
                 ex=self.DEFAULT_TTL,
             )
+
+        pipeline.execute()
 
     def get_question(
         self,
