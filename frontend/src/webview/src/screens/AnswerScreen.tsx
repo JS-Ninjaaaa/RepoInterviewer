@@ -10,12 +10,12 @@ import {
   Modal,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { theme } from "../theme";
-import type { apiRequestValue } from "../types/api-request-value";
-import type { FeedBackResponse, GeneralFeedbackResponse } from '../types/api-response-value';
-import type { chatMessage } from "../types/chat-message";
-import { useLoading } from "./context/LoadingContext";
-import { useThinkingAnimation } from "./hooks/use-thinking-animation";
+import { theme } from "@/theme";
+import type { ApiRequestValue } from "@/types/api-request-value";
+import type { FeedBackResponse, GeneralFeedbackResponse } from '@/types/api-response-value';
+import type { ChatMessage } from "@/types/chat-message";
+import { useLoading } from "@/screens/context/LoadingContext";
+import { useThinkingAnimation } from "@/screens/hooks/use-thinking-animation";
 
 interface AnswerScreenProps {
   vscode: VSCodeAPI;
@@ -30,7 +30,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
-  const [chatHistory, setChatHistory] = useState<chatMessage[]> ([{
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]> ([{
       type: 'question', 
       text: location.state.question 
     },
@@ -101,7 +101,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     setScrollTop(false);
     
     // フィードバッグを要求するAPI
-    const message: apiRequestValue = {
+    const message: ApiRequestValue = {
       type: "fetchFeedback",
       payload: {
         interview_id: interviewId,
@@ -118,7 +118,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     startThinking();
     // 次の質問を要求するAPI
     const nextId = questionId + 1;
-    const message: apiRequestValue = {
+    const message: ApiRequestValue = {
       type: "fetchNextQuestion",
       payload: { interview_id: interviewId, question_id: nextId },
     };
@@ -144,7 +144,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
   const fetchGeneralFeedback = () => {
     showLoading('全部の回答をチェック中・・・');
     // 総評を要求するAPI
-    const message: apiRequestValue = {
+    const message: ApiRequestValue = {
       type: "fetchGeneralFeedback",
       payload: { interview_id: interviewId },
     };

@@ -1,5 +1,5 @@
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
-import { characters } from "../../../data/characters";
+import { characters } from "@/data/characters";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
@@ -100,7 +100,7 @@ const CharacterSelectCards = ({
           {currentCharacter.title}
         </Typography>
 
-        {currentCharacter.quotes.map((q, i) => (
+        {currentCharacter.quotes.map((q: string, i:number) => (
           <Typography
             key={i}
             variant="caption"

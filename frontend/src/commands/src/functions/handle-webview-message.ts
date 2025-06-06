@@ -4,13 +4,13 @@ import {
   fetchNextQuestion,
   fetchFeedBack,
   fetchGeneralFeedback,
-} from "../api/api";
-import { fetchFiles } from "./fetch-files";
-import { apiRequestValue } from "../types/api-request-value";
+} from "@/api/api";
+import { fetchFiles } from "@/functions/fetch-files";
+import { ApiRequestValue } from "@/types/api-request-value";
 
 export async function handleWebviewMessage(
   panel: vscode.WebviewPanel,
-  message: apiRequestValue,
+  message: ApiRequestValue,
 ) {
   switch (message.type) {
     case "fetchFirstQuestion": {

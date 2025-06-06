@@ -2,11 +2,11 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
 
-import StartScreen from "./screens/startScreen/StartScreen";
-import AnswerScreen from "./screens/AnswerScreen";
-import GeneralFeedbackScreen from "./screens/GeneralFeedbackScreen";
-import { LoadingProvider, useLoading } from "./screens/context/LoadingContext";
-import { LoadingOverlay } from "./screens/components/LoadingOverlay";
+import StartScreen from "@/screens/startScreen/StartScreen";
+import AnswerScreen from "@/screens/AnswerScreen";
+import GeneralFeedbackScreen from "@/screens/GeneralFeedbackScreen";
+import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
+import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
 
 const vscode =
   typeof acquireVsCodeApi === "function"

@@ -1,9 +1,9 @@
 import React from "react";
 import { Typography } from "@mui/material";
-import type { Character } from "../../../types/character";
+import type { Character } from "@/types/character";
 
 interface HeaderProps {
-  currentCharacter: Character;  // ← 1要素分の型を指定
+  currentCharacter: Character;  
 }
 
 const Header: React.FC<HeaderProps> = ({ currentCharacter }) => {

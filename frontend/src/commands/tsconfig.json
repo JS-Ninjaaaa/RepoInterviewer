@@ -8,7 +8,11 @@
     "target": "es6",
     "moduleResolution": "node",
     "outDir": "../../build/commands",
-    "rootDir": "./"
+    "rootDir": "./",
+    "baseUrl": ".",
+    "paths": {            
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["**/*.ts"],
   "exclude": [

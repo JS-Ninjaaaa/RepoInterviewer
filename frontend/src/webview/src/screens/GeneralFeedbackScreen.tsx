@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button } from "@mui/material";
 import XIcon from "@mui/icons-material/X";
-import { theme } from "../theme";
+import { theme } from "@/theme";
 
 interface GeneralFeedbackScreenProps {
   vscode: VSCodeAPI;

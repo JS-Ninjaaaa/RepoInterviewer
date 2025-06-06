@@ -10,7 +10,11 @@
     "strict": true,
     "skipLibCheck": true,
     "rootDir": "src", // ソースのルート
-    "outDir": "../../build/webview" // ビルド成果物
+    "outDir": "../../build/webview", // ビルド成果物
+    "baseUrl": ".",
+    "paths": {            
+      "@/*": ["./src/*"]
+    }
   },
   "include": [
     "src/**/*" // React コード一式をすべて対象に

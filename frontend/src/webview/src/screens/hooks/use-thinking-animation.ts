@@ -1,8 +1,8 @@
 import { useRef, useCallback } from 'react';
-import type { chatMessage } from '../../types/chat-message';
+import type { ChatMessage } from '@/types/chat-message';
 
 export function useThinkingAnimation(
-  setChatHistory: React.Dispatch<React.SetStateAction<chatMessage[]>>
+  setChatHistory: React.Dispatch<React.SetStateAction<ChatMessage[]>>
 ) {
   const intervalRef = useRef<number | null>(null);
   const indexRef = useRef<number | null>(null);

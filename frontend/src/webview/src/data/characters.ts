@@ -1,15 +1,15 @@
 import { amber, lightGreen, blue, deepPurple } from "@mui/material/colors";
-import { Character } from "../types/character";
+import { Character } from "@/types/character";
 
-import yuzuPng from "../assets/images/yuzu.png";
-import haruPng from "../assets/images/haru.png";
-import sakiPng from "../assets/images/saki.png";
-import renPng from "../assets/images/ren.png";
+import yuzuPng from "@/assets/images/yuzu.png";
+import haruPng from "@/assets/images/haru.png";
+import sakiPng from "@/assets/images/saki.png";
+import renPng from "@/assets/images/ren.png";
 
-import wholeYuzuPng from "../assets/images/whole-yuzu.png";
-import wholeHaruPng from "../assets/images/whole-haru.png";
-import wholeSakiPng from "../assets/images/whole-saki.png";
-import wholeRenPng from "../assets/images/whole-ren.png";
+import wholeYuzuPng from "@/assets/images/whole-yuzu.png";
+import wholeHaruPng from "@/assets/images/whole-haru.png";
+import wholeSakiPng from "@/assets/images/whole-saki.png";
+import wholeRenPng from "@/assets/images/whole-ren.png";
 
 export const characters: Character[] = [
   {

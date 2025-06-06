@@ -1,4 +1,4 @@
-export type apiRequestValue =
+export type ApiRequestValue =
   | {
       type: "fetchFirstQuestion";
       payload: { difficulty: string; total_question: number };

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button, ThemeProvider } from "@mui/material";
-import { characters } from "../../data/characters";
-import { theme } from "../../theme";
-import { useLoading } from '../context/LoadingContext';
+import { characters } from "@/data/characters";
+import { theme } from "@/theme";
+import { useLoading } from '@/screens/context/LoadingContext';
 
-import type { apiRequestValue } from "../../types/api-request-value";
-import CharacterSelectCards from "./components/CharacterSelectCards";
-import Header from "./components/Header";
+import type { ApiRequestValue } from "@/types/api-request-value";
+import CharacterSelectCards from "@/screens/startScreen/components/CharacterSelectCards";
+import Header from "@/screens/startScreen/components/Header";
 
 interface StartScreenProps {
   vscode: VSCodeAPI;
@@ -15,7 +15,7 @@ interface StartScreenProps {
 
 declare global {
   interface VSCodeAPI {
-    postMessage: (msg: apiRequestValue) => void;
+    postMessage: (msg: ApiRequestValue) => void;
     getState: () => unknown;
     setState: (data: unknown) => void;
   }
@@ -31,7 +31,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
 
   const handleStartInterview = () => {
     showLoading('質問を生成中・・・');
-    const msg: apiRequestValue = {
+    const msg: ApiRequestValue = {
       type: 'fetchFirstQuestion',
       payload: {
         difficulty: currentCharacter.level,
