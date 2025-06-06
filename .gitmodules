@@ -1,0 +1,3 @@
+[submodule ".gcp_infra"]
+	path = .gcp_infra
+	url = https://github.com/JS-Ninjaaaa/RepoIniterviewer-infra-configs.git
