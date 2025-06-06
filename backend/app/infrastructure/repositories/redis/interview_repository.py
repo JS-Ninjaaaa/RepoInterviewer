@@ -10,7 +10,7 @@ class RedisInterviewRepository(InterviewRepository):
     DEFAULT_TTL = 3600
 
     REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
-    REDIS_PORT = os.getenv("REDIS_PORT", 6379)
+    REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 
     def __init__(self) -> None:
         """コンストラクタ"""
