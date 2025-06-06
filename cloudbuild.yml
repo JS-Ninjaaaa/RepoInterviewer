@@ -44,9 +44,6 @@ steps:
           --source=.gcp_infra \
           --skaffold-file=skaffold.yaml \
           --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend:$SHORT_SHA
-
-substitutions:
-  _REGION: asia-northeast1
-
+          
 options:
   logging: CLOUD_LOGGING_ONLY
