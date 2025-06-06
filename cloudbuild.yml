@@ -2,15 +2,19 @@ availableSecrets:
   secretManager:
     - versionName: projects/$PROJECT_ID/secrets/github-token/versions/latest
       env: GITHUB_TOKEN
-      
+
 steps:
-  # get gcp info 
+  # get gcp info with debug
   - name: 'gcr.io/cloud-builders/git'
     entrypoint: 'bash'
     args:
       - -c
       - |
+        echo ">> GITHUB_TOKEN length: ${#GITHUB_TOKEN}"
         git config --global url."https://oauth2:$$GITHUB_TOKEN@github.com/".insteadOf "https://github.com/"
+        echo ">> Git config set:"
+        git config --global -l
+        echo ">> Starting submodule clone"
         git submodule update --init --recursive
     secretEnv: ['GITHUB_TOKEN']
   # build docker
