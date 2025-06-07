@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import { theme } from "@/theme";
-import type { ApiRequestValue } from "@/types/api-request-value";
-import type { FeedBackResponse, GeneralFeedbackResponse } from '@/types/api-response-value';
+import type { ApiRequestValue } from "@shared/api-request-value";
+import type { FeedBackResponse, GeneralFeedbackResponse } from '@shared/api-response-value';
 import type { ChatMessage } from "@/types/chat-message";
 import { useLoading } from "@/screens/context/LoadingContext";
 import { useThinkingAnimation } from "@/screens/hooks/use-thinking-animation";

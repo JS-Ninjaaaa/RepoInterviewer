@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { ApiRequestValue } from "@/types/api-request-value";
+import type { ApiRequestValue } from "@shared/api-request-value"
 import { handleWebviewMessage } from "@/functions/handle-webview-message";
 import { getUri } from "@/functions/utilities/get-uri";
 import { getNonce } from "@/functions/utilities/get-nonce";
