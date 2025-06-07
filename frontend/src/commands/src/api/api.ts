@@ -1,4 +1,4 @@
-import { ApiEndPoint } from '@/env';
+import { ApiEndPoint } from '../env';
 import {
   FirstQuestionResponse,
   NextQuestionResponse,

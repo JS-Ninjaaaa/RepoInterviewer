@@ -4,8 +4,8 @@ import {
   fetchNextQuestion,
   fetchFeedBack,
   fetchGeneralFeedback,
-} from "@/api/api";
-import { fetchFiles } from "@/functions/fetch-files";
+} from "../api/api";
+import { fetchFiles } from "./fetch-files";
 import { ApiRequestValue } from "@shared/api-request-value";
 
 export async function handleWebviewMessage(

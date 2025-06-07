@@ -8,11 +8,11 @@
     "target": "es6",
     "moduleResolution": "node",
     "outDir": "../../build/commands",
-    "rootDir": "./",
-    "baseUrl": ".",
+    "rootDir": "./src",
+    "baseUrl": "./src",
     "paths": {            
-      "@/*": ["./src/*"],
-      "@shared/*": ["../shared/types/*"]
+      "@/*": ["*"],
+      "@shared/*": ["../../shared/types/*"]
     }
   },
   "include": [
