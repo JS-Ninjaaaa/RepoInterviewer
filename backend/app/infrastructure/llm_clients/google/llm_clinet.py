@@ -313,13 +313,11 @@ class GoogleLLMClient(LLMClient):
 
     def generate_general_review(
         self,
-        source_code: SourceCode,
         question: InterviewQuestion,
     ) -> str:
         """総評を生成する
 
         Args:
-            source_code (SourceCode): ソースコード
             question (InterviewQuestion): 質問の情報
 
         Returns:
