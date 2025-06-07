@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import JSZip from "jszip";
 import { spawn } from "child_process";
-import { mensetsuIgnoreFiles } from "@/data/mensetsuignore";
+import { mensetsuIgnoreFiles } from "../data/mensetsuignore";
 
 export async function fetchFiles(): Promise<Blob> {
   const files = await getFilteredFiles(); // ファイルパスをすべて探す
