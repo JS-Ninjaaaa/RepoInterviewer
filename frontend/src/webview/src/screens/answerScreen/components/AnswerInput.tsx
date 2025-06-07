@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { useAnswerContext } from "@/screens/answerScreen/context/useAnswerCOntext";
+import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
 
 const AnswerInput: React.FC = () => {
   const {

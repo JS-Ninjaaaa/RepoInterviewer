@@ -1,5 +1,5 @@
 import { Box, Typography, Avatar } from "@mui/material";
-import { useAnswerContext } from "@/screens/answerScreen/context/useAnswerCOntext";
+import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext"; 
 import { useRef, useEffect } from "react";
 
 const ChatPanel: React.FC = () => {
