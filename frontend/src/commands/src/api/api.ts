@@ -4,7 +4,7 @@ import {
   NextQuestionResponse,
   FeedBackResponse,
   GeneralFeedbackResponse,
-} from "@/types/api-response-value";
+} from "@shared/api-response-value";
 
 export async function fetchFirstQuestion(
   zipBlob: Blob,

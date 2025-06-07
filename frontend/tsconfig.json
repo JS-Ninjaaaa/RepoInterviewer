@@ -1,7 +1,15 @@
 {
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/webview/src/*"], 
+      "@shared/*": ["src/shared/types/*"]
+    }
+  },
   "files": [],
   "references": [
     { "path": "./src/commands/tsconfig.json" },
-    { "path": "./src/webview/tsconfig.json" }
+    { "path": "./src/webview/tsconfig.json" },
+    { "path": "./src/shared/types/tsconfig.json" }
   ],
 }
