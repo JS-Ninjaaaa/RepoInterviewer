@@ -58,7 +58,7 @@ class GoogleLLMClient(LLMClient):
         """コンストラクタ"""
         pass
 
-    def generate_content_config(
+    def make_content_config(
         self,
         character_prompt: str,
         response_mime_type: str = "text/plain",
@@ -149,10 +149,12 @@ class GoogleLLMClient(LLMClient):
         contents = [
             types.Content(role="user", parts=[types.Part.from_text(text=message)])
         ]
-        config = self.generate_content_config(
-            character_prompt=PromptService.get_character_prompt(Difficulty.easy),
+        character_prompt = PromptService.get_character_prompt(Difficulty.easy)
+        config = self.make_content_config(
+            character_prompt=character_prompt,
             response_mime_type="text/plain",
         )
+
         response = self.generate_content(
             contents=contents,
             config=config,
@@ -180,7 +182,7 @@ class GoogleLLMClient(LLMClient):
             list[str]: 質問文のリスト
         """
         character_prompt = PromptService.get_character_prompt(difficulty)
-        content_config = self.generate_content_config(
+        content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="application/json",
             response_schema=list[str],
@@ -230,7 +232,7 @@ class GoogleLLMClient(LLMClient):
             QuestionEvaluationResult: 面接の評価結果
         """
         character_prompt = PromptService.get_character_prompt(question.difficulty)
-        content_config = self.generate_content_config(
+        content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="application/json",
             response_schema=InterviewFeedback,
@@ -278,7 +280,7 @@ class GoogleLLMClient(LLMClient):
             QuestionEvaluationResult: 面接の評価結果
         """
         character_prompt = PromptService.get_character_prompt(question.difficulty)
-        content_config = self.generate_content_config(
+        content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="application/json",
             response_schema=QuestionEvaluationResult,
@@ -324,7 +326,7 @@ class GoogleLLMClient(LLMClient):
             str: 総評
         """
         character_prompt = PromptService.get_character_prompt(question.difficulty)
-        content_config = self.generate_content_config(
+        content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="text/plain",
         )
