@@ -75,7 +75,7 @@ class GoogleLLMClient(LLMClient):
             types.GenerateContentConfig: モデルの挙動の設定
 
         Note:
-            response_mime_typemに指定できる値
+            response_mime_typeに指定できる値
             - text/plain
             - application/json
         """
