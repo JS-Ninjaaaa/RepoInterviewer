@@ -13,14 +13,6 @@ class SourceCode:
         """
         self.source_code = source_code
 
-    def get_source_code(self) -> dict[str, str]:
-        """ソースコードを取得する
-
-        Returns:
-            dict[str, str]: ソースコード
-        """
-        return self.source_code
-
     def format_source_code(self) -> str:
         """ソースコードを整形する
 
