@@ -1,4 +1,7 @@
 {
+  "references": [
+    { "path": "../shared/types"}
+  ],
   "compilerOptions": {
     "composite": true, // project references 用
     "target": "ESNext", // 最新のJS機能をターゲット
@@ -13,11 +16,13 @@
     "outDir": "../../build/webview", // ビルド成果物
     "baseUrl": ".",
     "paths": {            
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@shared/*": ["../shared/types/*"]
     }
   },
   "include": [
-    "src/**/*" // React コード一式をすべて対象に
+    "src/**/*",
+    "../../shared/types"
   ],
   "exclude": ["vite.config.ts", "node_modules"]
 }

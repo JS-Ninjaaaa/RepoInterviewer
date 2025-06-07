@@ -11,10 +11,14 @@
     "rootDir": "./",
     "baseUrl": ".",
     "paths": {            
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@shared/*": ["../shared/types/*"]
     }
   },
-  "include": ["**/*.ts"],
+  "include": [
+    "**/*.ts",
+    "../../shared/types"
+  ],
   "exclude": [
     "node_modules",
     "../../build"
