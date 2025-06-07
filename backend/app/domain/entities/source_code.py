@@ -13,7 +13,7 @@ class SourceCode:
         """
         self.source_code = source_code
 
-    def format_source_code(self) -> str:
+    def format(self) -> str:
         """ソースコードを整形する
 
         Returns:
