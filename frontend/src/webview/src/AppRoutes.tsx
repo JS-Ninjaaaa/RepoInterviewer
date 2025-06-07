@@ -4,7 +4,7 @@ import { theme } from "./theme";
 
 import StartScreen from "@/screens/startScreen/StartScreen";
 import AnswerScreen from "@/screens/AnswerScreen";
-import GeneralFeedbackScreen from "@/screens/GeneralFeedbackScreen";
+import GeneralFeedbackScreen from "@/screens/generalFeedbackScreen/GeneralFeedbackScreen";
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
 
