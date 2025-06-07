@@ -1,0 +1,146 @@
+import {  useState, useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import type { ChatMessage } from "@/types/chat-message";
+import type { Character } from "@/types/character";
+import { FeedBackResponse, GeneralFeedbackResponse } from "@shared/api-response-value"
+import type { ApiRequestValue } from "@shared/api-request-value";
+import { useLoading } from "@/screens/context/LoadingContext";
+import { useThinkingAnimation } from "@/screens/hooks/use-thinking-animation";
+import { AnswerContext } from "./AnswerContext";
+
+interface AnswerProviderProps {
+  children: React.ReactNode;
+  vscode: VSCodeAPI;
+  interviewId: string;
+  currentCharacter: Character;
+  initialQuestion: string;
+}
+
+export const AnswerContextProvider: React.FC<AnswerProviderProps> = ({
+  children,
+  vscode,
+  interviewId,
+  currentCharacter,              
+  initialQuestion
+}) => {
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
+    { type: "question", text: initialQuestion }
+  ]);
+  const [chatInput, setChatInput] = useState<string>("");
+  const [questionId, setQuestionId] = useState<number>(1);
+  const [buttonDisplay, setButtonDisplay] = useState<string>("スキップ");
+  const [displayEnterBox, setDisplayEnterBox] = useState<boolean>(true);
+  const [interruptModalOpen, setInterruptModalOpen] = useState<boolean>(false);
+  const [skipModalOpen, setSkipModalOpen] = useState<boolean>(false);
+  const [scrollTop, setScrollTop] = useState<boolean>(true);
+
+  const { showLoading, hideLoading } = useLoading();
+  const { startThinking, stopThinking } = useThinkingAnimation(setChatHistory);
+  const navigate = useNavigate();
+
+  const judgeContinueSameQuestion = useCallback((payload: FeedBackResponse) => {
+    stopThinking();
+    const lastScore = payload.score;
+    if (payload.continue_question) {
+      setChatHistory(prev => [...prev, { type: 'question', text: payload.response }]);
+      setDisplayEnterBox(true);
+    } else {
+      const total = currentCharacter.totalQuestion;
+      const lastId = payload.question_id;
+      setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
+      setChatHistory(prev => [...prev, { type: 'feedback', text: payload.response, score: lastScore }]);
+    }
+  }, [currentCharacter.totalQuestion, stopThinking]);
+
+  const fetchFeedback = useCallback(() => {
+    setScrollTop(false)
+    setChatHistory(prev => [...prev, { type: "answer", text: chatInput }]);
+    startThinking();
+    setDisplayEnterBox(false);
+    const msg: ApiRequestValue = {
+      type: "fetchFeedback",
+      payload: { interview_id: interviewId, question_id: questionId, answer: chatInput }
+    };
+    vscode.postMessage(msg);
+    setChatInput("");
+  }, [chatInput, interviewId, questionId, startThinking, vscode]);
+
+  const fetchNextQuestion = useCallback(() => {
+    startThinking();
+    const nextId = questionId + 1;
+    const msg: ApiRequestValue = {
+      type: "fetchNextQuestion",
+      payload: { interview_id: interviewId, question_id: nextId }
+    };
+    vscode.postMessage(msg);
+    setQuestionId(nextId);
+    setButtonDisplay("スキップ");
+    setDisplayEnterBox(true);
+  }, [questionId, startThinking, vscode, interviewId]);
+
+  const fetchGeneralFeedback = useCallback(() => {
+    showLoading('全部の回答をチェック中・・・');
+    const msg: ApiRequestValue = {
+      type: "fetchGeneralFeedback",
+      payload: { interview_id: interviewId, }
+    };
+    vscode.postMessage(msg);
+  }, [showLoading, vscode, interviewId]);
+
+  const moveGeneralFeedbackScreen = useCallback((payload: GeneralFeedbackResponse) => {
+    navigate("/feedback", {
+      state: {
+        payload,
+        currentCharacter
+      }
+    });
+  }, [navigate, currentCharacter]);
+
+  const handleExtensionMessage = useCallback((event: MessageEvent) => {
+    const { type, payload } = event.data;
+    if (type === "Feedback") {
+      judgeContinueSameQuestion(payload);
+    } else if (type === 'nextQuestion') {
+      stopThinking();
+      setChatHistory(prev => [...prev, { type: 'question', text: payload.question }]);
+      setQuestionId(payload.question_id);
+      setButtonDisplay("スキップ");
+      setDisplayEnterBox(true);
+    } else if (type === "GeneralFeedback") {
+      hideLoading();
+      moveGeneralFeedbackScreen(payload);
+    }
+  }, [judgeContinueSameQuestion, stopThinking, hideLoading, moveGeneralFeedbackScreen]);
+
+  useEffect(() => {
+    window.addEventListener("message", handleExtensionMessage);
+    return () => window.removeEventListener("message", handleExtensionMessage);
+  }, [handleExtensionMessage]);
+
+  return (
+    <AnswerContext.Provider
+      value={{
+        currentCharacter,
+        interviewId,
+        chatHistory,
+        chatInput,
+        questionId,
+        buttonDisplay,
+        displayEnterBox,
+        interruptModalOpen,
+        skipModalOpen,
+        scrollTop,
+        navigate,
+        fetchFeedback,
+        fetchNextQuestion,
+        fetchGeneralFeedback,
+        setChatInput,
+        setInterruptModalOpen,
+        setSkipModalOpen,
+        setScrollTop,
+      }}
+    >
+      {children}
+    </AnswerContext.Provider>
+  );
+};

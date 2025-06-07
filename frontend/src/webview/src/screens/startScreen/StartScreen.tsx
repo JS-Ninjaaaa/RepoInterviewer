@@ -22,7 +22,9 @@ declare global {
   function acquireVsCodeApi(): VSCodeAPI;
 }
 
-const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
+const StartScreen = ({
+  vscode
+}: StartScreenProps) => {
   const { showLoading, hideLoading } = useLoading();
   const [characterIndex, setCharacterIndex] = useState(0);
   const currentCharacter = characters[characterIndex];
@@ -60,7 +62,9 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
   }, [currentCharacter, navigate, hideLoading]);
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider
+      theme={ theme }
+    >
       <Box
         sx={{
           display: "flex",
@@ -71,13 +75,23 @@ const StartScreen: React.FC<StartScreenProps> = ({ vscode }) => {
           minWidth: "320px",
         }}
       >
-        <Header currentCharacter={currentCharacter}/>
-        <Typography variant="h5" sx={{ fontWeight: "bold", mt: "20%" }}>
+        <Header
+          currentCharacter={ currentCharacter }
+        />
+
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: "bold", mt: "20%"
+          }}
+        >
           面接官選択
         </Typography>
 
         <CharacterSelectCards
-          selectingCharacter={{ characterIndex, setCharacterIndex }}
+          selectingCharacter={{
+            characterIndex, setCharacterIndex
+          }}
         />
 
         <Button

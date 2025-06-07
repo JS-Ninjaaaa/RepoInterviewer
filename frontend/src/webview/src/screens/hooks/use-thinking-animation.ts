@@ -32,7 +32,7 @@ export function useThinkingAnimation(
     let animIndex = 0;
 
     intervalRef.current = window.setInterval(() => {
-      if (indexRef.current === null) return;
+      if (indexRef.current === null) { return; };
       // 次の状態へ
       animIndex = (animIndex + 1) % states.length;
       setChatHistory(curr =>
@@ -51,7 +51,7 @@ export function useThinkingAnimation(
       intervalRef.current = null;
     }
     const idx = indexRef.current;
-    if (idx == null) return;
+    if (idx === null) { return; };
 
     // プレースホルダーを消す
     setChatHistory(prev => {
