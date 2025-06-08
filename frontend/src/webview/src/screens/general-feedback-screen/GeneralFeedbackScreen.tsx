@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import Footer from "@/screens/generalFeedbackScreen/components/Footer";
-import ScoreDisplay from "@/screens/generalFeedbackScreen/components/ScoreDisplay";
+import Footer from "@/screens/general-feedback-screen/components/Footer";
+import ScoreDisplay from "@/screens/general-feedback-screen/components/ScoreDisplay";
 
 interface GeneralFeedbackScreenProps {
   vscode: VSCodeAPI;

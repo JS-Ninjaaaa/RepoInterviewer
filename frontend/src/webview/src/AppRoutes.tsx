@@ -2,9 +2,9 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "@/theme";
 
-import StartScreen from "@/screens/startScreen/StartScreen";
+import StartScreen from "@/screens/start-screen/StartScreen";
 import AnswerScreen from "@/screens/answer-screen/AnswerScreen";
-import GeneralFeedbackScreen from "@/screens/generalFeedbackScreen/GeneralFeedbackScreen";
+import GeneralFeedbackScreen from "@/screens/general-feedback-screen/GeneralFeedbackScreen";
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
 
