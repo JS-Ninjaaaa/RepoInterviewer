@@ -9,7 +9,7 @@ from app.domain.repositories.source_code_repository import SourceCodeRepository
 from app.schemas.interview_schema import SetUpInterviewRequest, SetUpInterviewResponse
 
 
-class SetUpInterviewUsecase:
+class SetUpInterviewUseCase:
     def __init__(
         self,
         interview_repository: InterviewRepository,
