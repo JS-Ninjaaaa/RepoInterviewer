@@ -6,11 +6,7 @@ interface ScoreDisplayProps {
   scores: number[];
 }
 
-const ScoreDisplay = ({
-    currentCharacter,
-    scores
-}: ScoreDisplayProps) => {
-
+const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
   let totalScore: number = 0;
   for (let i = 0; i < scores.length; i++) {
     totalScore += scores[i];
@@ -20,7 +16,9 @@ const ScoreDisplay = ({
     <>
       <Typography
         sx={{
-          fontSize: "28px", fontWeight: "bold", mt: "16%"
+          fontSize: "28px",
+          fontWeight: "bold",
+          mt: "16%",
         }}
       >
         最終結果
@@ -36,7 +34,8 @@ const ScoreDisplay = ({
       >
         <Typography
           sx={{
-            fontSize: 76, lineHeight: 1
+            fontSize: 76,
+            lineHeight: 1,
           }}
         >
           {totalScore}
@@ -44,7 +43,7 @@ const ScoreDisplay = ({
 
         <Typography
           sx={{
-            fontSize: "32px"
+            fontSize: "32px",
           }}
         >
           点
@@ -53,19 +52,19 @@ const ScoreDisplay = ({
 
       <Box
         sx={{
-          mb: 2
+          mb: 2,
         }}
       >
         <Typography
           sx={{
-            color: currentCharacter.color[700]
+            color: currentCharacter.color[700],
           }}
         >
           {scores.join(" / ")}
         </Typography>
       </Box>
     </>
-  )
-}
+  );
+};
 
-export default ScoreDisplay
+export default ScoreDisplay;

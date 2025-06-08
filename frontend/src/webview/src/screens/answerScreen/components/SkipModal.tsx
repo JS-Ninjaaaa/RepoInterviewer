@@ -1,5 +1,5 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
-import { useAnswerContext } from "@/screens/answerScreen/context/useAnswerCOntext";
+import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
 
 const SkipModal: React.FC = () => {
   const { skipModalOpen, setSkipModalOpen, fetchFeedback } = useAnswerContext();
@@ -29,20 +29,22 @@ const SkipModal: React.FC = () => {
           p: 4,
           maxWidth: "400px",
           width: "80%",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         <Typography id="skip-modal-title" variant="h6" gutterBottom>
           本当にスキップしますか？ この問題は0点になります
         </Typography>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: "40px", mt: 2 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", gap: "40px", mt: 2 }}
+        >
           <Button
             variant="contained"
             onClick={handleClose}
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.primary.light,
-              color: "white"
+              color: "white",
             }}
           >
             いいえ
@@ -53,7 +55,7 @@ const SkipModal: React.FC = () => {
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.secondary.light,
-              color: "white"
+              color: "white",
             }}
           >
             スキップ

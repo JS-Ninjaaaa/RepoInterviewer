@@ -1,6 +1,6 @@
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
-import { theme } from "./theme";
+import { theme } from "@/theme";
 
 import StartScreen from "@/screens/startScreen/StartScreen";
 import AnswerScreen from "@/screens/answerScreen/AnswerScreen";
@@ -35,7 +35,7 @@ const AppContent: React.FC = () => {
       </MemoryRouter>
     </>
   );
-}
+};
 
 const AppRoutes: React.FC = () => (
   <ThemeProvider theme={theme}>

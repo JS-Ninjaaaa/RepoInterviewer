@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { theme } from "@/theme";
-import { useAnswerContext } from "@/screens/answerScreen/context/useAnswerCOntext";
+import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
 
 const ActionButtons: React.FC = () => {
   const {
@@ -8,7 +8,7 @@ const ActionButtons: React.FC = () => {
     fetchNextQuestion,
     fetchGeneralFeedback,
     setInterruptModalOpen,
-    setSkipModalOpen
+    setSkipModalOpen,
   } = useAnswerContext();
 
   const handleClick = () => {
@@ -29,7 +29,7 @@ const ActionButtons: React.FC = () => {
         mt: 1,
         gap: "20%",
         justifyContent: "center",
-        mb: "68px"
+        mb: "68px",
       }}
     >
       <Button
@@ -41,7 +41,7 @@ const ActionButtons: React.FC = () => {
           minWidth: "120px",
           width: "42%",
           height: 42,
-          fontSize: 18
+          fontSize: 18,
         }}
       >
         中断
@@ -58,7 +58,7 @@ const ActionButtons: React.FC = () => {
           minWidth: "150px",
           width: "42%",
           height: 42,
-          fontSize: 18
+          fontSize: 18,
         }}
       >
         {buttonDisplay}

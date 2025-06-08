@@ -9,14 +9,11 @@ interface FooterProps {
   currentCharacter: Character;
 }
 
-const Footer = ({
-  vscode,
-  currentCharacter,
-}: FooterProps) => {
+const Footer = ({ vscode, currentCharacter }: FooterProps) => {
   const navigate = useNavigate();
 
   const moveFirstScreen = () => {
-    navigate('/start');
+    navigate("/start");
   };
 
   return (
@@ -28,7 +25,7 @@ const Footer = ({
           gap: "5%",
           justifyContent: "center",
           alignItems: "center",
-          mb: '30px',
+          mb: "30px",
         }}
       >
         <XIcon
@@ -40,9 +37,7 @@ const Footer = ({
             fontSize: "18px",
           }}
         />
-        <Typography>
-            SNSで結果をシェアしよう ! 
-        </Typography>
+        <Typography>SNSで結果をシェアしよう !</Typography>
       </Box>
 
       <Box

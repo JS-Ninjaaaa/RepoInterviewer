@@ -1,14 +1,17 @@
-import {  useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ChatMessage } from "@/types/chat-message";
 import type { Character } from "@/types/character";
-import { FeedBackResponse, GeneralFeedbackResponse } from "@shared/api-response-value"
+import {
+  FeedBackResponse,
+  GeneralFeedbackResponse,
+} from "@shared/api-response-value";
 import type { ApiRequestValue } from "@shared/api-request-value";
 import { useLoading } from "@/screens/context/LoadingContext";
-import { useThinkingAnimation } from "@/screens/hooks/use-thinking-animation";
-import { AnswerContext } from "./AnswerContext";
+import { useThinkingAnimation } from "@/screens/components/hooks/use-thinking-animation";
+import { AnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
 
-interface AnswerProviderProps {
+interface AnswerContextProviderProps {
   children: React.ReactNode;
   vscode: VSCodeAPI;
   interviewId: string;
@@ -16,15 +19,15 @@ interface AnswerProviderProps {
   initialQuestion: string;
 }
 
-export const AnswerContextProvider: React.FC<AnswerProviderProps> = ({
+export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   children,
   vscode,
   interviewId,
-  currentCharacter,              
-  initialQuestion
+  currentCharacter,
+  initialQuestion,
 }) => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-    { type: "question", text: initialQuestion }
+    { type: "question", text: initialQuestion },
   ]);
   const [chatInput, setChatInput] = useState<string>("");
   const [questionId, setQuestionId] = useState<number>(1);
@@ -38,28 +41,41 @@ export const AnswerContextProvider: React.FC<AnswerProviderProps> = ({
   const { startThinking, stopThinking } = useThinkingAnimation(setChatHistory);
   const navigate = useNavigate();
 
-  const judgeContinueSameQuestion = useCallback((payload: FeedBackResponse) => {
-    stopThinking();
-    const lastScore = payload.score;
-    if (payload.continue_question) {
-      setChatHistory(prev => [...prev, { type: 'question', text: payload.response }]);
-      setDisplayEnterBox(true);
-    } else {
-      const total = currentCharacter.totalQuestion;
-      const lastId = payload.question_id;
-      setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
-      setChatHistory(prev => [...prev, { type: 'feedback', text: payload.response, score: lastScore }]);
-    }
-  }, [currentCharacter.totalQuestion, stopThinking]);
+  const judgeContinueSameQuestion = useCallback(
+    (payload: FeedBackResponse) => {
+      stopThinking();
+      const lastScore = payload.score;
+      if (payload.continue_question) {
+        setChatHistory((prev) => [
+          ...prev,
+          { type: "question", text: payload.response },
+        ]);
+        setDisplayEnterBox(true);
+      } else {
+        const total = currentCharacter.totalQuestion;
+        const lastId = payload.question_id;
+        setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
+        setChatHistory((prev) => [
+          ...prev,
+          { type: "feedback", text: payload.response, score: lastScore },
+        ]);
+      }
+    },
+    [currentCharacter.totalQuestion, stopThinking],
+  );
 
   const fetchFeedback = useCallback(() => {
-    setScrollTop(false)
-    setChatHistory(prev => [...prev, { type: "answer", text: chatInput }]);
+    setScrollTop(false);
+    setChatHistory((prev) => [...prev, { type: "answer", text: chatInput }]);
     startThinking();
     setDisplayEnterBox(false);
     const msg: ApiRequestValue = {
       type: "fetchFeedback",
-      payload: { interview_id: interviewId, question_id: questionId, answer: chatInput }
+      payload: {
+        interview_id: interviewId,
+        question_id: questionId,
+        answer: chatInput,
+      },
     };
     vscode.postMessage(msg);
     setChatInput("");
@@ -70,7 +86,7 @@ export const AnswerContextProvider: React.FC<AnswerProviderProps> = ({
     const nextId = questionId + 1;
     const msg: ApiRequestValue = {
       type: "fetchNextQuestion",
-      payload: { interview_id: interviewId, question_id: nextId }
+      payload: { interview_id: interviewId, question_id: nextId },
     };
     vscode.postMessage(msg);
     setQuestionId(nextId);
@@ -79,38 +95,52 @@ export const AnswerContextProvider: React.FC<AnswerProviderProps> = ({
   }, [questionId, startThinking, vscode, interviewId]);
 
   const fetchGeneralFeedback = useCallback(() => {
-    showLoading('全部の回答をチェック中・・・');
+    showLoading("全部の回答をチェック中・・・");
     const msg: ApiRequestValue = {
       type: "fetchGeneralFeedback",
-      payload: { interview_id: interviewId, }
+      payload: { interview_id: interviewId },
     };
     vscode.postMessage(msg);
   }, [showLoading, vscode, interviewId]);
 
-  const moveGeneralFeedbackScreen = useCallback((payload: GeneralFeedbackResponse) => {
-    navigate("/feedback", {
-      state: {
-        payload,
-        currentCharacter
-      }
-    });
-  }, [navigate, currentCharacter]);
+  const moveGeneralFeedbackScreen = useCallback(
+    (payload: GeneralFeedbackResponse) => {
+      navigate("/feedback", {
+        state: {
+          payload,
+          currentCharacter,
+        },
+      });
+    },
+    [navigate, currentCharacter],
+  );
 
-  const handleExtensionMessage = useCallback((event: MessageEvent) => {
-    const { type, payload } = event.data;
-    if (type === "Feedback") {
-      judgeContinueSameQuestion(payload);
-    } else if (type === 'nextQuestion') {
-      stopThinking();
-      setChatHistory(prev => [...prev, { type: 'question', text: payload.question }]);
-      setQuestionId(payload.question_id);
-      setButtonDisplay("スキップ");
-      setDisplayEnterBox(true);
-    } else if (type === "GeneralFeedback") {
-      hideLoading();
-      moveGeneralFeedbackScreen(payload);
-    }
-  }, [judgeContinueSameQuestion, stopThinking, hideLoading, moveGeneralFeedbackScreen]);
+  const handleExtensionMessage = useCallback(
+    (event: MessageEvent) => {
+      const { type, payload } = event.data;
+      if (type === "Feedback") {
+        judgeContinueSameQuestion(payload);
+      } else if (type === "nextQuestion") {
+        stopThinking();
+        setChatHistory((prev) => [
+          ...prev,
+          { type: "question", text: payload.question },
+        ]);
+        setQuestionId(payload.question_id);
+        setButtonDisplay("スキップ");
+        setDisplayEnterBox(true);
+      } else if (type === "GeneralFeedback") {
+        hideLoading();
+        moveGeneralFeedbackScreen(payload);
+      }
+    },
+    [
+      judgeContinueSameQuestion,
+      stopThinking,
+      hideLoading,
+      moveGeneralFeedbackScreen,
+    ],
+  );
 
   useEffect(() => {
     window.addEventListener("message", handleExtensionMessage);

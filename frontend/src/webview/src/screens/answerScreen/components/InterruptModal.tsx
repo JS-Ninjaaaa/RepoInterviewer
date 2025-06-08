@@ -1,8 +1,9 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
-import { useAnswerContext } from "@/screens/answerScreen/context/useAnswerCOntext";
+import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
 
 const InterruptModal: React.FC = () => {
-  const { interruptModalOpen, setInterruptModalOpen,  navigate  } = useAnswerContext();
+  const { interruptModalOpen, setInterruptModalOpen, navigate } =
+    useAnswerContext();
   const handleClose = () => setInterruptModalOpen(false);
   const handleConfirm = () => {
     setInterruptModalOpen(false);
@@ -27,20 +28,22 @@ const InterruptModal: React.FC = () => {
           p: 4,
           maxWidth: "400px",
           width: "80%",
-          textAlign: "center"
+          textAlign: "center",
         }}
       >
         <Typography id="interrupt-modal-title" variant="h6" gutterBottom>
           本当に中断しますか？
         </Typography>
-        <Box sx={{ display: "flex", justifyContent: "center", gap: "20px", mt: 2 }}>
+        <Box
+          sx={{ display: "flex", justifyContent: "center", gap: "20px", mt: 2 }}
+        >
           <Button
             variant="contained"
             onClick={handleClose}
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.primary.light,
-              color: "white"
+              color: "white",
             }}
           >
             いいえ
@@ -51,7 +54,7 @@ const InterruptModal: React.FC = () => {
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.secondary.light,
-              color: "white"
+              color: "white",
             }}
           >
             中断
