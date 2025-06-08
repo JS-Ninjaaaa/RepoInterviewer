@@ -5,9 +5,9 @@ import { characters } from "@/data/characters";
 import { theme } from "@/theme";
 import { useLoading } from "@/screens/context/LoadingContext";
 
-import type { ApiRequestValue } from "@shared/api-request-value";
-import CharacterSelectCards from "@/screens/startScreen/components/CharacterSelectCards";
-import Header from "@/screens/startScreen/components/Header";
+import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
+import CharacterSelectCards from "@/screens/start-screen/components/CharacterSelectCards";
+import Header from "@/screens/start-screen/components/Header";
 
 interface StartScreenProps {
   vscode: VSCodeAPI;
@@ -15,7 +15,7 @@ interface StartScreenProps {
 
 declare global {
   interface VSCodeAPI {
-    postMessage: (msg: ApiRequestValue) => void;
+    postMessage: (msg: VscodeApiRequestValue) => void;
     getState: () => unknown;
     setState: (data: unknown) => void;
   }
@@ -31,7 +31,7 @@ const StartScreen = ({ vscode }: StartScreenProps) => {
 
   const handleStartInterview = () => {
     showLoading("質問を生成中・・・");
-    const msg: ApiRequestValue = {
+    const msg: VscodeApiRequestValue = {
       type: "fetchFirstQuestion",
       payload: {
         difficulty: currentCharacter.level,

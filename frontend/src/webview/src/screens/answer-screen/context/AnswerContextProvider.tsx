@@ -5,8 +5,9 @@ import type { Character } from "@/types/character";
 import {
   FeedBackResponse,
   GeneralFeedbackResponse,
-} from "@shared/api-response-value";
-import type { ApiRequestValue } from "@shared/api-request-value";
+} from "@shared/backend-api-response-value";
+import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
+import type { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
 import { useLoading } from "@/screens/context/LoadingContext";
 import { useThinkingAnimation } from "@/screens/components/hooks/use-thinking-animation";
 import { AnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
@@ -69,7 +70,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
     setChatHistory((prev) => [...prev, { type: "answer", text: chatInput }]);
     startThinking();
     setDisplayEnterBox(false);
-    const msg: ApiRequestValue = {
+    const msg: VscodeApiRequestValue = {
       type: "fetchFeedback",
       payload: {
         interview_id: interviewId,
@@ -84,7 +85,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   const fetchNextQuestion = useCallback(() => {
     startThinking();
     const nextId = questionId + 1;
-    const msg: ApiRequestValue = {
+    const msg: VscodeApiRequestValue = {
       type: "fetchNextQuestion",
       payload: { interview_id: interviewId, question_id: nextId },
     };
@@ -96,7 +97,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
 
   const fetchGeneralFeedback = useCallback(() => {
     showLoading("全部の回答をチェック中・・・");
-    const msg: ApiRequestValue = {
+    const msg: VscodeApiRequestValue = {
       type: "fetchGeneralFeedback",
       payload: { interview_id: interviewId },
     };
@@ -117,23 +118,25 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
 
   const handleExtensionMessage = useCallback(
     (event: MessageEvent) => {
-      const { type, payload } = event.data;
-      console.log("message from vscode:", type, payload);
-
-      if (type === "Feedback") {
-        judgeContinueSameQuestion(payload);
-      } else if (type === "nextQuestion") {
-        stopThinking();
-        setChatHistory((prev) => [
-          ...prev,
-          { type: "question", text: payload.question },
-        ]);
-        setQuestionId(payload.question_id);
-        setButtonDisplay("スキップ");
-        setDisplayEnterBox(true);
-      } else if (type === "GeneralFeedback") {
-        hideLoading();
-        moveGeneralFeedbackScreen(payload);
+      const msg = event.data as VscodeApiResponseValue;
+      switch (msg.type) {
+        case "feedback":
+          judgeContinueSameQuestion(msg.payload);
+          break;
+        case "nextQuestion":
+          stopThinking();
+          setChatHistory((prev) => [
+            ...prev,
+            { type: "question", text: msg.payload.question },
+          ]);
+          setQuestionId(msg.payload.question_id);
+          setButtonDisplay("スキップ");
+          setDisplayEnterBox(true);
+          break;
+        case "generalFeedback":
+          hideLoading();
+          moveGeneralFeedbackScreen(msg.payload);
+          break;
       }
     },
     [
