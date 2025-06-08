@@ -7,7 +7,7 @@ interface GeneralFeedbackScreenProps {
   vscode: VSCodeAPI;
 }
 
-const FinelFeedBackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
+const GeneralFeedbackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
   const location = useLocation();
 
   const { currentCharacter, payload } = location.state;
@@ -65,4 +65,4 @@ const FinelFeedBackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
   );
 };
 
-export default FinelFeedBackScreen;
+export default GeneralFeedbackScreen;
