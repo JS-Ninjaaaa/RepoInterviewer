@@ -16,7 +16,7 @@ interface AnswerContextProviderProps {
   vscode: VSCodeAPI;
   interviewId: string;
   currentCharacter: Character;
-  initialQuestion: string;
+  firstlQuestion: string;
 }
 
 export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
@@ -24,10 +24,10 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   vscode,
   interviewId,
   currentCharacter,
-  initialQuestion,
+  firstlQuestion,
 }) => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([
-    { type: "question", text: initialQuestion },
+    { type: "question", text: firstlQuestion },
   ]);
   const [chatInput, setChatInput] = useState<string>("");
   const [questionId, setQuestionId] = useState<number>(1);
@@ -118,6 +118,8 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   const handleExtensionMessage = useCallback(
     (event: MessageEvent) => {
       const { type, payload } = event.data;
+      console.log("message from vscode:", type, payload);
+
       if (type === "Feedback") {
         judgeContinueSameQuestion(payload);
       } else if (type === "nextQuestion") {

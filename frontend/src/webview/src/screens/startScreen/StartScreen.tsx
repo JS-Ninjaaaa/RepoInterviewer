@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button, ThemeProvider } from "@mui/material";
 import { characters } from "@/data/characters";
 import { theme } from "@/theme";
-import { useLoading } from '@/screens/context/LoadingContext';
+import { useLoading } from "@/screens/context/LoadingContext";
 
 import type { ApiRequestValue } from "@shared/api-request-value";
 import CharacterSelectCards from "@/screens/startScreen/components/CharacterSelectCards";
@@ -22,9 +22,7 @@ declare global {
   function acquireVsCodeApi(): VSCodeAPI;
 }
 
-const StartScreen = ({
-  vscode
-}: StartScreenProps) => {
+const StartScreen = ({ vscode }: StartScreenProps) => {
   const { showLoading, hideLoading } = useLoading();
   const [characterIndex, setCharacterIndex] = useState(0);
   const currentCharacter = characters[characterIndex];
@@ -32,13 +30,13 @@ const StartScreen = ({
   const navigate = useNavigate();
 
   const handleStartInterview = () => {
-    showLoading('質問を生成中・・・');
+    showLoading("質問を生成中・・・");
     const msg: ApiRequestValue = {
-      type: 'fetchFirstQuestion',
+      type: "fetchFirstQuestion",
       payload: {
         difficulty: currentCharacter.level,
-        total_question: currentCharacter.totalQuestion
-      }
+        total_question: currentCharacter.totalQuestion,
+      },
     };
     vscode.postMessage(msg);
   };
@@ -46,25 +44,23 @@ const StartScreen = ({
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       const { type, payload } = event.data;
-      if (type === 'firstQuestion') {
+      if (type === "firstQuestion") {
         hideLoading();
-        navigate('/answer', {
+        navigate("/answer", {
           state: {
             interview_id: payload.interview_id,
             question: payload.question,
-            currentCharacter  // ← ここには必ず最新の currentCharacter が入る
-          }
+            currentCharacter,
+          },
         });
       }
     };
-    window.addEventListener('message', handler);
-    return () => window.removeEventListener('message', handler);
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
   }, [currentCharacter, navigate, hideLoading]);
 
   return (
-    <ThemeProvider
-      theme={ theme }
-    >
+    <ThemeProvider theme={theme}>
       <Box
         sx={{
           display: "flex",
@@ -75,14 +71,13 @@ const StartScreen = ({
           minWidth: "320px",
         }}
       >
-        <Header
-          currentCharacter={ currentCharacter }
-        />
+        <Header currentCharacter={currentCharacter} />
 
         <Typography
           variant="h5"
           sx={{
-            fontWeight: "bold", mt: "20%"
+            fontWeight: "bold",
+            mt: "20%",
           }}
         >
           面接官選択
@@ -90,7 +85,8 @@ const StartScreen = ({
 
         <CharacterSelectCards
           selectingCharacter={{
-            characterIndex, setCharacterIndex
+            characterIndex,
+            setCharacterIndex,
           }}
         />
 

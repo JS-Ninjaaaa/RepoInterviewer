@@ -30,7 +30,7 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
         vscode={vscode}
         interviewId={interviewId}
         currentCharacter={currentCharacter}
-        initialQuestion={question}
+        firstlQuestion={question}
       >
         <Box
           sx={{
