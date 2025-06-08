@@ -9,7 +9,7 @@ import {
 import type { ApiRequestValue } from "@shared/api-request-value";
 import { useLoading } from "@/screens/context/LoadingContext";
 import { useThinkingAnimation } from "@/screens/components/hooks/use-thinking-animation";
-import { AnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
+import { AnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 interface AnswerContextProviderProps {
   children: React.ReactNode;

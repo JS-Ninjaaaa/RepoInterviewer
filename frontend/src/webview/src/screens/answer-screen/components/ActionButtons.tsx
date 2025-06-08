@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { theme } from "@/theme";
-import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
+import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const ActionButtons: React.FC = () => {
   const {

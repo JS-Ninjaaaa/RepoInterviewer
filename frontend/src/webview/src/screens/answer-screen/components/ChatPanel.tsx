@@ -1,14 +1,10 @@
 import { Box, Typography, Avatar } from "@mui/material";
-import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext"; 
+import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 import { useRef, useEffect } from "react";
 
 const ChatPanel: React.FC = () => {
-  const {
-    chatHistory,
-    currentCharacter,
-    questionId,
-    scrollTop,
-  } = useAnswerContext();
+  const { chatHistory, currentCharacter, questionId, scrollTop } =
+    useAnswerContext();
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -25,7 +21,7 @@ const ChatPanel: React.FC = () => {
             <Box
               ref={bottomRef}
               sx={{
-                mt: 2
+                mt: 2,
               }}
             />
           )}
@@ -39,7 +35,7 @@ const ChatPanel: React.FC = () => {
                   mt: 1,
                   gap: "5%",
                   justifyContent: "left",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
               >
                 <Avatar
@@ -48,7 +44,7 @@ const ChatPanel: React.FC = () => {
                   sx={{
                     width: 56,
                     height: 56,
-                    m: 2
+                    m: 2,
                   }}
                 />
                 <Box
@@ -61,13 +57,13 @@ const ChatPanel: React.FC = () => {
                     color: "white",
                     minWidth: "120px",
                     width: "24%",
-                    height: "36px"
+                    height: "36px",
                   }}
                 >
                   <Typography
                     sx={{
                       fontSize: 20,
-                      fontWeight: "bold"
+                      fontWeight: "bold",
                     }}
                   >
                     {`${questionId} of ${currentCharacter.totalQuestion}`}
@@ -80,7 +76,7 @@ const ChatPanel: React.FC = () => {
                     fontSize: 16,
                     bgcolor: currentCharacter.color[50],
                     p: 2,
-                    borderRadius: 2
+                    borderRadius: 2,
                   }}
                 >
                   {msg.text}
@@ -91,13 +87,19 @@ const ChatPanel: React.FC = () => {
 
           {msg.type === "answer" && (
             <Box sx={{ my: 2, width: "100%" }}>
-              <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  width: "100%",
+                }}
+              >
                 <Avatar
                   alt={currentCharacter.name}
                   sx={{
                     width: 56,
                     height: 56,
-                    m: 2
+                    m: 2,
                   }}
                 />
               </Box>
@@ -107,7 +109,7 @@ const ChatPanel: React.FC = () => {
                     bgcolor: currentCharacter.color[50],
                     p: 2,
                     borderRadius: 2,
-                    width: "100%"
+                    width: "100%",
                   }}
                 >
                   <Typography sx={{ fontSize: 16 }}>{msg.text}</Typography>
@@ -130,7 +132,7 @@ const ChatPanel: React.FC = () => {
                   alignItems: "center",
                   bgcolor: currentCharacter.color[50],
                   p: 2,
-                  borderRadius: 2
+                  borderRadius: 2,
                 }}
               >
                 <Typography
@@ -139,7 +141,7 @@ const ChatPanel: React.FC = () => {
                     alignItems: "baseline",
                     flexDirection: "row",
                     fontSize: "36px",
-                    color: currentCharacter.color[600]
+                    color: currentCharacter.color[600],
                   }}
                 >
                   {msg.score}
@@ -153,7 +155,13 @@ const ChatPanel: React.FC = () => {
           )}
 
           {msg.type === "thinking" && (
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "left" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "left",
+              }}
+            >
               <Avatar
                 src={currentCharacter.image}
                 alt={currentCharacter.name}
@@ -170,7 +178,7 @@ const ChatPanel: React.FC = () => {
                   bgcolor: currentCharacter.color[50],
                   p: 2,
                   fontSize: 16,
-                  color: currentCharacter.color[700]
+                  color: currentCharacter.color[700],
                 }}
               >
                 {msg.text}

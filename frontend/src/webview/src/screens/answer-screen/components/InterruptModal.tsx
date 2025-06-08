@@ -1,5 +1,5 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
-import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
+import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const InterruptModal: React.FC = () => {
   const { interruptModalOpen, setInterruptModalOpen, navigate } =

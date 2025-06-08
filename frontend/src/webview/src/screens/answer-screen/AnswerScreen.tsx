@@ -1,12 +1,12 @@
 import { useLocation } from "react-router-dom";
 import { Box, ThemeProvider } from "@mui/material";
 import { theme } from "@/theme";
-import { AnswerContextProvider } from "@/screens/answerScreen/context/AnswerContextProvider";
-import ChatPanel from "@/screens/answerScreen/components/ChatPanel";
-import AnswerInput from "@/screens/answerScreen/components/AnswerInput";
-import ActionButtons from "@/screens/answerScreen/components/ActionButtons";
-import InterruptModal from "@/screens/answerScreen/components/InterruptModal";
-import SkipModal from "@/screens/answerScreen/components/SkipModal";
+import { AnswerContextProvider } from "@/screens/answer-screen/context/AnswerContextProvider";
+import ChatPanel from "@/screens/answer-screen/components/ChatPanel";
+import AnswerInput from "@/screens/answer-screen/components/AnswerInput";
+import ActionButtons from "@/screens/answer-screen/components/ActionButtons";
+import InterruptModal from "@/screens/answer-screen/components/InterruptModal";
+import SkipModal from "@/screens/answer-screen/components/SkipModal";
 import type { Character } from "@/types/character";
 
 interface LocationState {

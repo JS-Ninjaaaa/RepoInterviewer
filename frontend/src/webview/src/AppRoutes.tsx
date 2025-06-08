@@ -3,7 +3,7 @@ import { ThemeProvider } from "@mui/material";
 import { theme } from "@/theme";
 
 import StartScreen from "@/screens/startScreen/StartScreen";
-import AnswerScreen from "@/screens/answerScreen/AnswerScreen";
+import AnswerScreen from "@/screens/answer-screen/AnswerScreen";
 import GeneralFeedbackScreen from "@/screens/generalFeedbackScreen/GeneralFeedbackScreen";
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";

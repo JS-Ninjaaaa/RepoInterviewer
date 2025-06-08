@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import { useAnswerContext } from "@/screens/answerScreen/context/UseAnswerContext";
+import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const AnswerInput: React.FC = () => {
   const {
@@ -30,8 +30,8 @@ const AnswerInput: React.FC = () => {
           mt: 4,
           p: 2,
           "&:focus": {
-            outline: "none"
-          }
+            outline: "none",
+          },
         }}
       />
       <Box sx={{ textAlign: "right" }}>
@@ -45,7 +45,7 @@ const AnswerInput: React.FC = () => {
               py: 1,
               px: 2,
               fontSize: "28px",
-              boxShadow: 3
+              boxShadow: 3,
             }}
           />
         </Button>
