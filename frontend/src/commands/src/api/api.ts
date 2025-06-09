@@ -17,11 +17,10 @@ export async function fetchFirstQuestion(
   payload: PayloadOf<"fetchFirstQuestion">
 ) {
   const formData = new FormData();
-
-  // ZIPファイルを Blob に変換して送信
+  
   formData.append('source_code', zipBlob, 'data.zip');
   formData.append('difficulty', payload.difficulty);
-  formData.append('total_question', payload.total_question.toString());
+  formData.append('total_question', payload.totalQuestion.toString());
 
   const res = await fetch(`${ApiEndPoint}/interview`, {
     method: "POST",
@@ -32,17 +31,17 @@ export async function fetchFirstQuestion(
     throw new Error(`サーバーエラー: ${res.status}`);
   }
 
-  const backend_result = await res.json();
-  return mapFirstQuestion(backend_result);
+  const backendResult = await res.json();
+  return mapFirstQuestion(backendResult);
 }
 
 export async function fetchFeedBack(
   payload: PayloadOf<"fetchFeedback">
 ) {
-  const { interview_id, question_id, answer } = payload;
+  const { interviewId, questionId, answer } = payload;
 
   // クエリパラメターの設定
-  const url = `${ApiEndPoint}/interview/${interview_id}`;
+  const url = `${ApiEndPoint}/interview/${interviewId}`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -50,7 +49,7 @@ export async function fetchFeedBack(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      question_id,
+      question_id: questionId,
       message: answer, 
     }),
   });
@@ -59,16 +58,16 @@ export async function fetchFeedBack(
     throw new Error(`サーバーエラー : ${res.status}`);
   }
 
-  const backend_result = await res.json();
-  return mapFeedback(backend_result);
+  const backendResult = await res.json();
+  return mapFeedback(backendResult);
 }
 
 export async function fetchNextQuestion(
   payload: PayloadOf<"fetchNextQuestion">
 ) {
-  const { interview_id, question_id } = payload;
+  const { interviewId, questionId } = payload;
 
-  const url = `${ApiEndPoint}/interview/${interview_id}?question_id=${question_id}`;
+  const url = `${ApiEndPoint}/interview/${interviewId}?question_id=${questionId}`;
 
   const res = await fetch(url, {
     method: "GET",
@@ -78,14 +77,14 @@ export async function fetchNextQuestion(
     throw new Error(`質問が見つかりませんでした: ${res.status}`);
   }
 
-  const backend_result = await res.json();
-  return mapNextQuestion(backend_result);
+  const backendResult = await res.json();
+  return mapNextQuestion(backendResult);
 }
 
 export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedback">) {
-  const { interview_id } = payload;
+  const { interviewId } = payload;
 
-  const url = `${ApiEndPoint}/interview/${interview_id}/result`;
+  const url = `${ApiEndPoint}/interview/${interviewId}/result`;
 
   const res = await fetch(url, {
     method: "GET",
@@ -95,6 +94,6 @@ export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedb
     throw new Error(`サーバーエラー: ${res.status}`);
   }
 
-  const backend_result = await res.json();
-  return mapGeneralFeedback(backend_result);
+  const backendResult = await res.json();
+  return mapGeneralFeedback(backendResult);
 }

@@ -22,11 +22,11 @@ export async function handleWebviewMessage(
           message.payload
         ); 
         
-        const responsemessage: VscodeApiResponseValue = {
+        const responseMessage: VscodeApiResponseValue = {
           type: "firstQuestion",
-          payload:  questionInfo, 
+          payload: questionInfo, 
         };
-        panel.webview.postMessage(responsemessage);
+        panel.webview.postMessage(responseMessage);
         
         break;
       } catch (err: unknown) {
@@ -42,11 +42,11 @@ export async function handleWebviewMessage(
       try {
         const nextQuestionInfo = await fetchNextQuestion(message.payload);
 
-        const responsemessage: VscodeApiResponseValue = {
+        const responseMessage: VscodeApiResponseValue = {
           type: "nextQuestion",
           payload: nextQuestionInfo,
         };
-        panel.webview.postMessage(responsemessage);
+        panel.webview.postMessage(responseMessage);
 
         break;
       } catch (err: unknown) {
@@ -62,17 +62,17 @@ export async function handleWebviewMessage(
       try {
         const feedback = await fetchFeedBack(message.payload); 
         
-        // APIからcontinue_questionを返されなかったら
-        if (typeof feedback.continue_question === "undefined") {
+        // APIからcontinueQuestionを返されなかったら
+        if (typeof feedback.continueQuestion === "undefined") {
 
-          feedback.continue_question = false;
+          feedback.continueQuestion = false;
         }
 
-        const responsemessage: VscodeApiResponseValue = {
+        const responseMessage: VscodeApiResponseValue = {
           type: "feedback",
           payload: feedback,
         };
-        panel.webview.postMessage(responsemessage);
+        panel.webview.postMessage(responseMessage);
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
@@ -88,11 +88,11 @@ export async function handleWebviewMessage(
       try {
         const generalFeedback = await fetchGeneralFeedback(message.payload);
 
-        const responsemessage: VscodeApiResponseValue = {
+        const responseMessage: VscodeApiResponseValue = {
           type: "generalFeedback",
           payload: generalFeedback,
         };
-        panel.webview.postMessage(responsemessage);
+        panel.webview.postMessage(responseMessage);
 
         break;
       } catch (err: unknown) {

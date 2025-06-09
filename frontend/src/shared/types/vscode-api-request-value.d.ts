@@ -1,15 +1,15 @@
 export type VscodeApiRequestValue =
   | {
       type: "fetchFirstQuestion";
-      payload: { difficulty: string; total_question: number };
+      payload: { difficulty: string; totalQuestion: number };
     }
   | {
       type: "fetchNextQuestion";
-      payload: { interview_id: string; question_id: number };
+      payload: { interviewId: string; questionId: number };
     }
   | {
       type: "fetchFeedback";
-      payload: { interview_id: string; question_id: number; answer: string };
+      payload: { interviewId: string; questionId: number; answer: string };
     }
-  | { type: "fetchGeneralFeedback"; payload: { interview_id: string } }
+  | { type: "fetchGeneralFeedback"; payload: { interviewId: string } }
   | { type: "closeWebview" };
