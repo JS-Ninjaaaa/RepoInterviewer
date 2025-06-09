@@ -1,15 +1,15 @@
 import { ApiEndPoint } from '../env';
 import {
-  FirstQuestionResponse,
-  NextQuestionResponse,
-  FeedBackResponse,
-  GeneralFeedbackResponse,
+  BackendFirstQuestionResponse,
+  BackendNextQuestionResponse,
+  BackendFeedBackResponse,
+  BackendGeneralFeedbackResponse,
 } from "@shared/backend-api-response-value";
 
 export async function fetchFirstQuestion(
   zipBlob: Blob,
   payload: { difficulty: string; total_question: number }
-): Promise<FirstQuestionResponse> {
+): Promise<BackendFirstQuestionResponse> {
   const formData = new FormData();
 
   // ZIPファイルを Blob に変換して送信
@@ -32,7 +32,7 @@ export async function fetchFirstQuestion(
 
 export async function fetchFeedBack(
   payload: { interview_id: string; question_id: number; answer: string; }
-): Promise<FeedBackResponse> {
+): Promise<BackendFeedBackResponse> {
   const { interview_id, question_id, answer } = payload;
 
   // クエリパラメターの設定
@@ -45,7 +45,7 @@ export async function fetchFeedBack(
     },
     body: JSON.stringify({
       question_id,
-      message: answer, // 仕様に合わせてキー名は `message`
+      message: answer, 
     }),
   });
 
@@ -59,7 +59,7 @@ export async function fetchFeedBack(
 
 export async function fetchNextQuestion(
   payload: { interview_id: string; question_id: number }
-): Promise<NextQuestionResponse> {
+): Promise<BackendNextQuestionResponse> {
   const { interview_id, question_id } = payload;
 
   const url = `${ApiEndPoint}/interview/${interview_id}?question_id=${question_id}`;
@@ -78,7 +78,7 @@ export async function fetchNextQuestion(
 
 export async function fetchGeneralFeedback(payload: {
   interview_id: string;
-}): Promise<GeneralFeedbackResponse> {
+}): Promise<BackendGeneralFeedbackResponse> {
   const { interview_id } = payload;
 
   const url = `${ApiEndPoint}/interview/${interview_id}/result`;

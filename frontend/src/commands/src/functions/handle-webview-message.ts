@@ -93,7 +93,7 @@ export async function handleWebviewMessage(
           payload: generalFeedback,
         };
         panel.webview.postMessage(responsemessage);
-        
+
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
