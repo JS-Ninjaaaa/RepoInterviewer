@@ -1,10 +1,10 @@
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
-import { theme } from "./theme";
+import { theme } from "@/theme";
 
-import StartScreen from "@/screens/startScreen/StartScreen";
-import AnswerScreen from "@/screens/AnswerScreen";
-import GeneralFeedbackScreen from "@/screens/GeneralFeedbackScreen";
+import StartScreen from "@/screens/start-screen/StartScreen";
+import AnswerScreen from "@/screens/answer-screen/AnswerScreen";
+import GeneralFeedbackScreen from "@/screens/general-feedback-screen/GeneralFeedbackScreen";
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
 
@@ -35,7 +35,7 @@ const AppContent: React.FC = () => {
       </MemoryRouter>
     </>
   );
-}
+};
 
 const AppRoutes: React.FC = () => (
   <ThemeProvider theme={theme}>

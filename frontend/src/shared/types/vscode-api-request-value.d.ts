@@ -1,4 +1,4 @@
-export type ApiRequestValue =
+export type VscodeApiRequestValue =
   | {
       type: "fetchFirstQuestion";
       payload: { difficulty: string; total_question: number };

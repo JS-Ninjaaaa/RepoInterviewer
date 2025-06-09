@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import type { ApiRequestValue } from "@shared/api-request-value"
+import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import { handleWebviewMessage } from "./functions/handle-webview-message";
 import { getUri } from "./functions/utilities/get-uri";
 import { getNonce } from "./functions/utilities/get-nonce";
@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
         );
 
         // reactからメッセージを受け取ったタイミングで実行される
-        panel.webview.onDidReceiveMessage(async (message: ApiRequestValue) => {
+        panel.webview.onDidReceiveMessage(async (message: VscodeApiRequestValue) => {
           handleWebviewMessage(panel, message);
         });
       },

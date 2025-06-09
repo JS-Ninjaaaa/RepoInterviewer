@@ -6,11 +6,12 @@ import {
   fetchGeneralFeedback,
 } from "../api/api";
 import { fetchFiles } from "./fetch-files";
-import { ApiRequestValue } from "@shared/api-request-value";
+import { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
+import { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
 
 export async function handleWebviewMessage(
   panel: vscode.WebviewPanel,
-  message: ApiRequestValue,
+  message: VscodeApiRequestValue,
 ) {
   switch (message.type) {
     case "fetchFirstQuestion": {
@@ -21,10 +22,12 @@ export async function handleWebviewMessage(
           message.payload
         ); 
         
-        panel.webview.postMessage({
+        const responsemessage: VscodeApiResponseValue = {
           type: "firstQuestion",
           payload:  questionInfo, 
-        });
+        };
+        panel.webview.postMessage(responsemessage);
+        
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
@@ -39,10 +42,12 @@ export async function handleWebviewMessage(
       try {
         const nextQuestionInfo = await fetchNextQuestion(message.payload);
 
-        panel.webview.postMessage({
+        const responsemessage: VscodeApiResponseValue = {
           type: "nextQuestion",
           payload: nextQuestionInfo,
-        });
+        };
+        panel.webview.postMessage(responsemessage);
+
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
@@ -63,10 +68,11 @@ export async function handleWebviewMessage(
           feedback.continue_question = false;
         }
 
-        panel.webview.postMessage({
-          type: "Feedback",
+        const responsemessage: VscodeApiResponseValue = {
+          type: "feedback",
           payload: feedback,
-        });
+        };
+        panel.webview.postMessage(responsemessage);
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
@@ -82,10 +88,12 @@ export async function handleWebviewMessage(
       try {
         const generalFeedback = await fetchGeneralFeedback(message.payload);
 
-        panel.webview.postMessage({
-          type: "GeneralFeedback",
+        const responsemessage: VscodeApiResponseValue = {
+          type: "generalFeedback",
           payload: generalFeedback,
-        });
+        };
+        panel.webview.postMessage(responsemessage);
+        
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
