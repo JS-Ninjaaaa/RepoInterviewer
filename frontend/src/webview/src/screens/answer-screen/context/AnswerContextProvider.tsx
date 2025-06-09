@@ -84,19 +84,19 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
 
   const fetchNextQuestion = useCallback(() => {
     startThinking();
-    const nextId = questionId + 1;
+    const nextQuestionId = questionId + 1;
     const msg: VscodeApiRequestValue = {
       type: "fetchNextQuestion",
-      payload: { interview_id: interviewId, question_id: nextId },
+      payload: { interview_id: interviewId, question_id: nextQuestionId },
     };
     vscode.postMessage(msg);
-    setQuestionId(nextId);
+    setQuestionId(nextQuestionId);
     setButtonDisplay("スキップ");
     setDisplayEnterBox(true);
   }, [questionId, startThinking, vscode, interviewId]);
 
   const fetchGeneralFeedback = useCallback(() => {
-    showLoading("全部の回答をチェック中・・・");
+    showLoading("全ての回答をチェック中・・・");
     const msg: VscodeApiRequestValue = {
       type: "fetchGeneralFeedback",
       payload: { interview_id: interviewId },
@@ -165,7 +165,6 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
         interruptModalOpen,
         skipModalOpen,
         scrollTop,
-        navigate,
         fetchFeedback,
         fetchNextQuestion,
         fetchGeneralFeedback,

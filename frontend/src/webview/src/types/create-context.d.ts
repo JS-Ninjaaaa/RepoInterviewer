@@ -9,7 +9,6 @@ export interface AnswerContextType {
   interruptModalOpen: boolean;
   skipModalOpen: boolean;
   scrollTop: boolean;
-  navigate: NavigateFunction;
   fetchFeedback: () => void;
   fetchNextQuestion: () => void;
   fetchGeneralFeedback: () => void;
