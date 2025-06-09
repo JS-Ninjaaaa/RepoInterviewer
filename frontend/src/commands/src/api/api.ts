@@ -1,15 +1,15 @@
 import { ApiEndPoint } from '../env';
-import {
-  BackendFirstQuestionResponse,
-  BackendNextQuestionResponse,
-  BackendFeedBackResponse,
-  BackendGeneralFeedbackResponse,
-} from "@shared/backend-api-response-value";
+import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
+
+type PayloadOf<T extends VscodeApiRequestValue["type"]> =
+  VscodeApiRequestValue extends { type: T; payload: infer P }
+  ? P
+  : any;
 
 export async function fetchFirstQuestion(
   zipBlob: Blob,
-  payload: { difficulty: string; total_question: number }
-): Promise<BackendFirstQuestionResponse> {
+  payload: PayloadOf<"fetchFirstQuestion">
+) {
   const formData = new FormData();
 
   // ZIPファイルを Blob に変換して送信
@@ -31,8 +31,8 @@ export async function fetchFirstQuestion(
 }
 
 export async function fetchFeedBack(
-  payload: { interview_id: string; question_id: number; answer: string; }
-): Promise<BackendFeedBackResponse> {
+  payload: PayloadOf<"fetchFeedback">
+) {
   const { interview_id, question_id, answer } = payload;
 
   // クエリパラメターの設定
@@ -58,8 +58,8 @@ export async function fetchFeedBack(
 }
 
 export async function fetchNextQuestion(
-  payload: { interview_id: string; question_id: number }
-): Promise<BackendNextQuestionResponse> {
+  payload: PayloadOf<"fetchNextQuestion">
+) {
   const { interview_id, question_id } = payload;
 
   const url = `${ApiEndPoint}/interview/${interview_id}?question_id=${question_id}`;
@@ -76,9 +76,7 @@ export async function fetchNextQuestion(
   return result;
 }
 
-export async function fetchGeneralFeedback(payload: {
-  interview_id: string;
-}): Promise<BackendGeneralFeedbackResponse> {
+export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedback">) {
   const { interview_id } = payload;
 
   const url = `${ApiEndPoint}/interview/${interview_id}/result`;
