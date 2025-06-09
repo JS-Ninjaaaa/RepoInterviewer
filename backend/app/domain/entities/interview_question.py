@@ -16,6 +16,39 @@ class InterviewQuestion:
         chat_history (ChatHistory): 会話履歴
     """
 
+    @property
+    def interview_id(self) -> str:
+        return self._interview_id
+
+    @property
+    def question_id(self) -> str:
+        return self._question_id
+
+    @property
+    def difficulty(self) -> Difficulty:
+        return self._difficulty
+
+    @property
+    def max_score(self) -> int:
+        return self._max_score
+
+    @property
+    def score(self) -> int:
+        return self._score
+
+    @property
+    def chat_history(self) -> ChatHistory:
+        return self._chat_history
+
+    @score.setter
+    def score(self, value: int):
+        if value < 0 or value > self.max_score:
+            raise ValueError(
+                f"スコアは0から最大スコア({self.max_score})までの間でなければなりません"
+            )
+
+        self._score = value
+
     def __init__(
         self,
         interview_id: str,
@@ -33,11 +66,11 @@ class InterviewQuestion:
             max_score (int): 最大スコア
             chat_history (ChatHistory): 会話履歴
         """
-        self.interview_id = interview_id
-        self.question_id = question_id
-        self.difficulty = difficulty
-        self.max_score = max_score
-        self.chat_history = chat_history
+        self._interview_id = interview_id
+        self._question_id = question_id
+        self._difficulty = difficulty
+        self._max_score = max_score
+        self._chat_history = chat_history
 
     def append_chat_history(self, message: ChatMessage):
         """会話履歴にメッセージを追加する
@@ -45,16 +78,16 @@ class InterviewQuestion:
         Args:
             message (ChatMessage): 追加するメッセージ
         """
-        self.chat_history.append_message(message)
+        self._chat_history.append_message(message)
 
     def to_dict(self) -> dict:
         """辞書に変換する"""
         return {
-            "interview_id": self.interview_id,
-            "question_id": self.question_id,
-            "difficulty": self.difficulty.value,
-            "max_score": self.max_score,
-            "chat_history": self.chat_history.to_dict(),
+            "interview_id": self._interview_id,
+            "question_id": self._question_id,
+            "difficulty": self._difficulty.value,
+            "max_score": self._max_score,
+            "chat_history": self._chat_history.to_dict(),
         }
 
     @classmethod
