@@ -1,4 +1,4 @@
-import { FirstQuestion, NextQuestion, Feedback, GeneralFeedback } from "../../commands/src/types/mapper";
+import { FirstQuestion, NextQuestion, Feedback, GeneralFeedback } from "./webview-api-response-type";
 
 export type VscodeApiResponseValue =
   | { type: "firstQuestion"; payload: FirstQuestion }

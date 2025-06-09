@@ -1,5 +1,5 @@
 import type { BackendFirstQuestionResponse, BackendNextQuestionResponse, BackendFeedBackResponse, BackendGeneralFeedbackResponse } from "@shared/backend-api-response-value";
-import type { FirstQuestion, NextQuestion, Feedback, GeneralFeedback } from "@/types/mapper";
+import type { FirstQuestion, NextQuestion, Feedback, GeneralFeedback } from "@shared/webview-api-response-type";
 
 // 変数名の変換関数の定義
 export function mapFirstQuestion(
