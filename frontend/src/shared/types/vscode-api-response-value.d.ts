@@ -1,8 +1,8 @@
-import type { BackendFirstQuestionResponse, BackendNextQuestionResponse, BackendFeedBackResponse, BackendGeneralFeedbackResponse } from "./backend-api-response-value";
+import { FirstQuestion, NextQuestion, Feedback, GeneralFeedback } from "../../commands/src/types/mapper";
 
 export type VscodeApiResponseValue =
-  | { type: "firstQuestion"; payload: BackendFirstQuestionResponse }
-  | { type: "nextQuestion"; payload: BackendNextQuestionResponse }
-  | { type: "feedback"; payload: BackendFeedBackResponse }
-  | { type: "generalFeedback"; payload: BackendGeneralFeedbackResponse }
-  | { type: "error"; payload: string | unknown };
+  | { type: "firstQuestion"; payload: FirstQuestion }
+  | { type: "nextQuestion"; payload: NextQuestion }
+  | { type: "feedback"; payload: Feedback }
+  | { type: "generalFeedback"; payload: GeneralFeedback }
+  | { type: "error"; payload: string };

@@ -1,5 +1,11 @@
 import { ApiEndPoint } from '../env';
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
+import {
+  mapFirstQuestion,
+  mapNextQuestion,
+  mapFeedback,
+  mapGeneralFeedback,
+} from "../utilities/mappers";
 
 type PayloadOf<T extends VscodeApiRequestValue["type"]> =
   VscodeApiRequestValue extends { type: T; payload: infer P }
@@ -26,8 +32,8 @@ export async function fetchFirstQuestion(
     throw new Error(`サーバーエラー: ${res.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const backend_result = await res.json();
+  return mapFirstQuestion(backend_result);
 }
 
 export async function fetchFeedBack(
@@ -53,8 +59,8 @@ export async function fetchFeedBack(
     throw new Error(`サーバーエラー : ${res.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const backend_result = await res.json();
+  return mapFeedback(backend_result);
 }
 
 export async function fetchNextQuestion(
@@ -72,8 +78,8 @@ export async function fetchNextQuestion(
     throw new Error(`質問が見つかりませんでした: ${res.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const backend_result = await res.json();
+  return mapNextQuestion(backend_result);
 }
 
 export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedback">) {
@@ -89,6 +95,6 @@ export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedb
     throw new Error(`サーバーエラー: ${res.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const backend_result = await res.json();
+  return mapGeneralFeedback(backend_result);
 }
