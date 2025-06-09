@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { Box, ThemeProvider } from "@mui/material";
 import { theme } from "@/theme";
 import { AnswerContextProvider } from "@/screens/answer-screen/context/AnswerContextProvider";
-import ChatPanel from "@/screens/answer-screen/components/ChatPanel";
+import ChatPanel from "@/screens/answer-screen/components/chat-panel/ChatPanel";
 import AnswerInput from "@/screens/answer-screen/components/AnswerInput";
 import ActionButtons from "@/screens/answer-screen/components/ActionButtons";
 import InterruptModal from "@/screens/answer-screen/components/InterruptModal";

@@ -10,7 +10,6 @@ export type ChatMessage =
   | {
       type: 'feedback'
       text: string
-      // 単一スコア or 深掘りごとのスコア配列
       score: number | number[]
     }
   | { 
