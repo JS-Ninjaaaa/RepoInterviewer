@@ -81,7 +81,7 @@ class InterviewQuestion:
         Args:
             message (ChatMessage): 追加するメッセージ
         """
-        self._chat_history.append_message(message)
+        self._chat_history.append(message)
 
     def to_dict(self) -> dict:
         """辞書に変換する"""
