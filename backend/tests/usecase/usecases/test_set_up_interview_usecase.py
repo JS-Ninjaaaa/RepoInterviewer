@@ -1,37 +1,24 @@
-import tempfile
-from pathlib import Path
-from unittest.mock import Mock
-
 import pytest
 from app.domain.entities.chat_history import ChatHistory
 from app.domain.entities.difficulty import Difficulty
 from app.domain.entities.interview_question import InterviewQuestion
+from app.domain.entities.source_code import SourceCode
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
 from app.schemas.interview_schema import SetUpInterviewRequest, SetUpInterviewResponse
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 
-
-@pytest.fixture
-def mock_interview_repository():
-    return Mock(spec=InterviewRepository)
-
-
-@pytest.fixture
-def mock_source_code_repository():
-    return Mock(spec=SourceCodeRepository)
-
-
-@pytest.fixture
-def mock_llm_client():
-    return Mock(spec=LLMClient)
-
-
-@pytest.fixture
-def temp_dir():
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        yield Path(tmp_dir)
+# テストデータ
+source_code = b"test_zip_content"
+difficulty = Difficulty.normal
+total_question = 3
+questions = ["質問1", "質問2", "質問3"]
+extracted_code = SourceCode(
+    {
+        "main.py": "print('Hello, World!')",
+    }
+)
 
 
 @pytest.fixture
@@ -55,10 +42,7 @@ def test_execute_success(
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
 ):
-    # テストデータの準備
-    source_code = b"test_zip_content"
-    difficulty = Difficulty.normal
-    total_question = 3
+    # リクエストの準備
     request = SetUpInterviewRequest(
         source_code=source_code,
         difficulty=difficulty,
@@ -66,8 +50,7 @@ def test_execute_success(
     )
 
     # モックの振る舞いを設定
-    mock_source_code_repository.extract_zip.return_value = "extracted_code"
-    questions = ["質問1", "質問2", "質問3"]
+    mock_source_code_repository.extract_zip.return_value = extracted_code
     mock_llm_client.generate_questions.return_value = questions
 
     # テスト実行
@@ -76,12 +59,12 @@ def test_execute_success(
     # レスポンスの検証
     assert isinstance(response, SetUpInterviewResponse)
     assert response.interview_id is not None
-    assert response.first_question == "質問1"
+    assert response.first_question == questions[0]
 
     # モックの呼び出し確認
     mock_source_code_repository.extract_zip.assert_called_once()
     mock_llm_client.generate_questions.assert_called_once_with(
-        "extracted_code",
+        extracted_code,
         difficulty,
         total_question,
     )
@@ -115,10 +98,7 @@ def test_execute_failure_when_extract_zip_fails(
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
 ):
-    # テストデータの準備
-    source_code = b"invalid_zip_content"
-    difficulty = Difficulty.normal
-    total_question = 3
+    # リクエストの準備
     request = SetUpInterviewRequest(
         source_code=source_code,
         difficulty=difficulty,
@@ -128,7 +108,7 @@ def test_execute_failure_when_extract_zip_fails(
     # モックの振る舞いを設定
     mock_source_code_repository.extract_zip.side_effect = Exception()
 
-    # テスト実行と検証
+    # テスト実行と例外の検証
     with pytest.raises(Exception):
         setup_interview_usecase.execute(request)
 
@@ -144,10 +124,7 @@ def test_execute_failure_when_generate_questions_fails(
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
 ):
-    # テストデータの準備
-    source_code = b"test_zip_content"
-    difficulty = Difficulty.normal
-    total_question = 3
+    # リクエストの準備
     request = SetUpInterviewRequest(
         source_code=source_code,
         difficulty=difficulty,
@@ -155,10 +132,10 @@ def test_execute_failure_when_generate_questions_fails(
     )
 
     # モックの振る舞いを設定
-    mock_source_code_repository.extract_zip.return_value = "extracted_code"
+    mock_source_code_repository.extract_zip.return_value = extracted_code
     mock_llm_client.generate_questions.side_effect = Exception()
 
-    # テスト実行と検証
+    # テスト実行と例外の検証
     with pytest.raises(Exception):
         setup_interview_usecase.execute(request)
 
@@ -174,10 +151,7 @@ def test_execute_failure_when_create_interview_fails(
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
 ):
-    # テストデータの準備
-    source_code = b"test_zip_content"
-    difficulty = Difficulty.normal
-    total_question = 3
+    # リクエストの準備
     request = SetUpInterviewRequest(
         source_code=source_code,
         difficulty=difficulty,
@@ -185,11 +159,11 @@ def test_execute_failure_when_create_interview_fails(
     )
 
     # モックの振る舞いを設定
-    mock_source_code_repository.extract_zip.return_value = "extracted_code"
-    mock_llm_client.generate_questions.return_value = ["質問1", "質問2", "質問3"]
+    mock_source_code_repository.extract_zip.return_value = extracted_code
+    mock_llm_client.generate_questions.return_value = questions
     mock_interview_repository.create_interview.side_effect = Exception()
 
-    # テスト実行と検証
+    # テスト実行と例外の検証
     with pytest.raises(Exception):
         setup_interview_usecase.execute(request)
 
