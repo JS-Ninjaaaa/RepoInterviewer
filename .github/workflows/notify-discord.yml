@@ -37,7 +37,7 @@ jobs:
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
 
   notify_review_submitted:
-    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
+    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted' && github.event.action == 'submitted'
     runs-on: ubuntu-latest
     steps:
       - name: Install jq
