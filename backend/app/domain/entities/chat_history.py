@@ -9,9 +9,17 @@ class ChatMessage:
         message (str): メッセージの内容
     """
 
+    @property
+    def role(self) -> str:
+        return self._role
+
+    @property
+    def message(self) -> str:
+        return self._message
+
     def __init__(self, role: str, message: str):
-        self.role = role
-        self.message = message
+        self._role = role
+        self._message = message
 
     def to_dict(self) -> dict:
         """辞書に変換する"""
@@ -39,13 +47,17 @@ class ChatHistory:
         chat_history (list[ChatMessage]): 会話履歴
     """
 
+    @property
+    def chat_history(self) -> list[ChatMessage]:
+        return self._chat_history
+
     def __init__(self, messages: list[ChatMessage] = None):
         """コンストラクタ
 
         Args:
             messages (list[ChatMessage], optional): 会話履歴
         """
-        self.chat_history = messages if messages is not None else []
+        self._chat_history = messages if messages is not None else []
 
     def append_message(self, message: ChatMessage):
         """会話履歴にメッセージを追加する
@@ -53,11 +65,11 @@ class ChatHistory:
         Args:
             message (ChatMessage): 追加するメッセージ
         """
-        self.chat_history.append(message)
+        self._chat_history.append(message)
 
     def to_dict(self) -> dict:
         """辞書に変換する"""
-        return [message.to_dict() for message in self.chat_history]
+        return [message.to_dict() for message in self._chat_history]
 
     @classmethod
     def from_dict(cls, data: dict) -> ChatHistory:
