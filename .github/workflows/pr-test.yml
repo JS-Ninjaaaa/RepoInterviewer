@@ -35,4 +35,4 @@ jobs:
       - name: Install test dependencies
         run: uv pip install pytest
       - name: Run Tests
-        run: pytest tests
+        run: .venv/bin/pytest tests
