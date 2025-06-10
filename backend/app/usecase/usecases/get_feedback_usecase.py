@@ -25,9 +25,8 @@ class GetFeedbackUsecase:
             request.interview_id,
             request.question_id,
         )
-        chat_history = question.chat_history
 
-        chat_history.append(
+        question.append_chat_history(
             ChatMessage(
                 role="user",
                 message=request.message,
@@ -37,7 +36,7 @@ class GetFeedbackUsecase:
         session_dir = self.source_code_dir / request.interview_id
         source_code = self.source_code_repository.get_source_code(session_dir)
 
-        feedback = self.llm_client.generate_feedback(source_code, chat_history)
+        feedback = self.llm_client.generate_feedback(source_code, question)
 
         question.score = feedback.score
         question.append_chat_history(
