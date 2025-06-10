@@ -98,6 +98,7 @@ def test_execute_success(
         assert question.question_id == str(i + 1)
         assert question.difficulty == difficulty
         assert question.max_score == 100 // total_question
+        assert question.score == 0
 
         assert isinstance(question.chat_history, ChatHistory)
         chat_history = question.chat_history.chat_history

@@ -56,6 +56,7 @@ class InterviewQuestion:
         difficulty: Difficulty,
         max_score: int,
         chat_history: ChatHistory,
+        score: int = 0,
     ):
         """コンストラクタ
 
@@ -65,12 +66,14 @@ class InterviewQuestion:
             difficulty (Difficulty): 難易度
             max_score (int): 最大スコア
             chat_history (ChatHistory): 会話履歴
+            score (int): スコア
         """
         self._interview_id = interview_id
         self._question_id = question_id
         self._difficulty = difficulty
         self._max_score = max_score
         self._chat_history = chat_history
+        self._score = score
 
     def append_chat_history(self, message: ChatMessage):
         """会話履歴にメッセージを追加する
@@ -87,6 +90,7 @@ class InterviewQuestion:
             "question_id": self._question_id,
             "difficulty": self._difficulty.value,
             "max_score": self._max_score,
+            "score": self._score,
             "chat_history": self._chat_history.to_dict(),
         }
 
@@ -101,6 +105,8 @@ class InterviewQuestion:
             raise ValueError("difficultyが存在しません")
         if "max_score" not in data:
             raise ValueError("max_scoreが存在しません")
+        if "score" not in data:
+            raise ValueError("scoreが存在しません")
         if "chat_history" not in data:
             raise ValueError("chat_historyが存在しません")
 
@@ -109,5 +115,6 @@ class InterviewQuestion:
             question_id=data["question_id"],
             difficulty=Difficulty(data["difficulty"]),
             max_score=data["max_score"],
+            score=data["score"],
             chat_history=ChatHistory.from_dict(data["chat_history"]),
         )
