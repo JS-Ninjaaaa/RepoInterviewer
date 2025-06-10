@@ -29,6 +29,8 @@ jobs:
         with:
           enable-cache: true
       - name: Create venv and Install dependencies
-        run: uv sync --dev 
+        run: uv sync --dev # --dev をつけることで dev グループの依存関係もインストール
       - name: Run Tests
-        run: uv run pytest tests
+        run: |
+          export PYTHONPATH=$(pwd) # 現在のワーキングディレクトリ (backend) を PYTHONPATH に設定
+          uv run pytest tests
