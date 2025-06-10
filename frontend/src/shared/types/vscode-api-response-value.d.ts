@@ -1,8 +1,8 @@
-import type { FirstQuestionResponse, NextQuestionResponse, FeedBackResponse, GeneralFeedbackResponse } from "./backend-api-response-value";
+import { FirstQuestion, NextQuestion, Feedback, GeneralFeedback } from "./webview-api-response-type";
 
 export type VscodeApiResponseValue =
-  | { type: "firstQuestion"; payload: FirstQuestionResponse }
-  | { type: "nextQuestion"; payload: NextQuestionResponse }
-  | { type: "feedback"; payload: FeedBackResponse }
-  | { type: "generalFeedback"; payload: GeneralFeedbackResponse }
-  | { type: "error"; payload: string | unknown };
+  | { type: "firstQuestion"; payload: FirstQuestion }
+  | { type: "nextQuestion"; payload: NextQuestion }
+  | { type: "feedback"; payload: Feedback }
+  | { type: "generalFeedback"; payload: GeneralFeedback }
+  | { type: "error"; payload: string };

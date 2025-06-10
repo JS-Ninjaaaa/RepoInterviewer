@@ -3,23 +3,8 @@ import { theme } from "@/theme";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const ActionButtons: React.FC = () => {
-  const {
-    buttonDisplay,
-    fetchNextQuestion,
-    fetchGeneralFeedback,
-    setInterruptModalOpen,
-    setSkipModalOpen,
-  } = useAnswerContext();
-
-  const handleClick = () => {
-    if (buttonDisplay === "次へ") {
-      fetchNextQuestion();
-    } else if (buttonDisplay === "最終結果へ") {
-      fetchGeneralFeedback();
-    } else {
-      setSkipModalOpen(true);
-    }
-  };
+  const { buttonDisplay, setInterruptModalOpen, handleNextClick } =
+    useAnswerContext();
 
   return (
     <Box
@@ -47,7 +32,7 @@ const ActionButtons: React.FC = () => {
         中断
       </Button>
       <Button
-        onClick={handleClick}
+        onClick={handleNextClick}
         variant="contained"
         sx={{
           backgroundColor:

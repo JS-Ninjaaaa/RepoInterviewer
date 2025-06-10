@@ -2,12 +2,9 @@ import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ChatMessage } from "@/types/chat-message";
 import type { Character } from "@/types/character";
-import {
-  FeedBackResponse,
-  GeneralFeedbackResponse,
-} from "@shared/backend-api-response-value";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import type { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
+import { Feedback, GeneralFeedback } from "@shared/webview-api-response-type";
 import { useLoading } from "@/screens/context/LoadingContext";
 import { useThinkingAnimation } from "@/screens/components/hooks/use-thinking-animation";
 import { AnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
@@ -43,10 +40,10 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   const navigate = useNavigate();
 
   const judgeContinueSameQuestion = useCallback(
-    (payload: FeedBackResponse) => {
+    (payload: Feedback) => {
       stopThinking();
       const lastScore = payload.score;
-      if (payload.continue_question) {
+      if (payload.continueQuestion) {
         setChatHistory((prev) => [
           ...prev,
           { type: "question", text: payload.response },
@@ -54,7 +51,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
         setDisplayEnterBox(true);
       } else {
         const total = currentCharacter.totalQuestion;
-        const lastId = payload.question_id;
+        const lastId = payload.questionId;
         setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
         setChatHistory((prev) => [
           ...prev,
@@ -73,8 +70,8 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
     const msg: VscodeApiRequestValue = {
       type: "fetchFeedback",
       payload: {
-        interview_id: interviewId,
-        question_id: questionId,
+        interviewId: interviewId,
+        questionId: questionId,
         answer: chatInput,
       },
     };
@@ -84,28 +81,50 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
 
   const fetchNextQuestion = useCallback(() => {
     startThinking();
-    const nextId = questionId + 1;
+    const nextQuestionId = questionId + 1;
     const msg: VscodeApiRequestValue = {
       type: "fetchNextQuestion",
-      payload: { interview_id: interviewId, question_id: nextId },
+      payload: { interviewId: interviewId, questionId: nextQuestionId },
     };
     vscode.postMessage(msg);
-    setQuestionId(nextId);
+    setQuestionId(nextQuestionId);
     setButtonDisplay("スキップ");
     setDisplayEnterBox(true);
   }, [questionId, startThinking, vscode, interviewId]);
 
   const fetchGeneralFeedback = useCallback(() => {
-    showLoading("全部の回答をチェック中・・・");
+    showLoading("全ての回答をチェック中・・・");
     const msg: VscodeApiRequestValue = {
       type: "fetchGeneralFeedback",
-      payload: { interview_id: interviewId },
+      payload: { interviewId: interviewId },
     };
     vscode.postMessage(msg);
   }, [showLoading, vscode, interviewId]);
 
+  const handleNextClick = () => {
+    if (buttonDisplay === "次へ") {
+      fetchNextQuestion();
+    } else if (buttonDisplay === "最終結果へ") {
+      fetchGeneralFeedback();
+    } else {
+      setSkipModalOpen(true);
+    }
+  };
+
+  const handleSkipModalClose = () => setSkipModalOpen(false);
+  const handleInterruptModalClose = () => setInterruptModalOpen(false);
+  const handleSkipConfirm = () => {
+    setSkipModalOpen(false);
+    fetchFeedback();
+  };
+
+  const handleInterruptConfirm = () => {
+    setInterruptModalOpen(false);
+    navigate("/start");
+  };
+
   const moveGeneralFeedbackScreen = useCallback(
-    (payload: GeneralFeedbackResponse) => {
+    (payload: GeneralFeedback) => {
       navigate("/feedback", {
         state: {
           payload,
@@ -129,7 +148,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
             ...prev,
             { type: "question", text: msg.payload.question },
           ]);
-          setQuestionId(msg.payload.question_id);
+          setQuestionId(msg.payload.questionId);
           setButtonDisplay("スキップ");
           setDisplayEnterBox(true);
           break;
@@ -165,10 +184,14 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
         interruptModalOpen,
         skipModalOpen,
         scrollTop,
-        navigate,
         fetchFeedback,
         fetchNextQuestion,
         fetchGeneralFeedback,
+        handleSkipModalClose,
+        handleInterruptModalClose,
+        handleNextClick,
+        handleInterruptConfirm,
+        handleSkipConfirm,
         setChatInput,
         setInterruptModalOpen,
         setSkipModalOpen,

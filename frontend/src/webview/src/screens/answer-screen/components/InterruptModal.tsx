@@ -1,19 +1,16 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
-
 const InterruptModal: React.FC = () => {
-  const { interruptModalOpen, setInterruptModalOpen, navigate } =
-    useAnswerContext();
-  const handleClose = () => setInterruptModalOpen(false);
-  const handleConfirm = () => {
-    setInterruptModalOpen(false);
-    navigate("/start");
-  };
+  const {
+    interruptModalOpen,
+    handleInterruptConfirm,
+    handleInterruptModalClose,
+  } = useAnswerContext();
 
   return (
     <Modal
       open={interruptModalOpen}
-      onClose={handleClose}
+      onClose={handleInterruptModalClose}
       aria-labelledby="interrupt-modal-title"
       aria-describedby="interrupt-modal-description"
     >
@@ -39,7 +36,7 @@ const InterruptModal: React.FC = () => {
         >
           <Button
             variant="contained"
-            onClick={handleClose}
+            onClick={handleInterruptModalClose}
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.primary.light,
@@ -50,7 +47,7 @@ const InterruptModal: React.FC = () => {
           </Button>
           <Button
             variant="contained"
-            onClick={handleConfirm}
+            onClick={handleInterruptConfirm}
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.secondary.light,

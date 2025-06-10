@@ -35,7 +35,7 @@ const StartScreen = ({ vscode }: StartScreenProps) => {
       type: "fetchFirstQuestion",
       payload: {
         difficulty: currentCharacter.level,
-        total_question: currentCharacter.totalQuestion,
+        totalQuestion: currentCharacter.totalQuestion,
       },
     };
     vscode.postMessage(msg);
@@ -48,7 +48,7 @@ const StartScreen = ({ vscode }: StartScreenProps) => {
         hideLoading();
         navigate("/answer", {
           state: {
-            interview_id: payload.interview_id,
+            interviewId: payload.interviewId,
             question: payload.question,
             currentCharacter,
           },

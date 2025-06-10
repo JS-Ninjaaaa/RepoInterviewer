@@ -1,96 +1,98 @@
-import { ApiEndPoint } from '../env';
+import { API_ENDPOINT } from '../env';
+import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import {
-  FirstQuestionResponse,
-  NextQuestionResponse,
-  FeedBackResponse,
-  GeneralFeedbackResponse,
-} from "@shared/backend-api-response-value";
+  mapFirstQuestion,
+  mapNextQuestion,
+  mapFeedback,
+  mapGeneralFeedback,
+} from "../utilities/mappers";
+
+type PayloadOf<T extends VscodeApiRequestValue["type"]> =
+  VscodeApiRequestValue extends { type: T; payload: infer P }
+  ? P
+  : any;
 
 export async function fetchFirstQuestion(
   zipBlob: Blob,
-  payload: { difficulty: string; total_question: number }
-): Promise<FirstQuestionResponse> {
+  payload: PayloadOf<"fetchFirstQuestion">
+) {
   const formData = new FormData();
-
-  // ZIPファイルを Blob に変換して送信
+  
   formData.append('source_code', zipBlob, 'data.zip');
   formData.append('difficulty', payload.difficulty);
-  formData.append('total_question', payload.total_question.toString());
+  formData.append('total_question', payload.totalQuestion.toString());
 
-  const res = await fetch(`${ApiEndPoint}/interview`, {
+  const response = await fetch(`${API_ENDPOINT}/interview`, {
     method: "POST",
     body: formData,
   });
 
-  if (!res.ok) {
-    throw new Error(`サーバーエラー: ${res.status}`);
+  if (!response.ok) {
+    throw new Error(`サーバーエラー: ${response.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const firstQuestion = await response.json();
+  return mapFirstQuestion(firstQuestion);
 }
 
 export async function fetchFeedBack(
-  payload: { interview_id: string; question_id: number; answer: string; }
-): Promise<FeedBackResponse> {
-  const { interview_id, question_id, answer } = payload;
+  payload: PayloadOf<"fetchFeedback">
+) {
+  const { interviewId, questionId, answer } = payload;
 
-  // クエリパラメターの設定
-  const url = `${ApiEndPoint}/interview/${interview_id}`;
+  const url = `${API_ENDPOINT}/interview/${interviewId}`;
 
-  const res = await fetch(url, {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      question_id,
-      message: answer, // 仕様に合わせてキー名は `message`
+      question_id: questionId,
+      message: answer, 
     }),
   });
 
-  if (!res.ok) {
-    throw new Error(`サーバーエラー : ${res.status}`);
+  if (!response.ok) {
+    throw new Error(`サーバーエラー : ${response.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const feedback = await response.json();
+  return mapFeedback(feedback);
 }
 
 export async function fetchNextQuestion(
-  payload: { interview_id: string; question_id: number }
-): Promise<NextQuestionResponse> {
-  const { interview_id, question_id } = payload;
+  payload: PayloadOf<"fetchNextQuestion">
+) {
+  const { interviewId, questionId } = payload;
 
-  const url = `${ApiEndPoint}/interview/${interview_id}?question_id=${question_id}`;
+  const url = `${API_ENDPOINT}/interview/${interviewId}?question_id=${questionId}`;
 
-  const res = await fetch(url, {
+  const response = await fetch(url, {
     method: "GET",
   });
 
-  if (!res.ok) {
-    throw new Error(`質問が見つかりませんでした: ${res.status}`);
+  if (!response.ok) {
+    throw new Error(`質問が見つかりませんでした: ${response.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const nextQuestion = await response.json();
+  return mapNextQuestion(nextQuestion);
 }
 
-export async function fetchGeneralFeedback(payload: {
-  interview_id: string;
-}): Promise<GeneralFeedbackResponse> {
-  const { interview_id } = payload;
+export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedback">) {
+  const { interviewId } = payload;
 
-  const url = `${ApiEndPoint}/interview/${interview_id}/result`;
+  const url = `${API_ENDPOINT}/interview/${interviewId}/result`;
 
-  const res = await fetch(url, {
+  const response = await fetch(url, {
     method: "GET",
   });
 
-  if (!res.ok) {
-    throw new Error(`サーバーエラー: ${res.status}`);
+  if (!response.ok) {
+    throw new Error(`サーバーエラー: ${response.status}`);
   }
 
-  const result = await res.json();
-  return result;
+  const generalFeedback = await response.json();
+  return mapGeneralFeedback(generalFeedback);
 }

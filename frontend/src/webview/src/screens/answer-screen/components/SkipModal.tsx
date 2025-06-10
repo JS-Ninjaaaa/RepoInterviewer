@@ -2,19 +2,13 @@ import { Modal, Box, Typography, Button } from "@mui/material";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const SkipModal: React.FC = () => {
-  const { skipModalOpen, setSkipModalOpen, fetchFeedback } = useAnswerContext();
-
-  const handleClose = () => setSkipModalOpen(false);
-  const handleConfirm = () => {
-    setSkipModalOpen(false);
-    // 0点で次へ進む処理
-    fetchFeedback();
-  };
+  const { skipModalOpen, handleSkipModalClose, handleSkipConfirm } =
+    useAnswerContext();
 
   return (
     <Modal
       open={skipModalOpen}
-      onClose={handleClose}
+      onClose={handleSkipModalClose}
       aria-labelledby="skip-modal-title"
       aria-describedby="skip-modal-description"
     >
@@ -40,7 +34,7 @@ const SkipModal: React.FC = () => {
         >
           <Button
             variant="contained"
-            onClick={handleClose}
+            onClick={handleSkipModalClose}
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.primary.light,
@@ -51,7 +45,7 @@ const SkipModal: React.FC = () => {
           </Button>
           <Button
             variant="contained"
-            onClick={handleConfirm}
+            onClick={handleSkipConfirm}
             sx={{
               minWidth: "80px",
               backgroundColor: (theme) => theme.palette.secondary.light,

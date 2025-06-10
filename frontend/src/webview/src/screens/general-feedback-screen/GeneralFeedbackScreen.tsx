@@ -11,7 +11,7 @@ const GeneralFeedbackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
   const location = useLocation();
 
   const { currentCharacter, payload } = location.state;
-  const { general_review, scores } = payload;
+  const { generalReview, scores } = payload;
 
   return (
     <Box
@@ -55,7 +55,7 @@ const GeneralFeedbackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
               whiteSpace: "pre-wrap",
             }}
           >
-            {general_review}
+            {generalReview}
           </Typography>
         </Box>
       </Box>

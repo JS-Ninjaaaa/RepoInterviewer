@@ -1,1 +1,1 @@
-export const apiEndPoint = "";
+export const API_ENDPOINT = "";

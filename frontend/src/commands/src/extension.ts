@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import { handleWebviewMessage } from "./functions/handle-webview-message";
-import { getUri } from "./functions/utilities/get-uri";
-import { getNonce } from "./functions/utilities/get-nonce";
+import { getUri } from "./utilities/get-uri";
+import { getNonce } from "./utilities/get-nonce";
 import { openWindow } from "./functions/open-webview";
 
 // 拡張機能起動時のエントリポイント
