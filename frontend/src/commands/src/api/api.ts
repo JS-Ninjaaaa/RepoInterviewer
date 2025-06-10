@@ -1,4 +1,4 @@
-import { API_END_POINT } from '../env';
+import { API_ENDPOINT } from '../env';
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import {
   mapFirstQuestion,
@@ -22,7 +22,7 @@ export async function fetchFirstQuestion(
   formData.append('difficulty', payload.difficulty);
   formData.append('total_question', payload.totalQuestion.toString());
 
-  const response = await fetch(`${API_END_POINT}/interview`, {
+  const response = await fetch(`${API_ENDPOINT}/interview`, {
     method: "POST",
     body: formData,
   });
@@ -39,8 +39,8 @@ export async function fetchFeedBack(
   payload: PayloadOf<"fetchFeedback">
 ) {
   const { interviewId, questionId, answer } = payload;
-  
-  const url = `${API_END_POINT}/interview/${interviewId}`;
+
+  const url = `${API_ENDPOINT}/interview/${interviewId}`;
 
   const response = await fetch(url, {
     method: "POST",
@@ -66,7 +66,7 @@ export async function fetchNextQuestion(
 ) {
   const { interviewId, questionId } = payload;
 
-  const url = `${API_END_POINT}/interview/${interviewId}?question_id=${questionId}`;
+  const url = `${API_ENDPOINT}/interview/${interviewId}?question_id=${questionId}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -83,7 +83,7 @@ export async function fetchNextQuestion(
 export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedback">) {
   const { interviewId } = payload;
 
-  const url = `${API_END_POINT}/interview/${interviewId}/result`;
+  const url = `${API_ENDPOINT}/interview/${interviewId}/result`;
 
   const response = await fetch(url, {
     method: "GET",
