@@ -2,42 +2,11 @@ name: Notify Discord on PR Events
 
 on:
   pull_request:
-    types: [opened, review_requested, closed]
+    types: [review_requested, closed]
   pull_request_review:
     types: [submitted]
 
 jobs:
-  notify_on_opened_with_reviewers:
-    if: github.event.action == 'opened' && github.event.pull_request.requested_reviewers != ''
-    runs-on: ubuntu-latest
-    steps:
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Write user_map.json
-        run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
-
-      - name: Notify reviewers specified at PR creation
-        env:
-          REVIEWERS_JSON: ${{ toJson(github.event.pull_request.requested_reviewers) }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
-        run: |
-          echo "$REVIEWERS_JSON" | jq -c '.[]' | while read reviewer; do
-            LOGIN=$(echo "$reviewer" | jq -r '.login')
-            DISCORD_ID=$(jq -r --arg user "$LOGIN" '.[$user]' user_map.json)
-            MENTION="@here"
-            [ "$DISCORD_ID" != "null" ] && MENTION="<@$DISCORD_ID>"
-
-            cat <<EOF > message.json
-            {
-              "content": "$MENTION 👀PRが作成されました。レビューをお願いします: [$PR_TITLE]($PR_URL)"
-            }
-          EOF
-            curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
-          done
-
   notify_review_requested:
     if: github.event.action == 'review_requested'
     runs-on: ubuntu-latest
