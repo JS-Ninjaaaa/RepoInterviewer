@@ -12,6 +12,11 @@ export interface AnswerContextType {
   fetchFeedback: () => void;
   fetchNextQuestion: () => void;
   fetchGeneralFeedback: () => void;
+  handleSkipModalClose: () => void;
+  handleInterruptModalClose: () => void;
+  handleSkipConfirm: () => void;
+  handleInterruptConfirm: () => void;
+  handleNextClick: () => void;
   setChatInput: React.Dispatch<React.SetStateAction<string>>;
   setInterruptModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setSkipModalOpen: React.Dispatch<React.SetStateAction<boolean>>;

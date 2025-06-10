@@ -101,6 +101,28 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
     vscode.postMessage(msg);
   }, [showLoading, vscode, interviewId]);
 
+  const handleNextClick = () => {
+    if (buttonDisplay === "次へ") {
+      fetchNextQuestion();
+    } else if (buttonDisplay === "最終結果へ") {
+      fetchGeneralFeedback();
+    } else {
+      setSkipModalOpen(true);
+    }
+  };
+
+  const handleSkipModalClose = () => setSkipModalOpen(false);
+  const handleInterruptModalClose = () => setInterruptModalOpen(false);
+  const handleSkipConfirm = () => {
+    setSkipModalOpen(false);
+    fetchFeedback();
+  };
+
+  const handleInterruptConfirm = () => {
+    setInterruptModalOpen(false);
+    navigate("/start");
+  };
+
   const moveGeneralFeedbackScreen = useCallback(
     (payload: GeneralFeedback) => {
       navigate("/feedback", {
@@ -165,6 +187,11 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
         fetchFeedback,
         fetchNextQuestion,
         fetchGeneralFeedback,
+        handleSkipModalClose,
+        handleInterruptModalClose,
+        handleNextClick,
+        handleInterruptConfirm,
+        handleSkipConfirm,
         setChatInput,
         setInterruptModalOpen,
         setSkipModalOpen,
