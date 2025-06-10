@@ -1,0 +1,38 @@
+name: Run Backend Tests
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'  # backendフォルダに変更があった PR のみ
+    branches:
+      - main
+  workflow_dispatch:  # テスト用（手動）
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend  # backendフォルダで実行
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'  # 要求レベル最低version
+      # uvを使った環境構築
+      - name: Install uv
+        run: |
+          curl -ls https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      
+      - name: Install dependencies using uv
+        run: |
+          uv pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest tests
