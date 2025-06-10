@@ -22,17 +22,17 @@ export async function fetchFirstQuestion(
   formData.append('difficulty', payload.difficulty);
   formData.append('total_question', payload.totalQuestion.toString());
 
-  const res = await fetch(`${ApiEndPoint}/interview`, {
+  const backendApiResponse = await fetch(`${ApiEndPoint}/interview`, {
     method: "POST",
     body: formData,
   });
 
-  if (!res.ok) {
-    throw new Error(`サーバーエラー: ${res.status}`);
+  if (!backendApiResponse.ok) {
+    throw new Error(`サーバーエラー: ${backendApiResponse.status}`);
   }
 
-  const backendResult = await res.json();
-  return mapFirstQuestion(backendResult);
+  const FirstQuestion = await backendApiResponse.json();
+  return mapFirstQuestion(FirstQuestion);
 }
 
 export async function fetchFeedBack(
@@ -43,7 +43,7 @@ export async function fetchFeedBack(
   // クエリパラメターの設定
   const url = `${ApiEndPoint}/interview/${interviewId}`;
 
-  const res = await fetch(url, {
+  const backendApiResponse = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -54,12 +54,12 @@ export async function fetchFeedBack(
     }),
   });
 
-  if (!res.ok) {
-    throw new Error(`サーバーエラー : ${res.status}`);
+  if (!backendApiResponse.ok) {
+    throw new Error(`サーバーエラー : ${backendApiResponse.status}`);
   }
 
-  const backendResult = await res.json();
-  return mapFeedback(backendResult);
+  const Feedback = await backendApiResponse.json();
+  return mapFeedback(Feedback);
 }
 
 export async function fetchNextQuestion(
@@ -69,16 +69,16 @@ export async function fetchNextQuestion(
 
   const url = `${ApiEndPoint}/interview/${interviewId}?question_id=${questionId}`;
 
-  const res = await fetch(url, {
+  const backendApiResponse = await fetch(url, {
     method: "GET",
   });
 
-  if (!res.ok) {
-    throw new Error(`質問が見つかりませんでした: ${res.status}`);
+  if (!backendApiResponse.ok) {
+    throw new Error(`質問が見つかりませんでした: ${backendApiResponse.status}`);
   }
 
-  const backendResult = await res.json();
-  return mapNextQuestion(backendResult);
+  const NextQuestion = await backendApiResponse.json();
+  return mapNextQuestion(NextQuestion);
 }
 
 export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedback">) {
@@ -86,14 +86,14 @@ export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedb
 
   const url = `${ApiEndPoint}/interview/${interviewId}/result`;
 
-  const res = await fetch(url, {
+  const backendApiResponse = await fetch(url, {
     method: "GET",
   });
 
-  if (!res.ok) {
-    throw new Error(`サーバーエラー: ${res.status}`);
+  if (!backendApiResponse.ok) {
+    throw new Error(`サーバーエラー: ${backendApiResponse.status}`);
   }
 
-  const backendResult = await res.json();
-  return mapGeneralFeedback(backendResult);
+  const GeneralFeedback = await backendApiResponse.json();
+  return mapGeneralFeedback(GeneralFeedback);
 }
