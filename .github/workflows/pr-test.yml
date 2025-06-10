@@ -25,14 +25,14 @@ jobs:
           python-version: '3.11'  # 要求レベル最低version
       # uvを使った環境構築
       - name: Install uv
-        run: |
-          curl -ls https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-      
-      - name: Install dependencies using uv
-        run: |
-          uv pip install -r requirements.txt
-
-      - name: Run tests
-        run: |
-          pytest tests
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Create venv
+        run: uv venv
+      - name: Install dependencies
+        run: uv pip install -e .
+      - name: Install test dependencies
+        run: uv pip install pytest
+      - name: Run Tests
+        run: pytest tests
