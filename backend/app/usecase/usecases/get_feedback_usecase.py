@@ -7,7 +7,7 @@ from app.domain.repositories.source_code_repository import SourceCodeRepository
 from app.schemas.interview_schema import GetFeedbackRequest, GetFeedbackResponse
 
 
-class GetFeedbackUsecase:
+class GetFeedbackUseCase:
     def __init__(
         self,
         interview_repository: InterviewRepository,
