@@ -2,8 +2,6 @@ name: Run Backend Tests
 
 on:
   pull_request:
-    paths:
-      - 'backend/**'  # backendフォルダに変更があった PR のみ
     branches:
       - main
   workflow_dispatch:  # テスト用（手動）
