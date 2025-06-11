@@ -1,4 +1,4 @@
-import { API_ENDPOINT } from '../env';
+import { API_ENDPOINT } from "../env";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import {
   mapFirstQuestion,
@@ -8,19 +8,17 @@ import {
 } from "../utilities/mappers";
 
 type PayloadOf<T extends VscodeApiRequestValue["type"]> =
-  VscodeApiRequestValue extends { type: T; payload: infer P }
-  ? P
-  : any;
+  VscodeApiRequestValue extends { type: T; payload: infer P } ? P : any;
 
 export async function fetchFirstQuestion(
   zipBlob: Blob,
   payload: PayloadOf<"fetchFirstQuestion">
 ) {
   const formData = new FormData();
-  
-  formData.append('source_code', zipBlob, 'data.zip');
-  formData.append('difficulty', payload.difficulty);
-  formData.append('total_question', payload.totalQuestion.toString());
+
+  formData.append("source_code", zipBlob, "data.zip");
+  formData.append("difficulty", payload.difficulty);
+  formData.append("total_question", payload.totalQuestion.toString());
 
   const response = await fetch(`${API_ENDPOINT}/interview`, {
     method: "POST",
@@ -35,9 +33,7 @@ export async function fetchFirstQuestion(
   return mapFirstQuestion(firstQuestion);
 }
 
-export async function fetchFeedBack(
-  payload: PayloadOf<"fetchFeedback">
-) {
+export async function fetchFeedBack(payload: PayloadOf<"fetchFeedback">) {
   const { interviewId, questionId, answer } = payload;
 
   const url = `${API_ENDPOINT}/interview/${interviewId}`;
@@ -49,7 +45,7 @@ export async function fetchFeedBack(
     },
     body: JSON.stringify({
       question_id: questionId,
-      message: answer, 
+      message: answer,
     }),
   });
 
@@ -80,7 +76,9 @@ export async function fetchNextQuestion(
   return mapNextQuestion(nextQuestion);
 }
 
-export async function fetchGeneralFeedback(payload: PayloadOf<"fetchGeneralFeedback">) {
+export async function fetchGeneralFeedback(
+  payload: PayloadOf<"fetchGeneralFeedback">
+) {
   const { interviewId } = payload;
 
   const url = `${API_ENDPOINT}/interview/${interviewId}/result`;

@@ -4,10 +4,10 @@ let currentPanel: vscode.WebviewPanel | undefined;
 
 // 画面を二分割し，右側にwebviewを開く関数
 export async function openWindow(
-  extensionUri: vscode.Uri,
+  extensionUri: vscode.Uri
 ): Promise<vscode.WebviewPanel> {
   await vscode.commands.executeCommand(
-    "workbench.action.files.newUntitledFile",
+    "workbench.action.files.newUntitledFile"
   );
 
   if (currentPanel) {
@@ -27,7 +27,7 @@ export async function openWindow(
       localResourceRoots: [
         vscode.Uri.joinPath(extensionUri, "build", "webview"),
       ],
-    },
+    }
   );
 
   currentPanel.onDidDispose(() => {

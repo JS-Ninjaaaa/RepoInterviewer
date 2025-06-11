@@ -2,13 +2,13 @@ import type {
   BackendFirstQuestionResponse,
   BackendNextQuestionResponse,
   BackendFeedBackResponse,
-  BackendGeneralFeedbackResponse
+  BackendGeneralFeedbackResponse,
 } from "@shared/backend-api-response-value";
 import type {
   FirstQuestion,
   NextQuestion,
   Feedback,
-  GeneralFeedback
+  GeneralFeedback,
 } from "@shared/webview-api-response-type";
 
 // 変数名の変換関数の定義
@@ -30,9 +30,7 @@ export function mapNextQuestion(
   };
 }
 
-export function mapFeedback(
-  src: BackendFeedBackResponse
-): Feedback {
+export function mapFeedback(src: BackendFeedBackResponse): Feedback {
   return {
     questionId: src.question_id,
     response: src.response,

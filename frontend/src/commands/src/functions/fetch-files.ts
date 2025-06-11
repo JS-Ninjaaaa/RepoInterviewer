@@ -6,16 +6,16 @@ import { mensetsuIgnoreFiles } from "../data/mensetsuignore";
 
 export async function fetchFiles(): Promise<Blob> {
   const files = await getFilteredFiles(); // ファイルパスをすべて探す
-  const zip = new JSZip();     // ファイルをフィルターして中身を取り出しzipファイルにする
-  
+  const zip = new JSZip(); // ファイルをフィルターして中身を取り出しzipファイルにする
+
   for (const file of files) {
     const bytes = await vscode.workspace.fs.readFile(file);
-    const content = new TextDecoder('utf-8').decode(bytes);
+    const content = new TextDecoder("utf-8").decode(bytes);
     const rel = vscode.workspace.asRelativePath(file);
     zip.file(rel, content);
   }
-  
-  const blob = await zip.generateAsync({ type: 'blob' });
+
+  const blob = await zip.generateAsync({ type: "blob" });
   return blob;
 }
 
@@ -27,7 +27,7 @@ export async function getFilteredFiles(): Promise<vscode.Uri[]> {
   const ignoredRelPaths = await getGitIgnoredFilesAsync(root); // 相対パス
   const allFiles = await vscode.workspace.findFiles(
     "**/*",
-    `{${mensetsuIgnoreFiles.join(",")}}`,
+    `{${mensetsuIgnoreFiles.join(",")}}`
   );
 
   const gitignoreFiltered = allFiles
@@ -47,7 +47,7 @@ function getGitIgnoredFilesAsync(rootPath: string): Promise<string[]> {
       ["ls-files", "--others", "--ignored", "--exclude-standard"],
       {
         cwd: rootPath,
-      },
+      }
     );
 
     let result = "";

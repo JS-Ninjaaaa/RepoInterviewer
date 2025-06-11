@@ -59,7 +59,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
         ]);
       }
     },
-    [currentCharacter.totalQuestion, stopThinking],
+    [currentCharacter.totalQuestion, stopThinking]
   );
 
   const fetchFeedback = useCallback(() => {
@@ -132,7 +132,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
         },
       });
     },
-    [navigate, currentCharacter],
+    [navigate, currentCharacter]
   );
 
   const handleExtensionMessage = useCallback(
@@ -163,7 +163,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
       stopThinking,
       hideLoading,
       moveGeneralFeedbackScreen,
-    ],
+    ]
   );
 
   useEffect(() => {

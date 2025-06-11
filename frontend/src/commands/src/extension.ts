@@ -9,7 +9,7 @@ import { openWindow } from "./functions/open-webview";
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
-    1000,
+    1000
   );
   myStatusBarItem.text = "RepoInterviewer";
   myStatusBarItem.tooltip = "クリックして面接開始";
@@ -25,22 +25,24 @@ export function activate(context: vscode.ExtensionContext) {
         const panel = await openWindow(context.extensionUri);
         panel.webview.html = getWebviewContent(
           panel.webview,
-          context.extensionUri,
+          context.extensionUri
         );
 
         // reactからメッセージを受け取ったタイミングで実行される
-        panel.webview.onDidReceiveMessage(async (message: VscodeApiRequestValue) => {
-          handleWebviewMessage(panel, message);
-        });
-      },
-    ),
+        panel.webview.onDidReceiveMessage(
+          async (message: VscodeApiRequestValue) => {
+            handleWebviewMessage(panel, message);
+          }
+        );
+      }
+    )
   );
 }
 
 // Webviewに表示するHTMLの設定
 function getWebviewContent(
   webview: vscode.Webview,
-  extensionUri: vscode.Uri,
+  extensionUri: vscode.Uri
 ): string {
   // build/webview/assets/index.js を読み込む
   const scriptUri = getUri(webview, extensionUri, [
