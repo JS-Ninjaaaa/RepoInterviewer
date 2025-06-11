@@ -59,7 +59,7 @@ class ChatHistory:
         """
         self._chat_history = messages if messages is not None else []
 
-    def append_message(self, message: ChatMessage):
+    def append(self, message: ChatMessage):
         """会話履歴にメッセージを追加する
 
         Args:

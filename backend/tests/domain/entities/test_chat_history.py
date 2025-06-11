@@ -8,7 +8,7 @@ def test_append_message():
     assert len(chat_history.chat_history) == 0
 
     user_message = ChatMessage(role="user", message="こんにちは")
-    chat_history.append_message(user_message)
+    chat_history.append(user_message)
 
     assert len(chat_history.chat_history) == 1
 
