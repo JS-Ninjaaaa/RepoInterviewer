@@ -37,7 +37,7 @@ jobs:
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
 
   notify_review_submitted:
-    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted' && github.event.action == 'submitted'
+    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
     runs-on: ubuntu-latest
     steps:
       - name: Install jq
@@ -51,6 +51,7 @@ jobs:
           AUTHOR: ${{ github.event.pull_request.user.login }}
           REVIEWER: ${{ github.event.review.user.login }}
           REVIEW_STATE: ${{ github.event.review.state }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
           REVIEW_URL: ${{ github.event.review.html_url }}
           WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
@@ -61,7 +62,7 @@ jobs:
 
           cat <<EOF > message.json
           {
-            "content": "$MENTION 📝$REVIEWER がレビューを投稿しました（$REVIEW_STATE）: $REVIEW_URL"
+            "content": "$MENTION 📝$REVIEWER がレビューを投稿しました（$REVIEW_STATE）: [$PR_TITLE]($REVIEW_URL)"
           }
           EOF
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
