@@ -39,7 +39,8 @@ export const LoadingProvider: React.FC<LoadingProviderProps> = ({
 
 export function useLoading(): LoadingContextType {
   const ctx = useContext(LoadingContext);
-  if (!ctx)
+  if (!ctx) {
     throw new Error("useLoading は LoadingProvider の内側で使ってください");
+  }
   return ctx;
 }

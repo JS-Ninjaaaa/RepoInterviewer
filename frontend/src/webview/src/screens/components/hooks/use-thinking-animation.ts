@@ -14,12 +14,7 @@ export function useThinkingAnimation(
     }
 
     // ５つのアニメーション状態
-    const states = [
-      "考え中", // 1: 考え中
-      "考え中・", // 2: ドット1
-      "考え中・・", // 3: ドット2
-      "考え中・・・", // 4: ドット3
-    ];
+    const states = ["考え中", "考え中・", "考え中・・", "考え中・・・"];
 
     // プレースホルダーを追加し、インデックスを保存
     setChatHistory((prev) => {
@@ -37,8 +32,8 @@ export function useThinkingAnimation(
       }
       // 次の状態へ
       animIndex = (animIndex + 1) % states.length;
-      setChatHistory((curr) =>
-        curr.map((m, i) =>
+      setChatHistory((currentChatHistory) =>
+        currentChatHistory.map((m, i) =>
           i === indexRef.current
             ? { type: "thinking", text: states[animIndex] }
             : m
