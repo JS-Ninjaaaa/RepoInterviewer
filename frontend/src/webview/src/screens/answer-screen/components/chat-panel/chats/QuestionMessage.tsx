@@ -10,7 +10,7 @@ interface Props {
 }
 
 const QuestionMessage: React.FC<Props> = ({ msg }) => {
-  const { currentCharacter, questionId } = useAnswerContext();
+  const { currentCharacter } = useAnswerContext();
   return (
     <Box sx={{ my: 2 }}>
       <Box sx={{ display: "flex", gap: "5%", alignItems: "center", mt: 1 }}>
@@ -28,7 +28,7 @@ const QuestionMessage: React.FC<Props> = ({ msg }) => {
           }}
         >
           <Typography sx={{ fontSize: 20, fontWeight: "bold" }}>
-            {questionId} / {currentCharacter.totalQuestion}
+            {msg.questionId} of {currentCharacter.totalQuestion}
           </Typography>
         </Box>
       </Box>

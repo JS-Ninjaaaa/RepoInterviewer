@@ -2,6 +2,7 @@ export type ChatMessage =
   | {
       type: "question";
       text: string;
+      questionId: number;
     }
   | {
       type: "answer";
