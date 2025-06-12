@@ -1,24 +1,32 @@
+# .github/workflows/notify-discord.yml
 name: Notify Discord on PR Events
 
+################################################################################
+# イベント構成
+#   - pull_request.review_requested : レビュワー指名時
+#   - pull_request.closed          : PR マージ時
+#   - pull_request_review.submitted: レビュー提出時
+#     （state = approved / changes_requested / commented すべて受け取る）
+################################################################################
 on:
-  # ① レビュー依頼
   pull_request:
-    types: [review_requested,closed]
+    types: [review_requested, closed]
 
-  # ② レビュー提出（approved / changes_requested / commented すべて）
   pull_request_review:
     types: [submitted]
 
+################################################################################
+# 1. レビュー依頼通知
+################################################################################
 jobs:
-  #############################################################################
-  # PRレビュー依頼通知
-  #############################################################################
   notify_review_requested:
     if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get update && sudo apt-get install -y jq
-      - run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Write user_map.json
+        run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
       - name: Notify reviewer
         env:
           REVIEWER: ${{ github.event.requested_reviewer.login }}
@@ -27,25 +35,30 @@ jobs:
           WEBHOOK:  ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
           DISCORD_ID=$(jq -r --arg user "$REVIEWER" '.[$user]' user_map.json)
-          MENTION="@here"; [ "$DISCORD_ID" != "null" ] && MENTION="<@$DISCORD_ID>"
-          jq -n --arg content "$MENTION 👀 レビュー依頼: [$PR_TITLE]($PR_URL)" '{content:$content}' \
-             > msg.json
+          MENTION="@here"
+          [ "$DISCORD_ID" != "null" ] && [ -n "$DISCORD_ID" ] && MENTION="<@$DISCORD_ID>"
+          jq -n --arg content "$MENTION 👀 レビュー依頼が届きました: [$PR_TITLE]($PR_URL)" \
+                '{content:$content}' > msg.json
           curl -H "Content-Type: application/json" -X POST -d @msg.json "$WEBHOOK"
 
-  #############################################################################
-  # レビュー提出通知（初回提出のみ）
-  #############################################################################
+################################################################################
+# 2. レビュー提出通知（PR 作成者本人による “返信レビュー” は無視）
+################################################################################
   notify_review_submitted:
-    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
+    if: github.event_name == 'pull_request_review' &&
+        github.event.action   == 'submitted'          &&
+        github.event.review.user.login != github.event.pull_request.user.login
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get update && sudo apt-get install -y jq
-      - run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Write user_map.json
+        run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
       - name: Notify on review submission
         env:
           AUTHOR:       ${{ github.event.pull_request.user.login }}
           REVIEWER:     ${{ github.event.review.user.login }}
-          REVIEW_STATE: ${{ github.event.review.state }}   # approved / changes_requested / commented
+          REVIEW_STATE: ${{ github.event.review.state }}       # approved / changes_requested / commented
           REVIEW_URL:   ${{ github.event.review.html_url }}
           WEBHOOK:      ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
@@ -59,19 +72,22 @@ jobs:
           MENTION="@here"
           [ "$DISCORD_ID" != "null" ] && [ -n "$DISCORD_ID" ] && MENTION="<@$DISCORD_ID>"
           jq -n --arg content "$MENTION $ICON レビューが提出されました: $REVIEW_URL" \
-                '{content: $content}' > msg.json
+                '{content:$content}' > msg.json
           curl -H "Content-Type: application/json" -X POST -d @msg.json "$WEBHOOK"
 
-  #############################################################################
-  # PRマージ通知
-  #############################################################################
+################################################################################
+# 3. PR マージ通知
+################################################################################
   notify_pr_merged:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' &&
+    if: github.event_name == 'pull_request' &&
+        github.event.action == 'closed'     &&
         github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get update && sudo apt-get install -y jq
-      - run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Write user_map.json
+        run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
       - name: Notify on merge
         env:
           AUTHOR:   ${{ github.event.pull_request.user.login }}
@@ -80,7 +96,8 @@ jobs:
           WEBHOOK:  ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
           DISCORD_ID=$(jq -r --arg user "$AUTHOR" '.[$user]' user_map.json)
-          MENTION="@here"; [ "$DISCORD_ID" != "null" ] && MENTION="<@$DISCORD_ID>"
-          jq -n --arg content "$MENTION ✅ PRがマージされました: [$PR_TITLE]($PR_URL)" \
-             '{content:$content}' > msg.json
+          MENTION="@here"
+          [ "$DISCORD_ID" != "null" ] && MENTION="<@$DISCORD_ID>"
+          jq -n --arg content "$MENTION ✅ PR がマージされました: [$PR_TITLE]($PR_URL)" \
+                '{content:$content}' > msg.json
           curl -H "Content-Type: application/json" -X POST -d @msg.json "$WEBHOOK"
