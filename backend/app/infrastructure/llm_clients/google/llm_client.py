@@ -240,8 +240,9 @@ class GoogleLLMClient(LLMClient):
 
         contents = self.make_chat_history_contents(question.chat_history)
 
+        max_score = 100 // question.total_question
         feedback_prompt = PromptService.make_feedback_prompt(
-            question.max_score,
+            max_score,
             source_code,
         )
         contents.append(
@@ -288,8 +289,9 @@ class GoogleLLMClient(LLMClient):
 
         contents = self.make_chat_history_contents(question.chat_history)
 
+        max_score = 100 // question.total_question
         deep_question_prompt = PromptService.make_deep_question_prompt(
-            question.max_score,
+            max_score,
             source_code,
         )
         contents.append(
@@ -315,24 +317,26 @@ class GoogleLLMClient(LLMClient):
 
     def generate_general_review(
         self,
-        question: InterviewQuestion,
+        difficulty: Difficulty,
+        chat_histories: list[ChatHistory],
     ) -> str:
         """総評を生成する
 
         Args:
-            question (InterviewQuestion): 質問の情報
+            difficulty (Difficulty): 難易度
+            chat_histories (list[ChatHistory]): 会話履歴のリスト
 
         Returns:
             str: 総評
         """
-        character_prompt = PromptService.get_character_prompt(question.difficulty)
+        character_prompt = PromptService.get_character_prompt(difficulty)
         content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="text/plain",
         )
 
         # fmt: off
-        general_review_prompt = PromptService.make_general_review_prompt(question.chat_history)
+        general_review_prompt = PromptService.make_general_review_prompt(chat_histories)
         contents = [
             types.Content(
                 role="user", parts=[types.Part.from_text(text=general_review_prompt)]
