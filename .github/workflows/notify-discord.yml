@@ -33,7 +33,7 @@ jobs:
                 '{content: $content}' > message.json
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
 
-  notify_review_comment:
+  filter_first_review_comment:
     if: github.event_name == 'pull_request_review_comment' &&
         github.event.action == 'created' &&
         github.event.comment.in_reply_to_id == null
@@ -44,32 +44,28 @@ jobs:
       - name: Install jq & curl
         run: sudo apt-get update && sudo apt-get install -y jq curl
 
-      - name: Write user_map.json
-        run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
-
-      - name: Filter Is this the first comment in the review?
+      - name: Detect whether this is the 1st comment in its review
         env:
-          REVIEW_ID:    ${{ github.event.comment.pull_request_review_id }}
-          PR_NUMBER:    ${{ github.event.pull_request.number }}
-          REPO:         ${{ github.repository }}
+          REVIEW_ID: ${{ github.event.comment.pull_request_review_id }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO:      ${{ github.repository }}
         run: |
           if [ -z "$REVIEW_ID" ]; then
-            echo "No review ID → skip"
+            echo "::notice::No review_id — skipping"
             exit 0
           fi
 
           COUNT=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/comments" \
-            | jq length)
+                   -H "Accept: application/vnd.github+json" \
+                   "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/comments" \
+                 | jq length)
 
           if [ "$COUNT" -gt 1 ]; then
-            echo "Second or later comment → skip"
+            echo "::notice::Second-or-later comment in same review — skipping"
             exit 0
           fi
 
-          echo "This is the first comment in the review (no action taken)"
-
+          echo "::notice::1st top-level comment detected — no notification sent"
 
   notify_pr_merged:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
@@ -97,33 +93,35 @@ jobs:
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
 
   notify_review_submitted:
-    if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
+    if: github.event_name == 'pull_request_review' &&
+        github.event.action == 'submitted' &&
+        github.event.review.state != 'commented'
     runs-on: ubuntu-latest
     steps:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Write user_map.json from Secret
+      - name: Write user_map.json
         run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
 
-      - name: Notify PR author on review
+      - name: Notify PR author on review submit
         env:
           AUTHOR:        ${{ github.event.pull_request.user.login }}
           REVIEWER:      ${{ github.event.review.user.login }}
-          REVIEW_STATE:  ${{ github.event.review.state }}   # approved / changes_requested / commented
+          REVIEW_STATE:  ${{ github.event.review.state }}   # approved / changes_requested
           REVIEW_URL:    ${{ github.event.review.html_url }}
           WEBHOOK:       ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
           case "$REVIEW_STATE" in
             approved)          ICON="✅";;
             changes_requested) ICON="❌";;
-            commented)         ICON="💬";;
             *)                 ICON="";;
           esac
 
           DISCORD_ID=$(jq -r --arg user "$AUTHOR" '.[$user]' user_map.json)
           MENTION="@here"
           [ "$DISCORD_ID" != "null" ] && [ -n "$DISCORD_ID" ] && MENTION="<@$DISCORD_ID>"
+
           jq -n --arg content "$MENTION $ICON レビュー($REVIEW_STATE) が $REVIEWER から届きました: $REVIEW_URL" \
                 '{content: $content}' > message.json
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
