@@ -19,6 +19,9 @@ class GetQuestionUseCase:
 
         Returns:
             GetQuestionResponse: 質問文を取得した結果
+
+        Raises:
+            Exception: 質問文が存在しない場合
         """
         # 質問の情報を取得する
         question = self.interview_repository.get_question(
@@ -31,6 +34,9 @@ class GetQuestionUseCase:
 
         # 質問文を取得する
         chat_history = question.chat_history.chat_history
+        if len(chat_history) == 0:
+            raise Exception("質問文が存在しません")
+
         question_text = chat_history[0].message
 
         # 質問文を返す
