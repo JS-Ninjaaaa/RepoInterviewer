@@ -1,14 +1,18 @@
 name: Notify Discord on PR Events
 
 on:
+  # ① PR のレビュー依頼をキャッチ
   pull_request:
     types: [review_requested, closed]
-  pull_request_review_comment:
-    types: [created]            # レビュー中のコメント
+
+  # ② PR に対する“レビュー提出”をキャッチ（approved / changes_requested / commented すべて）
   pull_request_review:
-    types: [submitted]          # ★ レビュー提出を検知
+    types: [submitted]
 
 jobs:
+  #############################################################################
+  # 1. レビュー依頼が来たらレビュワーにメンション付き通知
+  #############################################################################
   notify_review_requested:
     if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
     runs-on: ubuntu-latest
@@ -16,15 +20,15 @@ jobs:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Write user_map.json from Secret
+      - name: Write user_map.json
         run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
 
-      - name: Notify reviewer on PR review request
+      - name: Notify reviewer
         env:
           REVIEWER: ${{ github.event.requested_reviewer.login }}
-          PR_URL:  ${{ github.event.pull_request.html_url }}
+          PR_URL:   ${{ github.event.pull_request.html_url }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-          WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
+          WEBHOOK:  ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
           DISCORD_ID=$(jq -r --arg user "$REVIEWER" '.[$user]' user_map.json)
           MENTION="@here"
@@ -33,40 +37,9 @@ jobs:
                 '{content: $content}' > message.json
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
 
-  filter_first_review_comment:
-    if: github.event_name == 'pull_request_review_comment' &&
-        github.event.action == 'created' &&
-        github.event.comment.in_reply_to_id == null
-    runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    steps:
-      - name: Install jq & curl
-        run: sudo apt-get update && sudo apt-get install -y jq curl
-
-      - name: Detect whether this is the 1st comment in its review
-        env:
-          REVIEW_ID: ${{ github.event.comment.pull_request_review_id }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          REPO:      ${{ github.repository }}
-        run: |
-          if [ -z "$REVIEW_ID" ]; then
-            echo "::notice::No review_id — skipping"
-            exit 0
-          fi
-
-          COUNT=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-                   -H "Accept: application/vnd.github+json" \
-                   "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/comments" \
-                 | jq length)
-
-          if [ "$COUNT" -gt 1 ]; then
-            echo "::notice::Second-or-later comment in same review — skipping"
-            exit 0
-          fi
-
-          echo "::notice::1st top-level comment detected — no notification sent"
-
+  #############################################################################
+  # 2. PR がマージされたら通知
+  #############################################################################
   notify_pr_merged:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
@@ -77,21 +50,23 @@ jobs:
       - name: Write user_map.json
         run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
 
-      - name: Notify PR author on merge
+      - name: Notify on merge
         env:
-          AUTHOR: ${{ github.event.pull_request.user.login }}
+          AUTHOR:   ${{ github.event.pull_request.user.login }}
           PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          WEBHOOK: ${{ secrets.DISCORD_PR_WEBHOOK }}
+          PR_URL:   ${{ github.event.pull_request.html_url }}
+          WEBHOOK:  ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
-          USER="$AUTHOR"
-          DISCORD_ID=$(jq -r --arg user "$USER" '.[$user]' user_map.json)
+          DISCORD_ID=$(jq -r --arg user "$AUTHOR" '.[$user]' user_map.json)
           MENTION="@here"
           [ "$DISCORD_ID" != "null" ] && MENTION="<@$DISCORD_ID>"
           jq -n --arg content "$MENTION ✅PRがマージされました: [$PR_TITLE]($PR_URL)" \
                 '{content: $content}' > message.json
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
 
+  #############################################################################
+  # 3. レビューが「提出(submitted)」されたらステータスを問わず通知
+  #############################################################################
   notify_review_submitted:
     if: github.event_name == 'pull_request_review' && github.event.action == 'submitted'
     runs-on: ubuntu-latest
@@ -99,14 +74,14 @@ jobs:
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Write user_map.json from Secret
+      - name: Write user_map.json
         run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
 
-      - name: Notify PR author on review
+      - name: Notify on review submission
         env:
           AUTHOR:        ${{ github.event.pull_request.user.login }}
           REVIEWER:      ${{ github.event.review.user.login }}
-          REVIEW_STATE:  ${{ github.event.review.state }}   # approved / changes_requested / commented
+          REVIEW_STATE:  ${{ github.event.review.state }}      # approved / changes_requested / commented
           REVIEW_URL:    ${{ github.event.review.html_url }}
           WEBHOOK:       ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
@@ -120,6 +95,6 @@ jobs:
           DISCORD_ID=$(jq -r --arg user "$AUTHOR" '.[$user]' user_map.json)
           MENTION="@here"
           [ "$DISCORD_ID" != "null" ] && [ -n "$DISCORD_ID" ] && MENTION="<@$DISCORD_ID>"
-          jq -n --arg content "$MENTION $ICON レビュー($REVIEW_STATE) が $REVIEWER から届きました: $REVIEW_URL" \
+          jq -n --arg content "$MENTION $ICON レビューが提出されました: $REVIEW_URL" \
                 '{content: $content}' > message.json
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
