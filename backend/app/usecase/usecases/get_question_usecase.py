@@ -4,9 +4,22 @@ from app.schemas.interview_schema import GetQuestionRequest, GetQuestionResponse
 
 class GetQuestionUseCase:
     def __init__(self, interview_repository: InterviewRepository) -> None:
+        """コンストラクタ
+
+        Args:
+            interview_repository (InterviewRepository): 面接リポジトリ
+        """
         self.interview_repository = interview_repository
 
     def execute(self, request: GetQuestionRequest) -> GetQuestionResponse:
+        """質問文を取得する
+
+        Args:
+            request (GetQuestionRequest): 質問文を取得するリクエスト
+
+        Returns:
+            GetQuestionResponse: 質問文を取得した結果
+        """
         # 質問の情報を取得する
         question = self.interview_repository.get_question(
             request.interview_id,

@@ -25,7 +25,11 @@ class RedisInterviewRepository(InterviewRepository):
         )
 
     def create_interview(self, questions: list[InterviewQuestion]) -> None:
-        """面接を作成する"""
+        """面接を作成する
+
+        Args:
+            questions (list[InterviewQuestion]): 質問のリスト
+        """
         redis_client = self.get_redis_client()
         pipeline = redis_client.pipeline()
 
@@ -43,6 +47,15 @@ class RedisInterviewRepository(InterviewRepository):
         interview_id: str,
         question_id: str,
     ) -> InterviewQuestion | None:
+        """質問を取得する
+
+        Args:
+            interview_id (str): 面接ID
+            question_id (str): 質問ID
+
+        Returns:
+            InterviewQuestion | None: 質問
+        """
         redis_client = self.get_redis_client()
         question = redis_client.get(
             name=f"{interview_id}-{question_id}",
@@ -58,6 +71,16 @@ class RedisInterviewRepository(InterviewRepository):
         question_id: str,
         question: InterviewQuestion,
     ) -> InterviewQuestion:
+        """質問の情報を更新する
+
+        Args:
+            interview_id (str): 面接ID
+            question_id (str): 質問ID
+            question (InterviewQuestion): 更新後の質問
+
+        Returns:
+            InterviewQuestion: 更新後の質問
+        """
         redis_client = self.get_redis_client()
         redis_client.set(
             name=f"{interview_id}-{question_id}",

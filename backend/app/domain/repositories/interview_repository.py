@@ -11,7 +11,7 @@ class InterviewRepository(ABC):
         """面接を作成する
 
         Args:
-            questions (list[InterviewQuestion]): 面接の質問を格納したリスト
+            questions (list[InterviewQuestion]): 質問を格納したリスト
         """
         pass
 
