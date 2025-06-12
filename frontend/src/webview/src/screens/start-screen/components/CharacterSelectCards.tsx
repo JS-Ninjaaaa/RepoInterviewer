@@ -21,7 +21,7 @@ const CharacterSelectCards = ({
 
   const handlePrevCharacter = () => {
     setCharacterIndex(
-      (prev) => (prev - 1 + characters.length) % characters.length,
+      (prev) => (prev - 1 + characters.length) % characters.length
     );
   };
   return (

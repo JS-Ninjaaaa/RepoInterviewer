@@ -6,6 +6,9 @@ export const AnswerContext = createContext<AnswerContextType | null>(null);
 
 export const useAnswerContext = () => {
   const context = useContext(AnswerContext);
-  if (!context) throw new Error("useAnswerContext must be used within AnswerContextProvider");
+  if (!context)
+    throw new Error(
+      "useAnswerContext must be used within AnswerContextProvider"
+    );
   return context;
 };

@@ -11,23 +11,20 @@ import { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
 
 export async function handleWebviewMessage(
   panel: vscode.WebviewPanel,
-  message: VscodeApiRequestValue,
+  message: VscodeApiRequestValue
 ) {
   switch (message.type) {
     case "fetchFirstQuestion": {
       const zipBlob: Blob = await fetchFiles();
       try {
-        const questionInfo = await fetchFirstQuestion(
-          zipBlob, 
-          message.payload
-        ); 
-        
+        const questionInfo = await fetchFirstQuestion(zipBlob, message.payload);
+
         const responseMessage: VscodeApiResponseValue = {
           type: "firstQuestion",
-          payload: questionInfo, 
+          payload: questionInfo,
         };
         panel.webview.postMessage(responseMessage);
-        
+
         break;
       } catch (err: unknown) {
         panel.webview.postMessage({
@@ -60,11 +57,10 @@ export async function handleWebviewMessage(
 
     case "fetchFeedback": {
       try {
-        const feedback = await fetchFeedBack(message.payload); 
-        
+        const feedback = await fetchFeedBack(message.payload);
+
         // APIからcontinueQuestionを返されなかったら
         if (typeof feedback.continueQuestion === "undefined") {
-
           feedback.continueQuestion = false;
         }
 

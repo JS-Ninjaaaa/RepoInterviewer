@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 export function getUri(
   webview: Webview,
   extensionUri: Uri,
-  pathList: string[],
+  pathList: string[]
 ): vscode.Uri {
   return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
 }
