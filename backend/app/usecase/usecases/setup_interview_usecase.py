@@ -53,14 +53,12 @@ class SetUpInterviewUseCase:
             request.total_question,
         )
 
-        max_score = 100 // request.total_question
-
         interview_questions = [
             InterviewQuestion(
                 interview_id=interview_id,
                 question_id=str(i + 1),
                 difficulty=request.difficulty,
-                max_score=max_score,
+                total_question=request.total_question,
                 chat_history=ChatHistory([ChatMessage(role="model", message=question)]),
             )
             for i, question in enumerate(questions)

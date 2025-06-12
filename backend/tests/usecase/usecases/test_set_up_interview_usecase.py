@@ -12,8 +12,8 @@ from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 # テストデータ
 source_code = b"test_zip_content"
 difficulty = Difficulty.normal
-total_question = 3
-questions = ["質問1", "質問2", "質問3"]
+total_question = 4
+questions = ["質問1", "質問2", "質問3", "質問4"]
 extracted_code = SourceCode(
     {
         "main.py": "print('Hello, World!')",
@@ -80,7 +80,7 @@ def test_execute_success(
         assert question.interview_id == response.interview_id
         assert question.question_id == str(i + 1)
         assert question.difficulty == difficulty
-        assert question.max_score == 100 // total_question
+        assert question.total_question == total_question
         assert question.score == 0
 
         assert isinstance(question.chat_history, ChatHistory)

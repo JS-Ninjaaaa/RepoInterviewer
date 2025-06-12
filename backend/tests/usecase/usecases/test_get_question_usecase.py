@@ -28,7 +28,7 @@ def test_execute_success(
         interview_id=interview_id,
         question_id=question_id,
         difficulty=Difficulty.normal,
-        max_score=25,
+        total_question=4,
         chat_history=chat_history,
         score=0,
     )
