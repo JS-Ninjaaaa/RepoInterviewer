@@ -24,3 +24,14 @@ class GetFeedbackResponse(BaseModel):
     question_id: str
     score: int
     comment: str
+
+
+class GetQuestionRequest(BaseModel):
+    interview_id: str
+    question_id: str
+
+
+class GetQuestionResponse(BaseModel):
+    interview_id: str
+    question_id: str
+    question: str

@@ -11,12 +11,16 @@ class InterviewRepository(ABC):
         """面接を作成する
 
         Args:
-            questions (list[InterviewQuestion]): 面接の質問を格納したリスト
+            questions (list[InterviewQuestion]): 質問を格納したリスト
         """
         pass
 
     @abstractmethod
-    def get_question(self, interview_id: str, question_id: str) -> InterviewQuestion:
+    def get_question(
+        self,
+        interview_id: str,
+        question_id: str,
+    ) -> InterviewQuestion | None:
         """質問の情報を取得する
 
         Args:
