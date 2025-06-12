@@ -15,12 +15,28 @@ class GetFeedbackUseCase:
         llm_client: LLMClient,
         source_code_dir: Path = Path("tmp"),
     ) -> None:
+        """コンストラクタ
+
+        Args:
+            interview_repository (InterviewRepository): 面接リポジトリ
+            source_code_repository (SourceCodeRepository): ソースコードリポジトリ
+            llm_client (LLMClient): LLMクライアント
+            source_code_dir (Path): ソースコードを保存するディレクトリ
+        """
         self.interview_repository = interview_repository
         self.source_code_repository = source_code_repository
         self.llm_client = llm_client
         self.source_code_dir = source_code_dir
 
     def execute(self, request: GetFeedbackRequest) -> GetFeedbackResponse:
+        """フィードバックを生成する
+
+        Args:
+            request (GetFeedbackRequest): フィードバックを生成するリクエスト
+
+        Returns:
+            GetFeedbackResponse: フィードバックを生成した結果
+        """
         question = self.interview_repository.get_question(
             request.interview_id,
             request.question_id,

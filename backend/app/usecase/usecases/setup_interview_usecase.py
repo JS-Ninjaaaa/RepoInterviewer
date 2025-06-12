@@ -17,12 +17,28 @@ class SetUpInterviewUseCase:
         llm_client: LLMClient,
         source_code_dir: Path = Path("tmp"),
     ) -> None:
+        """コンストラクタ
+
+        Args:
+            interview_repository (InterviewRepository): 面接リポジトリ
+            source_code_repository (SourceCodeRepository): ソースコードリポジトリ
+            llm_client (LLMClient): LLMクライアント
+            source_code_dir (Path): ソースコードを保存するディレクトリ
+        """
         self.interview_repository = interview_repository
         self.source_code_repository = source_code_repository
         self.llm_client = llm_client
         self.source_code_dir = source_code_dir
 
     def execute(self, request: SetUpInterviewRequest) -> SetUpInterviewResponse:
+        """面接を設定する
+
+        Args:
+            request (SetUpInterviewRequest): 面接を設定するリクエスト
+
+        Returns:
+            SetUpInterviewResponse: 面接を設定した結果
+        """
         interview_id = str(uuid4())
 
         session_dir = self.source_code_dir / interview_id
