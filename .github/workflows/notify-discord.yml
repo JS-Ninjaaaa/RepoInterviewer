@@ -42,9 +42,10 @@ jobs:
           curl -H "Content-Type: application/json" -X POST -d @msg.json "$WEBHOOK"
 
 ################################################################################
-# 2. レビュー提出通知（PR 作成者本人による “返信レビュー” は無視）
+# 2. レビュー提出通知
 ################################################################################
   notify_review_submitted:
+    # authorのコメントは無視する
     if: github.event_name == 'pull_request_review' &&
         github.event.action   == 'submitted'          &&
         github.event.review.user.login != github.event.pull_request.user.login
