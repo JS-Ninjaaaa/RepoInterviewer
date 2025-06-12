@@ -93,25 +93,6 @@ class PromptService:
         )
 
     @classmethod
-    def make_general_review_prompt(cls, chat_history: ChatHistory) -> str:
-        """総評を生成するプロンプトを取得する
-
-        Args:
-            chat_history (ChatHistory): チャット履歴
-
-        Returns:
-            str: 総評を生成するプロンプト
-        """
-        file_path = cls.user_prompt_dir_path / "general_review.txt"
-
-        with open(file_path, "r", encoding="utf-8") as f:
-            prompt_template = f.read()
-
-        return prompt_template.format(
-            chat_histories=json.dumps(chat_history.to_dict()),
-        )
-
-    @classmethod
     def make_deep_question_prompt(cls, max_score: int, source_code: SourceCode) -> str:
         """深掘りの質問を生成するプロンプトを取得する
 
@@ -130,4 +111,25 @@ class PromptService:
         return prompt_template.format(
             max_score=max_score,
             source_code=source_code.format(),
+        )
+
+    @classmethod
+    def make_general_review_prompt(cls, chat_histories: list[ChatHistory]) -> str:
+        """総評を生成するプロンプトを取得する
+
+        Args:
+            chat_history (ChatHistory): チャット履歴
+
+        Returns:
+            str: 総評を生成するプロンプト
+        """
+        file_path = cls.user_prompt_dir_path / "general_review.txt"
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            prompt_template = f.read()
+
+        return prompt_template.format(
+            chat_histories=json.dumps(
+                [chat_history.to_dict() for chat_history in chat_histories]
+            ),
         )
