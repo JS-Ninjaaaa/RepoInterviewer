@@ -19,7 +19,7 @@ source_code = SourceCode(
         "main.py": "print('Hello, World!')",
     }
 )
-max_score = 25
+total_question = 4
 feedback_score = 20
 feedback_comment = "良いコードです"
 
@@ -50,7 +50,7 @@ def test_execute_success(
         interview_id=interview_id,
         question_id=question_id,
         difficulty=Difficulty.normal,
-        max_score=max_score,
+        total_question=total_question,
         chat_history=ChatHistory(),
         score=0,
     )
@@ -145,7 +145,7 @@ def test_execute_failure_when_source_code_not_found(
         interview_id=interview_id,
         question_id=question_id,
         difficulty=Difficulty.normal,
-        max_score=max_score,
+        total_question=total_question,
         chat_history=ChatHistory(),
         score=0,
     )
@@ -184,7 +184,7 @@ def test_execute_failure_when_feedback_generation_fails(
         interview_id=interview_id,
         question_id=question_id,
         difficulty=Difficulty.normal,
-        max_score=max_score,
+        total_question=total_question,
         chat_history=ChatHistory(),
         score=0,
     )
@@ -224,12 +224,13 @@ def test_execute_failure_when_score_exceeds_max_score(
         interview_id=interview_id,
         question_id=question_id,
         difficulty=Difficulty.normal,
-        max_score=max_score,
+        total_question=total_question,
         chat_history=ChatHistory(),
         score=0,
     )
     mock_interview_repository.get_question.return_value = question
     mock_source_code_repository.get_source_code.return_value = source_code
+    max_score = 100 // total_question
     mock_llm_client.generate_feedback.return_value = InterviewFeedback(
         score=max_score + 1,  # max_scoreより大きいスコア
         comment=feedback_comment,
@@ -267,7 +268,7 @@ def test_execute_failure_when_update_question_fails(
         interview_id=interview_id,
         question_id=question_id,
         difficulty=Difficulty.normal,
-        max_score=max_score,
+        total_question=total_question,
         chat_history=ChatHistory(),
         score=0,
     )
