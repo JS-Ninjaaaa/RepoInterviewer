@@ -16,7 +16,11 @@ class InterviewRepository(ABC):
         pass
 
     @abstractmethod
-    def get_question(self, interview_id: str, question_id: str) -> InterviewQuestion:
+    def get_question(
+        self,
+        interview_id: str,
+        question_id: str,
+    ) -> InterviewQuestion | None:
         """質問の情報を取得する
 
         Args:
