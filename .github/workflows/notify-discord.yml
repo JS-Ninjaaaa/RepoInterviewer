@@ -47,7 +47,7 @@ jobs:
   notify_review_submitted:
     # authorのコメントは無視する
     if: github.event_name == 'pull_request_review' &&
-        github.event.action   == 'submitted'          &&
+        github.event.action   == 'submitted'       &&
         github.event.review.user.login != github.event.pull_request.user.login
     runs-on: ubuntu-latest
     steps:
