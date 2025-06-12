@@ -34,12 +34,11 @@ jobs:
           curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
 
   notify_review_comment:
-    # 「レビューのインラインコメント」かつ「返信ではない」場合のみ
     if: github.event_name == 'pull_request_review_comment' &&
         github.event.action == 'created' &&
         github.event.comment.in_reply_to_id == null
     runs-on: ubuntu-latest
-    env:            # ← GITHUB_TOKEN を使って API を叩く
+    env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Install jq & curl
@@ -48,35 +47,29 @@ jobs:
       - name: Write user_map.json
         run: echo '${{ secrets.DISCORD_USER_MAP_JSON }}' > user_map.json
 
-      - name: Notify PR author **only for the first comment in the review**
+      - name: Filter Is this the first comment in the review?
         env:
-          AUTHOR:       ${{ github.event.pull_request.user.login }}
-          COMMENT_URL:  ${{ github.event.comment.html_url }}
           REVIEW_ID:    ${{ github.event.comment.pull_request_review_id }}
           PR_NUMBER:    ${{ github.event.pull_request.number }}
           REPO:         ${{ github.repository }}
-          WEBHOOK:      ${{ secrets.DISCORD_PR_WEBHOOK }}
         run: |
-          if [ -n "$REVIEW_ID" ]; then
-            COUNT=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/comments" \
-              | jq length)
-
-            if [ "$COUNT" -gt 1 ]; then
-              echo "Second or later comment in the same review -> skip notification"
-              exit 0
-            fi
+          if [ -z "$REVIEW_ID" ]; then
+            echo "No review ID → skip"
+            exit 0
           fi
 
-          DISCORD_ID=$(jq -r --arg user "$AUTHOR" '.[$user]' user_map.json)
-          MENTION="@here"
-          [ "$DISCORD_ID" != "null" ] && [ -n "$DISCORD_ID" ] && MENTION="<@$DISCORD_ID>"
+          COUNT=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/reviews/$REVIEW_ID/comments" \
+            | jq length)
 
-          jq -n --arg content "$MENTION 💬レビューコメントが追加されました: $COMMENT_URL" \
-                '{content: $content}' > message.json
+          if [ "$COUNT" -gt 1 ]; then
+            echo "Second or later comment → skip"
+            exit 0
+          fi
 
-          curl -H "Content-Type: application/json" -X POST -d @message.json "$WEBHOOK"
+          echo "This is the first comment in the review (no action taken)"
+
 
   notify_pr_merged:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
