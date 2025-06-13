@@ -230,9 +230,8 @@ def test_execute_failure_when_score_exceeds_max_score(
     )
     mock_interview_repository.get_question.return_value = question
     mock_source_code_repository.get_source_code.return_value = source_code
-    max_score = 100 // total_question
     mock_llm_client.generate_feedback.return_value = InterviewFeedback(
-        score=max_score + 1,  # max_scoreより大きいスコア
+        score=question.max_score + 1,  # max_scoreより大きいスコア
         comment=feedback_comment,
     )
 
