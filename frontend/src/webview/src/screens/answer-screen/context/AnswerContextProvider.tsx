@@ -46,7 +46,11 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
       if (payload.continueQuestion) {
         setChatHistory((prev) => [
           ...prev,
-          { type: "question", text: payload.response, questionId: payload.questionId },
+          {
+            type: "question",
+            text: payload.response,
+            questionId: payload.questionId,
+          },
         ]);
         setDisplayEnterBox(true);
       } else {
@@ -146,7 +150,11 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
           stopThinking();
           setChatHistory((prev) => [
             ...prev,
-            { type: "question", text: msg.payload.question, questionId: msg.payload.questionId },
+            {
+              type: "question",
+              text: msg.payload.question,
+              questionId: msg.payload.questionId,
+            },
           ]);
           setQuestionId(msg.payload.questionId);
           setButtonDisplay("スキップ");
