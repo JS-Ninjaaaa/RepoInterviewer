@@ -7,8 +7,6 @@ from app.schemas.interview_schema import (
 
 
 class GetInterviewResultUseCase:
-    first_question_id = 1
-
     def __init__(
         self,
         interview_repository: InterviewRepository,
@@ -31,27 +29,18 @@ class GetInterviewResultUseCase:
 
         Returns:
             GetInterviewResultResponse: 面接結果を取得した結果
+
+        Raises:
+            Exception: 面接結果が存在しない場合
         """
-        # FIXME: 質問IDが連番であることを仮定している
-        first_question = self.interview_repository.get_question(
-            request.interview_id,
-            str(self.first_question_id),
-        )
+        questions = self.interview_repository.get_all_questions(request.interview_id)
 
-        difficulty = first_question.difficulty
-        scores = [first_question.score]
-        chat_histories = [first_question.chat_history]
+        if len(questions) == 0:
+            raise Exception("面接結果が存在しません")
 
-        for question_id in range(
-            self.first_question_id + 1,
-            first_question.total_question + 1,
-        ):
-            question = self.interview_repository.get_question(
-                request.interview_id,
-                str(question_id),
-            )
-            scores.append(question.score)
-            chat_histories.append(question.chat_history)
+        difficulty = questions[0].difficulty
+        scores = [question.score for question in questions]
+        chat_histories = [question.chat_history for question in questions]
 
         general_review = self.llm_client.generate_general_review(
             difficulty,
