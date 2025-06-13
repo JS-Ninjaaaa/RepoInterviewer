@@ -11,7 +11,7 @@ class InterviewQuestion:
         interview_id (str): 面接ID
         question_id (str): 質問ID
         difficulty (Difficulty): 難易度
-        max_score (int): 最大スコア
+        total_question (int): 質問数
         score (int): スコア
         chat_history (ChatHistory): 会話履歴
     """
@@ -29,8 +29,12 @@ class InterviewQuestion:
         return self._difficulty
 
     @property
-    def max_score(self) -> int:
-        return self._max_score
+    def total_question(self) -> int:
+        return self._total_question
+
+    @property
+    def max_score(self):
+        return 100 // self.total_question
 
     @property
     def score(self) -> int:
@@ -42,7 +46,7 @@ class InterviewQuestion:
 
     @score.setter
     def score(self, value: int):
-        if value < 0 or value > self.max_score:
+        if value < 0 or self.max_score < value:
             raise ValueError(
                 f"スコアは0から最大スコア({self.max_score})までの間でなければなりません"
             )
@@ -54,7 +58,7 @@ class InterviewQuestion:
         interview_id: str,
         question_id: str,
         difficulty: Difficulty,
-        max_score: int,
+        total_question: int,
         chat_history: ChatHistory,
         score: int = 0,
     ):
@@ -64,14 +68,14 @@ class InterviewQuestion:
             interview_id (str): 面接ID
             question_id (str): 質問ID
             difficulty (Difficulty): 難易度
-            max_score (int): 最大スコア
+            total_question (int): 質問数
             chat_history (ChatHistory): 会話履歴
             score (int): スコア
         """
         self._interview_id = interview_id
         self._question_id = question_id
         self._difficulty = difficulty
-        self._max_score = max_score
+        self._total_question = total_question
         self._chat_history = chat_history
         self._score = score
 
@@ -89,7 +93,7 @@ class InterviewQuestion:
             "interview_id": self._interview_id,
             "question_id": self._question_id,
             "difficulty": self._difficulty.value,
-            "max_score": self._max_score,
+            "total_question": self._total_question,
             "score": self._score,
             "chat_history": self._chat_history.to_dict(),
         }
@@ -103,8 +107,8 @@ class InterviewQuestion:
             raise ValueError("question_idが存在しません")
         if "difficulty" not in data:
             raise ValueError("difficultyが存在しません")
-        if "max_score" not in data:
-            raise ValueError("max_scoreが存在しません")
+        if "total_question" not in data:
+            raise ValueError("total_questionが存在しません")
         if "score" not in data:
             raise ValueError("scoreが存在しません")
         if "chat_history" not in data:
@@ -114,7 +118,7 @@ class InterviewQuestion:
             interview_id=data["interview_id"],
             question_id=data["question_id"],
             difficulty=Difficulty(data["difficulty"]),
-            max_score=data["max_score"],
+            total_question=data["total_question"],
             score=data["score"],
             chat_history=ChatHistory.from_dict(data["chat_history"]),
         )

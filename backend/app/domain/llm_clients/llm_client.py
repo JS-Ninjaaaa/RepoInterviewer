@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from app.domain.entities.chat_history import ChatHistory
 from app.domain.entities.difficulty import Difficulty
 from app.domain.entities.evaluation_result import QuestionEvaluationResult
 from app.domain.entities.interview_question import InterviewQuestion
@@ -75,11 +76,16 @@ class LLMClient(ABC):
         pass
 
     @abstractmethod
-    def generate_general_review(self, question: InterviewQuestion) -> str:
+    def generate_general_review(
+        self,
+        difficulty: Difficulty,
+        chat_histories: list[ChatHistory],
+    ) -> str:
         """総評を生成する
 
         Args:
-            question (InterviewQuestion): 質問の情報
+            difficulty (Difficulty): 難易度
+            chat_histories (list[ChatHistory]): 会話履歴のリスト
 
         Returns:
             str: 総評文
