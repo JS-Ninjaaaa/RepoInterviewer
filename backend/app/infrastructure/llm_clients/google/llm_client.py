@@ -240,9 +240,8 @@ class GoogleLLMClient(LLMClient):
 
         contents = self.make_chat_history_contents(question.chat_history)
 
-        max_score = 100 // question.total_question
         feedback_prompt = PromptService.make_feedback_prompt(
-            max_score,
+            question.max_score,
             source_code,
         )
         contents.append(
@@ -289,9 +288,8 @@ class GoogleLLMClient(LLMClient):
 
         contents = self.make_chat_history_contents(question.chat_history)
 
-        max_score = 100 // question.total_question
         deep_question_prompt = PromptService.make_deep_question_prompt(
-            max_score,
+            question.max_score,
             source_code,
         )
         contents.append(

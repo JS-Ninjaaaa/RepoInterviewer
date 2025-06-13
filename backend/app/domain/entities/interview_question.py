@@ -33,6 +33,10 @@ class InterviewQuestion:
         return self._total_question
 
     @property
+    def max_score(self):
+        return 100 // self.total_question
+
+    @property
     def score(self) -> int:
         return self._score
 
@@ -42,10 +46,9 @@ class InterviewQuestion:
 
     @score.setter
     def score(self, value: int):
-        max_score = 100 // self.total_question
-        if value < 0 or max_score < value:
+        if value < 0 or self.max_score < value:
             raise ValueError(
-                f"スコアは0から最大スコア({max_score})までの間でなければなりません"
+                f"スコアは0から最大スコア({self.max_score})までの間でなければなりません"
             )
 
         self._score = value
