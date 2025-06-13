@@ -31,7 +31,7 @@ const Footer = ({ vscode, currentCharacter }: FooterProps) => {
         <Box
           component="a"
           href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-            `${currentCharacter.name}から技術面接フィードバックをもらった！`
+            `${currentCharacter.name}から技術面接のフィードバックをもらった！`
           )}&hashtags=RepoInterviewer`}
           target="_blank"
           rel="noopener noreferrer"
