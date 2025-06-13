@@ -44,7 +44,7 @@ def test_execute_success(
         )
         for i in range(1, total_question + 1)
     ]
-    mock_interview_repository.get_question.side_effect = questions
+    mock_interview_repository.get_all_questions.return_value = questions
     mock_llm_client.generate_general_review.return_value = general_review
 
     # リクエストの準備
@@ -59,7 +59,7 @@ def test_execute_success(
     assert response.general_review == general_review
 
     # リポジトリの呼び出し確認
-    assert mock_interview_repository.get_question.call_count == total_question
+    assert mock_interview_repository.get_all_questions.call_count == 1
 
     # LLMクライアントの呼び出し確認
     mock_llm_client.generate_general_review.assert_called_once_with(
@@ -74,7 +74,7 @@ def test_execute_failure_when_interview_not_found(
     mock_llm_client: LLMClient,
 ):
     # モックの設定
-    mock_interview_repository.get_question.side_effect = Exception()
+    mock_interview_repository.get_all_questions.side_effect = Exception()
 
     # リクエストの準備
     request = GetInterviewResultRequest(interview_id=interview_id)
@@ -84,7 +84,7 @@ def test_execute_failure_when_interview_not_found(
         get_interview_result_usecase.execute(request)
 
     # リポジトリの呼び出し確認
-    mock_interview_repository.get_question.assert_called_once()
+    mock_interview_repository.get_all_questions.assert_called_once()
     mock_llm_client.generate_general_review.assert_not_called()
 
 
@@ -105,7 +105,7 @@ def test_execute_failure_when_general_review_generation_fails(
         )
         for i in range(1, total_question + 1)
     ]
-    mock_interview_repository.get_question.side_effect = questions
+    mock_interview_repository.get_all_questions.return_value = questions
     mock_llm_client.generate_general_review.side_effect = Exception()
 
     # リクエストの準備
@@ -116,7 +116,7 @@ def test_execute_failure_when_general_review_generation_fails(
         get_interview_result_usecase.execute(request)
 
     # リポジトリの呼び出し確認
-    assert mock_interview_repository.get_question.call_count == total_question
+    assert mock_interview_repository.get_all_questions.call_count == 1
 
     # LLMクライアントの呼び出し確認
     mock_llm_client.generate_general_review.assert_called_once_with(

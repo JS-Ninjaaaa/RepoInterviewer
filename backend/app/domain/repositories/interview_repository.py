@@ -47,3 +47,15 @@ class InterviewRepository(ABC):
             question (InterviewQuestion): 更新後の質問の情報
         """
         pass
+
+    @abstractmethod
+    def get_all_questions(
+        self,
+        interview_id: str,
+    ) -> list[InterviewQuestion]:
+        """面接の質問をすべて取得する
+
+        Args:
+            interview_id (str): 面接ID
+        """
+        pass

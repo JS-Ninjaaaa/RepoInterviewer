@@ -89,3 +89,26 @@ class RedisInterviewRepository(InterviewRepository):
         )
 
         return question
+
+    def get_all_questions(
+        self,
+        interview_id: str,
+    ) -> list[InterviewQuestion]:
+        """面接の質問をすべて取得する
+
+        Args:
+            interview_id (str): 面接ID
+
+        Returns:
+            list[InterviewQuestion]: 面接の質問のリスト
+        """
+        redis_client = self.get_redis_client()
+        keys = redis_client.scan(match=f"{interview_id}-*")
+
+        questions = redis_client.mget(keys[1])
+        if questions is None:
+            return []
+
+        return [
+            InterviewQuestion.from_dict(json.loads(question)) for question in questions
+        ]
