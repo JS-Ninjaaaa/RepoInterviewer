@@ -14,10 +14,24 @@ class GetInterviewResultUseCase:
         interview_repository: InterviewRepository,
         llm_client: LLMClient,
     ):
+        """コンストラクタ
+
+        Args:
+            interview_repository (InterviewRepository): 面接リポジトリ
+            llm_client (LLMClient): LLMクライアント
+        """
         self.interview_repository = interview_repository
         self.llm_client = llm_client
 
     def execute(self, request: GetInterviewResultRequest) -> GetInterviewResultResponse:
+        """面接結果を取得する
+
+        Args:
+            request (GetInterviewResultRequest): 面接結果を取得するリクエスト
+
+        Returns:
+            GetInterviewResultResponse: 面接結果を取得した結果
+        """
         # FIXME: 質問IDが連番であることを仮定している
         first_question = self.interview_repository.get_question(
             request.interview_id,
