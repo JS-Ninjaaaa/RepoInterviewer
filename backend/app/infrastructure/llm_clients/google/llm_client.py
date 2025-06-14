@@ -188,17 +188,15 @@ class GoogleLLMClient(LLMClient):
             response_schema=list[str],
         )
 
-        contents = self.make_chat_history_contents(source_code.chat_history)
-
         questions_prompt = PromptService.make_questions_prompt(
-            source_code,
-            total_question,
+            total_question=total_question,
+            source_code=source_code,
         )
-        contents.append(
+        contents = [
             types.Content(
                 role="user", parts=[types.Part.from_text(text=questions_prompt)]
             )
-        )
+        ]
 
         response = self.generate_content(
             contents=contents,
