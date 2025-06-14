@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import { handleWebviewMessage } from "./functions/handle-webview-message";
-import { getUri } from "./utilities/get-uri";
+import { getWebviewUris } from "./functions/get-webview-uris";
 import { getNonce } from "./utilities/get-nonce";
 import { openWindow } from "./functions/open-webview";
 
@@ -44,13 +44,13 @@ function getWebviewContent(
   webview: vscode.Webview,
   extensionUri: vscode.Uri
 ): string {
-  // build/webview/assets/index.js を読み込む
-  const scriptUri = getUri(webview, extensionUri, [
-    "build",
-    "webview",
-    "index.js",
-  ]);
   const nonce = getNonce();
+
+  const { scriptUri, imageUris } = getWebviewUris(webview, extensionUri);
+
+  const initDataScript = `<script nonce="${nonce}">
+    window.initialData = ${JSON.stringify(imageUris)};
+  </script>`;
 
   return `<!DOCTYPE html>
     <html lang="en">
@@ -67,6 +67,9 @@ function getWebviewContent(
     </head>
     <body>
       <div id="root"></div>
+
+      ${initDataScript}
+
       <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
     </body>
     </html>`;

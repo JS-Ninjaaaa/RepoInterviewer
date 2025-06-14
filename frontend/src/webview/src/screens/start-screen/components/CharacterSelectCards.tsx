@@ -1,9 +1,10 @@
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
-import { characters } from "@/data/characters";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import { Character } from "@/types/character";
 
 interface Props {
+  characters: Character[];
   selectingCharacter: {
     characterIndex: number;
     setCharacterIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const CharacterSelectCards = ({
+  characters,
   selectingCharacter: { characterIndex, setCharacterIndex },
 }: Props) => {
   const currentCharacter = characters[characterIndex];

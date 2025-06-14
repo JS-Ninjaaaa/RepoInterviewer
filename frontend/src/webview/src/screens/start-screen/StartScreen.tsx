@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button, ThemeProvider } from "@mui/material";
-import { characters } from "@/data/characters";
+import { Character } from "@/types/character";
 import { theme } from "@/theme";
 import { useLoading } from "@/screens/context/LoadingContext";
 
@@ -11,6 +11,7 @@ import Header from "@/screens/start-screen/components/Header";
 
 interface StartScreenProps {
   vscode: VSCodeAPI;
+  characters: Character[];
 }
 
 declare global {
@@ -22,7 +23,7 @@ declare global {
   function acquireVsCodeApi(): VSCodeAPI;
 }
 
-const StartScreen = ({ vscode }: StartScreenProps) => {
+const StartScreen = ({ vscode, characters }: StartScreenProps) => {
   const { showLoading, hideLoading } = useLoading();
   const [characterIndex, setCharacterIndex] = useState(0);
   const currentCharacter = characters[characterIndex];
@@ -84,6 +85,7 @@ const StartScreen = ({ vscode }: StartScreenProps) => {
         </Typography>
 
         <CharacterSelectCards
+          characters={characters}
           selectingCharacter={{
             characterIndex,
             setCharacterIndex,
