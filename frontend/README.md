@@ -26,6 +26,6 @@ React + TypeScript + Vite を用いたアプリです。VisualStudioCodeの拡�
 
 1. エディターで`frontend\src\commands\src\extension.ts`を開いてください。
 
-2. キーボードのF5を押してください。VSCodeの新しいウインドウが開くので，任意のプロジェクトを開いてください。コマンドパレットが開いた場合は，`VSCode EXtension Development`を選択してください。
+2. キーボードのF5を押してください。VSCodeの新しいウインドウが開くので，任意のプロジェクトを開いてください。コマンドパレットが開いた場合は，`VSCode Extension Development`を選択してください。
 
 3. 画面下部のステータスバーに表示される「RepoInterviewer」のアイコンを押して拡張機能を起動します。コマンドパレットで「repointerviewer.start」と入力して起動させることも可能です。

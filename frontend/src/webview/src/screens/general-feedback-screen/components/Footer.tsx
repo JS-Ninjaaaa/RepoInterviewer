@@ -28,15 +28,25 @@ const Footer = ({ vscode, currentCharacter }: FooterProps) => {
           mb: "30px",
         }}
       >
-        <XIcon
-          sx={{
-            bgcolor: "black",
-            color: "white",
-            p: 1,
-            borderRadius: 1,
-            fontSize: "18px",
-          }}
-        />
+        <Box
+          component="a"
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            `${currentCharacter.name}から技術面接のフィードバックをもらった！`
+          )}&hashtags=RepoInterviewer`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "inline-block" }}
+        >
+          <XIcon
+            sx={{
+              bgcolor: "black",
+              color: "white",
+              p: 1,
+              borderRadius: 1,
+              fontSize: "18px",
+            }}
+          />
+        </Box>
         <Typography>SNSで結果をシェアしよう !</Typography>
       </Box>
 
