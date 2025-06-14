@@ -10,6 +10,10 @@ from typing import List
 from pydantic import BaseModel
 
 
+class ErrorResponse(BaseModel):
+    message: str
+
+
 class Difficulty(Enum):
     easy = "easy"
     normal = "normal"
@@ -26,10 +30,6 @@ class InterviewPostRequest(BaseModel):
 class InterviewPostResponse(BaseModel):
     interview_id: str
     question: str
-
-
-class InterviewPostErrorResponse(BaseModel):
-    error_message: str
 
 
 class InterviewInterviewIdPostRequest(BaseModel):
