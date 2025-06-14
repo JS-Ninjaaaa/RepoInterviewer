@@ -1,61 +1,58 @@
 from typing import Union
 
+from app.api.dependencies import get_set_up_interview_usecase
+from app.domain.entities.difficulty import Difficulty
+from app.schemas.interview_schema import SetUpInterviewRequest, SetUpInterviewResponse
 from app.schemas.schemas import (
-    Difficulty,
     InterviewInterviewIdGetResponse,
     InterviewInterviewIdPostErrorResponse,
     InterviewInterviewIdPostRequest,
     InterviewInterviewIdPostResponse,
     InterviewInterviewIdResultGetErrorResponse,
     InterviewInterviewIdResultGetResponse,
-    InterviewPostErrorResponse,
-    InterviewPostRequest,
-    InterviewPostResponse,
 )
 from app.services.interview_service import (
     get_interview_result,
     get_question,
     get_response,
-    set_up_interview,
 )
-from fastapi import APIRouter, Form, HTTPException, UploadFile
+from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 
 router = APIRouter()
 
 
 @router.post(
     "",
-    response_model=InterviewPostResponse,
-    responses={"500": {"model": InterviewPostErrorResponse}},
-    tags=["InterviewAPI"],
+    response_model=SetUpInterviewResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Interview"],
+    summary="面接を開始する",
+    operation_id="set_up_interview",
 )
-async def post_interview(
+async def set_up_interview(
     source_code: UploadFile,
-    difficulty: Difficulty = Form("normal"),
-    total_question: int = Form(5),
-) -> Union[InterviewPostResponse, InterviewPostErrorResponse]:
+    difficulty: str = Form("normal"),
+    total_question: int = Form(4),
+    usecase: SetUpInterviewUseCase = Depends(get_set_up_interview_usecase),
+):
     """
-    コードと設定を送って面接セッションを開始
+    ソースコードと面接の設定を受け取って面接を開始する
     """
     zip_bytes = await source_code.read()
     try:
-        request_body = InterviewPostRequest(
+        request_body = SetUpInterviewRequest(
             source_code=zip_bytes,
             difficulty=Difficulty(difficulty),
             total_question=total_question,
         )
     except Exception as e:
-        return InterviewPostErrorResponse(
-            error_message=f"リクエストボディが不正です: {str(e)}"
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"リクエストボディが不正です: {str(e)}",
         )
 
-    interview_id, first_question = set_up_interview(request_body)
-    if first_question == "":
-        return InterviewPostErrorResponse(
-            error_message="面接のセットアップに失敗しました"
-        )
-
-    return InterviewPostResponse(interview_id=interview_id, question=first_question)
+    return usecase.execute(request_body)
 
 
 @router.post(

@@ -28,10 +28,6 @@ class InterviewPostResponse(BaseModel):
     question: str
 
 
-class InterviewPostErrorResponse(BaseModel):
-    error_message: str
-
-
 class InterviewInterviewIdPostRequest(BaseModel):
     question_id: int
     message: str
