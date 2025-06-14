@@ -47,7 +47,7 @@ class InterviewSession:
                 "total_question": self.total_questions,
             }
 
-            response = requests.post(url, files=files, json=request_body)
+            response = requests.post(url, files=files, data=request_body)
             passed = print_result(response.status_code, 201, response.text)
 
             if not passed:
@@ -72,7 +72,7 @@ class InterviewSession:
             "message": message,
         }
 
-        response = requests.post(url, headers=headers, json=request_body)
+        response = requests.post(url, headers=headers, data=request_body)
         print_result(response.status_code, 200, response.text)
 
     def get_current_question(self) -> None:
