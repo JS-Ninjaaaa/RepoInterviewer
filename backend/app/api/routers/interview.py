@@ -4,7 +4,6 @@ from app.api.dependencies import get_set_up_interview_usecase
 from app.domain.entities.difficulty import Difficulty
 from app.schemas.interview_schema import SetUpInterviewRequest, SetUpInterviewResponse
 from app.schemas.schemas import (
-    ErrorResponse,
     InterviewInterviewIdGetResponse,
     InterviewInterviewIdPostErrorResponse,
     InterviewInterviewIdPostRequest,
@@ -18,7 +17,7 @@ from app.services.interview_service import (
     get_response,
 )
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 
 router = APIRouter()
 
@@ -26,13 +25,9 @@ router = APIRouter()
 @router.post(
     "",
     response_model=SetUpInterviewResponse,
-    status_code=201,
+    status_code=status.HTTP_201_CREATED,
     tags=["Interview"],
     summary="面接を開始する",
-    responses={
-        "400": {"model": ErrorResponse},
-        "500": {"model": ErrorResponse},
-    },
     operation_id="set_up_interview",
 )
 async def set_up_interview(
@@ -52,7 +47,10 @@ async def set_up_interview(
             total_question=total_question,
         )
     except Exception as e:
-        return ErrorResponse(message=f"リクエストボディが不正です: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"リクエストボディが不正です: {str(e)}",
+        )
 
     return usecase.execute(request_body)
 
