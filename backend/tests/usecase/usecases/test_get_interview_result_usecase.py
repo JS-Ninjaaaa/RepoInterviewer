@@ -13,7 +13,7 @@ from app.usecase.usecases.get_interview_result_usecase import GetInterviewResult
 interview_id = "b5d0d93a-737b-4f90-81dc-bb58a2cba892"
 total_question = 4
 max_score = 100 // total_question
-general_review = "総評"
+overall_review = "総評"
 
 
 @pytest.fixture
@@ -45,7 +45,7 @@ def test_execute_success(
         for i in range(1, total_question + 1)
     ]
     mock_interview_repository.get_all_questions.return_value = questions
-    mock_llm_client.generate_general_review.return_value = general_review
+    mock_llm_client.generate_general_review.return_value = overall_review
 
     # リクエストの準備
     request = GetInterviewResultRequest(interview_id=interview_id)
@@ -56,7 +56,7 @@ def test_execute_success(
     # 戻り値の検証
     assert response.interview_id == interview_id
     assert len(response.scores) == total_question
-    assert response.general_review == general_review
+    assert response.overall_review == overall_review
 
     # リポジトリの呼び出し確認
     assert mock_interview_repository.get_all_questions.call_count == 1

@@ -42,7 +42,7 @@ class GetInterviewResultUseCase:
         scores = [question.score for question in questions]
         chat_histories = [question.chat_history for question in questions]
 
-        general_review = self.llm_client.generate_general_review(
+        overall_review = self.llm_client.generate_general_review(
             difficulty,
             chat_histories,
         )
@@ -50,5 +50,5 @@ class GetInterviewResultUseCase:
         return GetInterviewResultResponse(
             interview_id=request.interview_id,
             scores=scores,
-            general_review=general_review,
+            overall_review=overall_review,
         )

@@ -44,4 +44,4 @@ class GetInterviewResultRequest(BaseModel):
 class GetInterviewResultResponse(BaseModel):
     interview_id: str
     scores: list[int]
-    general_review: str
+    overall_review: str
