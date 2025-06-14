@@ -1,8 +1,13 @@
-from app.api.routers import health, interview
+# fmt: off
 from dotenv import load_dotenv
-from fastapi import FastAPI
 
 load_dotenv()
+
+
+from app.api.routers import health, interview
+from fastapi import FastAPI
+
+# fmt: on
 
 app = FastAPI()
 
