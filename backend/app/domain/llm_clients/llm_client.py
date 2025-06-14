@@ -88,6 +88,6 @@ class LLMClient(ABC):
             chat_histories (list[ChatHistory]): 会話履歴のリスト
 
         Returns:
-            str: 総評文
+            str: 総評
         """
         pass

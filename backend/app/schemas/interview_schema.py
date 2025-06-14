@@ -35,3 +35,13 @@ class GetQuestionResponse(BaseModel):
     interview_id: str
     question_id: str
     question: str
+
+
+class GetInterviewResultRequest(BaseModel):
+    interview_id: str
+
+
+class GetInterviewResultResponse(BaseModel):
+    interview_id: str
+    scores: list[int]
+    overall_review: str
