@@ -14,7 +14,7 @@ import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
 
 declare global {
   interface Window {
-    initialData?: ImageUri;
+    imageUris?: ImageUri;
   }
 }
 
@@ -58,7 +58,7 @@ const AppRoutes: React.FC = () => {
   const [characters, setCharacters] = useState<Character[] | null>(null);
 
   useEffect(() => {
-    const data = window.initialData;
+    const data = window.imageUris;
     if (!data) {
       return;
     }

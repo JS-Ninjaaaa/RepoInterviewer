@@ -49,7 +49,7 @@ function getWebviewContent(
   const { scriptUri, imageUris } = getWebviewUris(webview, extensionUri);
 
   const initDataScript = `<script nonce="${nonce}">
-    window.initialData = ${JSON.stringify(imageUris)};
+    window.imageUris = ${JSON.stringify(imageUris)};
   </script>`;
 
   return `<!DOCTYPE html>
