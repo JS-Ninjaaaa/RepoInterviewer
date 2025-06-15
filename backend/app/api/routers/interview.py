@@ -2,8 +2,7 @@ from typing import Union
 
 from app.api.dependencies import get_set_up_interview_usecase
 from app.domain.entities.difficulty import Difficulty
-from app.schemas.interview_schema import SetUpInterviewRequest, SetUpInterviewResponse
-from app.schemas.schemas import (
+from app.schemas.interview_schema import (
     InterviewInterviewIdGetResponse,
     InterviewInterviewIdPostErrorResponse,
     InterviewInterviewIdPostRequest,
@@ -15,6 +14,10 @@ from app.services.interview_service import (
     get_interview_result,
     get_question,
     get_response,
+)
+from app.usecase.dtos.interview_dto import (
+    SetUpInterviewRequest,
+    SetUpInterviewResponse,
 )
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
@@ -32,8 +35,8 @@ router = APIRouter()
 )
 async def set_up_interview(
     source_code: UploadFile,
-    difficulty: str = Form("normal"),
-    total_question: int = Form(4),
+    difficulty: Difficulty = Form(Difficulty.normal),
+    total_question: int = Form(4, gt=0),
     usecase: SetUpInterviewUseCase = Depends(get_set_up_interview_usecase),
 ):
     """
@@ -43,7 +46,7 @@ async def set_up_interview(
     try:
         request_body = SetUpInterviewRequest(
             source_code=zip_bytes,
-            difficulty=Difficulty(difficulty),
+            difficulty=difficulty,
             total_question=total_question,
         )
     except Exception as e:

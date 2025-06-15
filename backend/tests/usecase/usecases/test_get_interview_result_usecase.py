@@ -6,7 +6,7 @@ from app.domain.entities.difficulty import Difficulty
 from app.domain.entities.interview_question import InterviewQuestion
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
-from app.schemas.interview_schema import GetInterviewResultRequest
+from app.usecase.dtos.interview_dto import GetInterviewResultRequest
 from app.usecase.usecases.get_interview_result_usecase import GetInterviewResultUseCase
 
 # テストデータ

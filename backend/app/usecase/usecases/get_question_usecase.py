@@ -1,5 +1,5 @@
 from app.domain.repositories.interview_repository import InterviewRepository
-from app.schemas.interview_schema import GetQuestionRequest, GetQuestionResponse
+from app.usecase.dtos.interview_dto import GetQuestionRequest, GetQuestionResponse
 
 
 class GetQuestionUseCase:

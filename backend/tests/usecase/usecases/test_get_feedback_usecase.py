@@ -7,7 +7,7 @@ from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
 from app.infrastructure.llm_clients.google.llm_client import InterviewFeedback
-from app.schemas.interview_schema import GetFeedbackRequest
+from app.usecase.dtos.interview_dto import GetFeedbackRequest
 from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
 
 # テストデータ

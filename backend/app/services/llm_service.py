@@ -2,7 +2,7 @@ import json
 import os
 
 from app.repositories.production.redis_repo import get_interview_data
-from app.schemas.schemas import Difficulty
+from app.schemas.interview_schema import Difficulty
 from app.services.prompt_service import (
     get_character_prompt,
     make_deep_question_prompt,  # 深掘り

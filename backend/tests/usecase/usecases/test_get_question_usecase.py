@@ -3,7 +3,7 @@ from app.domain.entities.chat_history import ChatHistory, ChatMessage
 from app.domain.entities.difficulty import Difficulty
 from app.domain.entities.interview_question import InterviewQuestion
 from app.domain.repositories.interview_repository import InterviewRepository
-from app.schemas.interview_schema import GetQuestionRequest
+from app.usecase.dtos.interview_dto import GetQuestionRequest
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
 
 # テストデータ
