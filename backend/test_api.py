@@ -125,9 +125,9 @@ def show_menu() -> None:
         print("--------------------------------")
         print("1. POST /interview")
         print("2. POST /interview/:interview_id")
-        print("3. GET /interview/:interview_id")
-        print("4. GET /interview/:interview_id/result")
-        print("5. Next Question")
+        print("3. GET /interview/:interview_id?question_id=now")
+        print("4. GET /interview/:interview_id?question_id=next")
+        print("5. GET /interview/:interview_id/result")
         print("6. Exit")
 
         choice = input("\nSelect a test to run (1-6): ")
@@ -144,10 +144,10 @@ def show_menu() -> None:
             session.get_current_question()
 
         elif choice == "4":
-            session.get_interview_result()
+            session.get_next_question()
 
         elif choice == "5":
-            session.get_next_question()
+            session.get_interview_result()
 
         elif choice == "6":
             break

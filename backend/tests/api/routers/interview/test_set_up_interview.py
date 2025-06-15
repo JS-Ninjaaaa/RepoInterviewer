@@ -4,9 +4,12 @@ from unittest.mock import MagicMock
 
 import pytest
 from app.api.dependencies import get_set_up_interview_usecase
-from app.api.routers.interview import SetUpInterviewResponse
-from app.usecase.usecases.setup_interview_usecase import (
+from app.domain.entities.difficulty import Difficulty
+from app.usecase.dtos.interview_dto import (
     SetUpInterviewRequest,
+    SetUpInterviewResponse,
+)
+from app.usecase.usecases.setup_interview_usecase import (
     SetUpInterviewUseCase,
 )
 from fastapi import status
@@ -70,7 +73,7 @@ def test_set_up_interview_success(
     mock_set_up_interview_usecase.execute.assert_called_once_with(
         SetUpInterviewRequest(
             source_code=test_zip_file,
-            difficulty=difficulty,
+            difficulty=Difficulty(difficulty),
             total_question=total_question,
         )
     )

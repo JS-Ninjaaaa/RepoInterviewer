@@ -13,7 +13,7 @@ from app.repositories.production.redis_repo import (
     update_interview_result,
 )
 from app.repositories.production.source_repo import get_source_code
-from app.schemas.schemas import (
+from app.schemas.interview_schema import (
     Difficulty,
     InterviewInterviewIdPostRequest,
     InterviewPostRequest,
