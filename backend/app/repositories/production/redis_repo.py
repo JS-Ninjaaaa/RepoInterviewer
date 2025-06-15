@@ -2,7 +2,7 @@ import json
 import os
 
 import redis
-from app.schemas.schemas import Difficulty
+from app.schemas.interview_schema import Difficulty
 
 
 def get_redis_client():

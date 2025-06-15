@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from app.schemas.schemas import Difficulty
+from app.schemas.interview_schema import Difficulty
 
 
 def format_source_code(source_code: dict[str, str]) -> str:

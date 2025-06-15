@@ -6,7 +6,7 @@ from app.domain.entities.source_code import SourceCode
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
-from app.schemas.interview_schema import SetUpInterviewRequest, SetUpInterviewResponse
+from app.usecase.dtos.interview_dto import SetUpInterviewRequest, SetUpInterviewResponse
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 
 # テストデータ
