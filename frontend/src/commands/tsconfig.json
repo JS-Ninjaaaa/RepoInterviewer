@@ -8,7 +8,7 @@
     "target": "es6",
     "moduleResolution": "node",
     "outDir": "../../build/commands",
-    "rootDir": "../",
+    "rootDir": "./src",
     "baseUrl": "./src",
     "paths": {            
       "@/*": ["*"],
@@ -16,8 +16,8 @@
     }
   },
   "include": [
-    "src/**/*.ts",
-    "../shared/types"
+    "**/*.ts",
+    "../../shared/types"
   ],
   "exclude": [
     "node_modules",
