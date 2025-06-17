@@ -87,6 +87,7 @@ def get_feedback(
     response = usecase.execute(request_body)
 
     return InterviewInterviewIdPostResponse(
+        interview_id=response.interview_id,
         question_id=response.question_id,
         score=response.score,
         response=response.comment,

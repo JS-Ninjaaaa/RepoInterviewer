@@ -32,12 +32,13 @@ class InterviewPostResponse(BaseModel):
 
 
 class InterviewInterviewIdPostRequest(BaseModel):
-    question_id: int
+    question_id: str
     message: str
 
 
 class InterviewInterviewIdPostResponse(BaseModel):
-    question_id: int
+    interview_id: str
+    question_id: str
     score: int = Field(ge=0, le=100)
     response: str
 
