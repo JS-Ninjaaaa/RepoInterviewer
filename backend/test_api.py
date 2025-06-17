@@ -72,7 +72,7 @@ class InterviewSession:
             "message": message,
         }
 
-        response = requests.post(url, headers=headers, data=request_body)
+        response = requests.post(url, headers=headers, json=request_body)
         print_result(response.status_code, 200, response.text)
 
     def get_current_question(self) -> None:
