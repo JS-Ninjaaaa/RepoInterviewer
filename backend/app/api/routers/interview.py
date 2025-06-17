@@ -1,10 +1,7 @@
-from typing import Union
-
-from app.api.dependencies import get_set_up_interview_usecase
+from app.api.dependencies import get_feedback_usecase, get_set_up_interview_usecase
 from app.domain.entities.difficulty import Difficulty
 from app.schemas.interview_schema import (
     InterviewInterviewIdGetResponse,
-    InterviewInterviewIdPostErrorResponse,
     InterviewInterviewIdPostRequest,
     InterviewInterviewIdPostResponse,
     InterviewInterviewIdResultGetErrorResponse,
@@ -13,12 +10,13 @@ from app.schemas.interview_schema import (
 from app.services.interview_service import (
     get_interview_result,
     get_question,
-    get_response,
 )
 from app.usecase.dtos.interview_dto import (
+    GetFeedbackRequest,
     SetUpInterviewRequest,
     SetUpInterviewResponse,
 )
+from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 
@@ -61,38 +59,37 @@ async def set_up_interview(
 @router.post(
     "/{interview_id}",
     response_model=InterviewInterviewIdPostResponse,
-    responses={"500": {"model": InterviewInterviewIdPostErrorResponse}},
-    tags=["InterviewAPI"],
+    status_code=status.HTTP_200_OK,
+    tags=["Interview"],
+    summary="ユーザーの回答に対してフィードバックを返す",
+    operation_id="get_feedback",
 )
-def post_interview_interview_id(
+def get_feedback(
     interview_id: str,
     body: InterviewInterviewIdPostRequest,
-) -> Union[InterviewInterviewIdPostResponse, InterviewInterviewIdPostErrorResponse]:
+    usecase: GetFeedbackUseCase = Depends(get_feedback_usecase),
+):
     """
-    ユーザーの回答に対してLLMからの返答を取得
+    ユーザーの回答に対してフィードバックを返す
     """
     try:
-        request_body = InterviewInterviewIdPostRequest(
+        request_body = GetFeedbackRequest(
+            interview_id=interview_id,
             question_id=body.question_id,
             message=body.message,
         )
     except Exception as e:
-        return InterviewInterviewIdPostErrorResponse(
-            error_message=f"リクエストボディが不正です: {str(e)}"
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"リクエストボディが不正です: {str(e)}",
         )
 
-    score, comment, continue_question = get_response(interview_id, request_body)
-
-    if score == 0 and comment == "":
-        return InterviewInterviewIdPostErrorResponse(
-            error_message="応答の生成に失敗しました"
-        )
+    response = usecase.execute(request_body)
 
     return InterviewInterviewIdPostResponse(
-        question_id=request_body.question_id,
-        score=score,
-        response=comment,
-        continue_question=continue_question,
+        question_id=response.question_id,
+        score=response.score,
+        response=response.comment,
     )
 
 
