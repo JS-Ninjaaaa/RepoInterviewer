@@ -40,9 +40,9 @@ class InterviewInterviewIdPostResponse(BaseModel):
     question_id: int
     score: int = Field(ge=0, le=100)
     response: str
-    continue_question: bool
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdPostErrorResponse(BaseModel):
     error_message: str
 
