@@ -1,6 +1,6 @@
 import { amber, lightGreen, blue, deepPurple } from "@mui/material/colors";
 import { Character } from "@/types/character";
-import { ImageUri } from "@shared/uri";
+import type { ImageUri } from "@shared/uri";
 
 export function createCharacters(imageUris: ImageUri): Character[] {
   return [

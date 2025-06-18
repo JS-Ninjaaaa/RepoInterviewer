@@ -6,8 +6,8 @@ import {
   fetchGeneralFeedback,
 } from "../api/api";
 import { fetchFiles } from "./fetch-files";
-import { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
-import { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
+import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
+import type { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
 
 export async function handleWebviewMessage(
   panel: vscode.WebviewPanel,
