@@ -1,7 +1,4 @@
 {
-  "references": [
-    { "path": "../shared/types"}
-  ],
   "compilerOptions": {
     "composite": true, // project references 用
     "target": "ESNext", // 最新のJS機能をターゲット
@@ -22,7 +19,9 @@
   },
   "include": [
     "src/**/*",
-    "../../shared/types"
   ],
-  "exclude": ["vite.config.ts", "node_modules"]
+  "exclude": [
+    "vite.config.ts", 
+    "node_modules"
+  ]
 }
