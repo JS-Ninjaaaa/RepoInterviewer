@@ -1,7 +1,10 @@
-from app.api.dependencies import get_feedback_usecase, get_set_up_interview_usecase
+from app.api.dependencies import (
+    get_feedback_usecase,
+    get_question_usecase,
+    get_set_up_interview_usecase,
+)
 from app.domain.entities.difficulty import Difficulty
 from app.schemas.interview_schema import (
-    InterviewInterviewIdGetResponse,
     InterviewInterviewIdPostRequest,
     InterviewInterviewIdPostResponse,
     InterviewInterviewIdResultGetErrorResponse,
@@ -9,14 +12,16 @@ from app.schemas.interview_schema import (
 )
 from app.services.interview_service import (
     get_interview_result,
-    get_question,
 )
 from app.usecase.dtos.interview_dto import (
     GetFeedbackRequest,
+    GetQuestionRequest,
+    GetQuestionResponse,
     SetUpInterviewRequest,
     SetUpInterviewResponse,
 )
 from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
+from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 
@@ -42,7 +47,7 @@ async def set_up_interview(
     """
     zip_bytes = await source_code.read()
     try:
-        request_body = SetUpInterviewRequest(
+        request = SetUpInterviewRequest(
             source_code=zip_bytes,
             difficulty=difficulty,
             total_question=total_question,
@@ -53,7 +58,7 @@ async def set_up_interview(
             detail=f"リクエストボディが不正です: {str(e)}",
         )
 
-    return usecase.execute(request_body)
+    return usecase.execute(request)
 
 
 @router.post(
@@ -73,7 +78,7 @@ def get_feedback(
     ユーザーの回答に対してフィードバックを返す
     """
     try:
-        request_body = GetFeedbackRequest(
+        request = GetFeedbackRequest(
             interview_id=interview_id,
             question_id=body.question_id,
             message=body.message,
@@ -84,7 +89,7 @@ def get_feedback(
             detail=f"リクエストボディが不正です: {str(e)}",
         )
 
-    response = usecase.execute(request_body)
+    response = usecase.execute(request)
 
     return InterviewInterviewIdPostResponse(
         interview_id=response.interview_id,
@@ -96,24 +101,32 @@ def get_feedback(
 
 @router.get(
     "/{interview_id}",
-    response_model=InterviewInterviewIdGetResponse,
-    tags=["InterviewAPI"],
+    response_model=GetQuestionResponse,
+    tags=["Interview"],
+    summary="指定された質問IDの質問文を取得する",
+    operation_id="get_question",
 )
 def get_interview_interview_id(
-    interview_id: str, question_id: int
-) -> InterviewInterviewIdGetResponse:
+    interview_id: str,
+    question_id: str,
+    usecase: GetQuestionUseCase = Depends(get_question_usecase),
+):
     """
-    指定された質問IDの質問文を取得
+    指定された質問IDの質問文を取得する
     """
-    found_question_id, found_question_text = get_question(interview_id, question_id)
-    if found_question_text == "" and found_question_id == 0:
+
+    try:
+        request = GetQuestionRequest(
+            interview_id=interview_id,
+            question_id=question_id,
+        )
+    except Exception as e:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"パラメータが不正です: {str(e)}",
         )
 
-    return InterviewInterviewIdGetResponse(
-        question_id=found_question_id, question=found_question_text
-    )
+    return usecase.execute(request)
 
 
 @router.get(
