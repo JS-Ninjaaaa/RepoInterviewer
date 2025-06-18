@@ -48,8 +48,9 @@ class InterviewInterviewIdPostErrorResponse(BaseModel):
     error_message: str
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdGetResponse(BaseModel):
-    question_id: int
+    question_id: str
     question: str
 
 
