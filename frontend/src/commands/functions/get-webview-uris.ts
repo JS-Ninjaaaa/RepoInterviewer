@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { getUri } from "../utilities/get-uri";
-import type { ImageUri } from "@shared/uri";
+import { ImageUri } from "@shared/uri";
 
 export interface WebviewUris {
   scriptUri: vscode.Uri;
