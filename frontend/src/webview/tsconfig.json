@@ -1,4 +1,7 @@
 {
+  "references": [
+    { "path": "../shared/types"}
+  ],
   "compilerOptions": {
     "composite": true, // project references 用
     "target": "ESNext", // 最新のJS機能をターゲット
