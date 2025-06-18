@@ -7,16 +7,16 @@
     "module": "commonjs",
     "target": "es6",
     "moduleResolution": "node",
-    "outDir": "../../build/commands",
+    "outDir": "../../build",
     "rootDir": "../",
-    "baseUrl": "./src",
+    "baseUrl": "../",
     "paths": {            
       "@/*": ["*"],
-      "@shared/*": ["../../shared/types/*"]
+      "@shared/*": ["shared/types/*"]
     }
   },
   "include": [
-    "src/**/*.ts",
+    "../commands/**/*.ts",
     "../shared/types"
   ],
   "exclude": [

@@ -22,7 +22,9 @@
   },
   "include": [
     "src/**/*",
-    "../../shared/types"
   ],
-  "exclude": ["vite.config.ts", "node_modules"]
+  "exclude": [
+    "vite.config.ts", 
+    "node_modules"
+  ]
 }
