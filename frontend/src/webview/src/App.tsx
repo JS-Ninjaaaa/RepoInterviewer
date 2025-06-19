@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
-import { baseTheme } from "./theme";
+import { baseTheme } from "@/theme";
 import { createCharacters } from "@/data/characters";
 import type { Character } from "@/types/character";
 import { ImageUri } from "@shared/uri";
