@@ -4,7 +4,7 @@ import type { ImageUri } from "@shared/uri";
 
 export interface WebviewUris {
   scriptUri: vscode.Uri;
-  imageUris: ImageUri; 
+  imageUris: ImageUri;
 }
 
 const imageFileNames: { [K in keyof ImageUri]: string } = {
