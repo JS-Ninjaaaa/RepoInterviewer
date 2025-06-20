@@ -114,7 +114,7 @@ class PromptService:
         )
 
     @classmethod
-    def make_general_review_prompt(cls, chat_histories: list[ChatHistory]) -> str:
+    def make_overall_review_prompt(cls, chat_histories: list[ChatHistory]) -> str:
         """総評を生成するプロンプトを取得する
 
         Args:
@@ -123,7 +123,7 @@ class PromptService:
         Returns:
             str: 総評を生成するプロンプト
         """
-        file_path = cls.user_prompt_dir_path / "general_review.txt"
+        file_path = cls.user_prompt_dir_path / "overall_review.txt"
 
         with open(file_path, "r", encoding="utf-8") as f:
             prompt_template = f.read()
