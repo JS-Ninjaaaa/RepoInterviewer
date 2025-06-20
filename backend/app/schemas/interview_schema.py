@@ -54,10 +54,12 @@ class InterviewInterviewIdGetResponse(BaseModel):
     question: str
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdResultGetResponse(BaseModel):
     scores: List[int]
     general_review: str
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdResultGetErrorResponse(BaseModel):
     error_message: str

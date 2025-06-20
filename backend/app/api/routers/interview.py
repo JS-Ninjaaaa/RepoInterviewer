@@ -1,5 +1,6 @@
 from app.api.dependencies import (
     get_feedback_usecase,
+    get_overall_review_usecase,
     get_question_usecase,
     get_set_up_interview_usecase,
 )
@@ -7,20 +8,18 @@ from app.domain.entities.difficulty import Difficulty
 from app.schemas.interview_schema import (
     InterviewInterviewIdPostRequest,
     InterviewInterviewIdPostResponse,
-    InterviewInterviewIdResultGetErrorResponse,
-    InterviewInterviewIdResultGetResponse,
-)
-from app.services.interview_service import (
-    get_interview_result,
 )
 from app.usecase.dtos.interview_dto import (
     GetFeedbackRequest,
+    GetInterviewResultRequest,
+    GetInterviewResultResponse,
     GetQuestionRequest,
     GetQuestionResponse,
     SetUpInterviewRequest,
     SetUpInterviewResponse,
 )
 from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
+from app.usecase.usecases.get_interview_result_usecase import GetInterviewResultUseCase
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
@@ -131,19 +130,23 @@ def get_interview_interview_id(
 
 @router.get(
     "/{interview_id}/result",
-    response_model=InterviewInterviewIdResultGetResponse,
-    responses={500: {"model": InterviewInterviewIdResultGetErrorResponse}},
-    tags=["InterviewAPI"],
+    response_model=GetInterviewResultResponse,
+    tags=["Interview"],
+    summary="面接結果を取得する",
+    operation_id="get_interview_result",
 )
-def get_interview_interview_id_result(interview_id: str):
-    scores, general_review = get_interview_result(interview_id)
-
-    if scores == [] and general_review == "":
-        raise HTTPException(
-            status_code=500,
-            detail="総評を取得できませんでした",
+def get_interview_result(
+    interview_id: str,
+    usecase: GetInterviewResultUseCase = Depends(get_overall_review_usecase),
+):
+    try:
+        request = GetInterviewResultRequest(
+            interview_id=interview_id,
         )
-    return {
-        "scores": scores,
-        "general_review": general_review,
-    }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"パラメータが不正です: {str(e)}",
+        )
+
+    return usecase.execute(request)
