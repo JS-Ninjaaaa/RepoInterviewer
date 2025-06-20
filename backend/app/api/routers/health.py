@@ -1,7 +1,6 @@
 from app.api.dependencies import get_llm_client
 from app.domain.llm_clients.llm_client import LLMClient
-from fastapi import APIRouter
-from fastapi.params import Depends
+from fastapi import APIRouter, Depends
 
 router = APIRouter()
 
