@@ -1,8 +1,20 @@
 import json
+from enum import Enum
 
+import inquirer
 import requests
 
 BASE_URL = "http://127.0.0.1:8000"
+
+
+class Action(Enum):
+    SETUP = "setup"
+    ANSWER = "answer"
+    CURRENT = "current"
+    NEXT = "next"
+    RESULT = "result"
+    ALL = "all"
+    EXIT = "exit"
 
 
 def is_json(text: str) -> bool:
@@ -68,7 +80,7 @@ class InterviewSession:
         url = f"{BASE_URL}/interview/{self.interview_id}"
         headers = {"Content-Type": "application/json"}
         request_body = {
-            "question_id": self.current_question_id,
+            "question_id": str(self.current_question_id),
             "message": message,
         }
 
@@ -85,7 +97,7 @@ class InterviewSession:
         )
 
         url = f"{BASE_URL}/interview/{self.interview_id}"
-        params = {"question_id": self.current_question_id}
+        params = {"question_id": str(self.current_question_id)}
         headers = {"Content-Type": "application/json"}
 
         response = requests.get(url, params=params, headers=headers)
@@ -117,43 +129,87 @@ class InterviewSession:
         print_result(response.status_code, 200, response.text)
 
 
+def handle_action(action: Action, session: InterviewSession) -> bool:
+    """アクションを処理し、終了するかどうかを返す"""
+    if action == Action.SETUP:
+        if not session.set_up_interview():
+            print("面接の開始に失敗しました")
+        return False
+
+    elif action == Action.ANSWER:
+        if not session.interview_id:
+            print("先に面接を開始してください (POST /interview)")
+            return False
+
+        answer_questions = [inquirer.Text("message", message="回答を入力してください")]
+        answer_answers = inquirer.prompt(answer_questions)
+        if answer_answers:
+            session.post_answer(answer_answers["message"])
+
+        return False
+
+    elif action == Action.CURRENT:
+        session.get_current_question()
+        return False
+
+    elif action == Action.NEXT:
+        session.get_next_question()
+        return False
+
+    elif action == Action.RESULT:
+        session.get_interview_result()
+        return False
+
+    elif action == Action.ALL:
+        session.set_up_interview()
+
+        for _ in range(session.total_questions):
+            answer_questions = [
+                inquirer.Text("message", message="回答を入力してください")
+            ]
+            answer_answers = inquirer.prompt(answer_questions)
+            if answer_answers:
+                session.post_answer(answer_answers["message"])
+
+            session.get_next_question()
+
+        session.get_interview_result()
+        return False
+
+    elif action == Action.EXIT:
+        return True
+
+
 def show_menu() -> None:
     session = InterviewSession()
 
     while True:
-        print("\nRepoInterviewer API Test CLI")
-        print("--------------------------------")
-        print("1. POST /interview")
-        print("2. POST /interview/:interview_id")
-        print("3. GET /interview/:interview_id?question_id=now")
-        print("4. GET /interview/:interview_id?question_id=next")
-        print("5. GET /interview/:interview_id/result")
-        print("6. Exit")
+        questions = [
+            inquirer.List(
+                "action",
+                message="RepoInterviewer API Test CLI",
+                choices=[
+                    ("POST /interview", Action.SETUP.value),
+                    ("POST /interview/:interview_id", Action.ANSWER.value),
+                    ("GET /interview/:interview_id (current)", Action.CURRENT.value),
+                    ("GET /interview/:interview_id (next)", Action.NEXT.value),
+                    ("GET /interview/:interview_id/result", Action.RESULT.value),
+                    ("Run All Tests", Action.ALL.value),
+                    ("Exit", Action.EXIT.value),
+                ],
+            )
+        ]
 
-        choice = input("\nSelect a test to run (1-6): ")
+        answers = inquirer.prompt(questions)
 
-        if choice == "1":
-            if not session.set_up_interview():
-                print("Failed to start interview")
-
-        elif choice == "2":
-            message = input("Enter your answer: ")
-            session.post_answer(message)
-
-        elif choice == "3":
-            session.get_current_question()
-
-        elif choice == "4":
-            session.get_next_question()
-
-        elif choice == "5":
-            session.get_interview_result()
-
-        elif choice == "6":
+        if not answers:
             break
 
-        else:
-            print("Invalid option")
+        action = Action(answers["action"])
+        should_exit = handle_action(action, session)
+
+        if should_exit:
+            break
 
 
 if __name__ == "__main__":

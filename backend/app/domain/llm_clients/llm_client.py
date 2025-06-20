@@ -76,7 +76,7 @@ class LLMClient(ABC):
         pass
 
     @abstractmethod
-    def generate_general_review(
+    def generate_overall_review(
         self,
         difficulty: Difficulty,
         chat_histories: list[ChatHistory],

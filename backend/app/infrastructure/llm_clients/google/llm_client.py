@@ -311,7 +311,7 @@ class GoogleLLMClient(LLMClient):
         except json.JSONDecodeError:
             raise ValueError("応答をJSONに変換できませんでした")
 
-    def generate_general_review(
+    def generate_overall_review(
         self,
         difficulty: Difficulty,
         chat_histories: list[ChatHistory],
@@ -332,10 +332,10 @@ class GoogleLLMClient(LLMClient):
         )
 
         # fmt: off
-        general_review_prompt = PromptService.make_general_review_prompt(chat_histories)
+        overall_review_prompt = PromptService.make_overall_review_prompt(chat_histories)
         contents = [
             types.Content(
-                role="user", parts=[types.Part.from_text(text=general_review_prompt)]
+                role="user", parts=[types.Part.from_text(text=overall_review_prompt)]
             )
         ]
         # fmt: on
