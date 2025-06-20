@@ -13,6 +13,7 @@ class Action(Enum):
     CURRENT = "current"
     NEXT = "next"
     RESULT = "result"
+    ALL = "all"
     EXIT = "exit"
 
 
@@ -144,6 +145,7 @@ def handle_action(action: Action, session: InterviewSession) -> bool:
         answer_answers = inquirer.prompt(answer_questions)
         if answer_answers:
             session.post_answer(answer_answers["message"])
+
         return False
 
     elif action == Action.CURRENT:
@@ -155,6 +157,22 @@ def handle_action(action: Action, session: InterviewSession) -> bool:
         return False
 
     elif action == Action.RESULT:
+        session.get_interview_result()
+        return False
+
+    elif action == Action.ALL:
+        session.set_up_interview()
+
+        for _ in range(session.total_questions):
+            answer_questions = [
+                inquirer.Text("message", message="回答を入力してください")
+            ]
+            answer_answers = inquirer.prompt(answer_questions)
+            if answer_answers:
+                session.post_answer(answer_answers["message"])
+
+            session.get_next_question()
+
         session.get_interview_result()
         return False
 
@@ -176,6 +194,7 @@ def show_menu() -> None:
                     ("GET /interview/:interview_id (current)", Action.CURRENT.value),
                     ("GET /interview/:interview_id (next)", Action.NEXT.value),
                     ("GET /interview/:interview_id/result", Action.RESULT.value),
+                    ("Run All Tests", Action.ALL.value),
                     ("Exit", Action.EXIT.value),
                 ],
             )
