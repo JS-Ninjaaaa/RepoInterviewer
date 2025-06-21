@@ -1,3 +1,6 @@
+import { Character } from "@/types/character";
+import { ChatMessage } from "@/types/chat-message";
+
 export interface AnswerContextType {
   currentCharacter: Character;
   interviewId: string;

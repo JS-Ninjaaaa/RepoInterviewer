@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography, Button, ThemeProvider } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { Character } from "@/types/character";
-import { theme } from "@/theme";
 import { useLoading } from "@/screens/context/LoadingContext";
 
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
@@ -61,54 +60,52 @@ const StartScreen = ({ vscode, characters }: StartScreenProps) => {
   }, [currentCharacter, navigate, hideLoading]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundColor: currentCharacter.color[100],
+        height: "100vh",
+        minWidth: "320px",
+      }}
+    >
+      <Header currentCharacter={currentCharacter} />
+
+      <Typography
+        variant="h5"
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          backgroundColor: currentCharacter.color[100],
-          height: "100vh",
-          minWidth: "320px",
+          fontWeight: "bold",
+          mt: "20%",
         }}
       >
-        <Header currentCharacter={currentCharacter} />
+        面接官選択
+      </Typography>
 
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: "bold",
-            mt: "20%",
-          }}
-        >
-          面接官選択
-        </Typography>
+      <CharacterSelectCards
+        characters={characters}
+        selectingCharacter={{
+          characterIndex,
+          setCharacterIndex,
+        }}
+      />
 
-        <CharacterSelectCards
-          characters={characters}
-          selectingCharacter={{
-            characterIndex,
-            setCharacterIndex,
-          }}
-        />
-
-        <Button
-          onClick={handleStartInterview}
-          variant="contained"
-          sx={{
-            mb: "80px",
-            backgroundColor: currentCharacter.color[700],
-            color: "white",
-            width: "30%",
-            minWidth: "160px",
-            height: 48,
-            fontSize: 18,
-          }}
-        >
-          面接開始
-        </Button>
-      </Box>
-    </ThemeProvider>
+      <Button
+        onClick={handleStartInterview}
+        variant="contained"
+        sx={{
+          mb: "80px",
+          backgroundColor: currentCharacter.color[700],
+          color: "white",
+          width: "30%",
+          minWidth: "160px",
+          height: 48,
+          fontSize: 18,
+        }}
+      >
+        面接開始
+      </Button>
+    </Box>
   );
 };
 

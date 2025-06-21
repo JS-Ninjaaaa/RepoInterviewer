@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Box, Typography, Button } from "@mui/material";
 import XIcon from "@mui/icons-material/X";
-import { theme } from "@/theme";
 import { Character } from "@/types/character";
 
 interface FooterProps {
@@ -63,7 +62,7 @@ const Footer = ({ vscode, currentCharacter }: FooterProps) => {
           onClick={() => vscode.postMessage({ type: "closeWebview" })}
           variant="contained"
           sx={{
-            backgroundColor: theme.palette.secondary.light,
+            backgroundColor: (theme) => theme.palette.secondary.light,
             color: "white",
             minWidth: "120px",
             height: "36px",

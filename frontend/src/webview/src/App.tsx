@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { ThemeProvider } from "@mui/material";
-import { theme } from "@/theme";
+import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
+import { baseTheme } from "@/theme";
 import { createCharacters } from "@/data/characters";
 import type { Character } from "@/types/character";
 import { ImageUri } from "@shared/uri";
-
+import TitleScreen from "@/screens/title-screen/TitleScreen";
 import StartScreen from "@/screens/start-screen/StartScreen";
 import AnswerScreen from "@/screens/answer-screen/AnswerScreen";
 import GeneralFeedbackScreen from "@/screens/general-feedback-screen/GeneralFeedbackScreen";
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
+import ModeToggleButton from "@/components/ModeTogleButton";
 
 declare global {
   interface Window {
@@ -37,8 +38,10 @@ const AppContent: React.FC<AppContentProps> = ({ characters }) => {
   return (
     <>
       <LoadingOverlay open={loading} message={message} />
-      <MemoryRouter initialEntries={["/start"]}>
+      <ModeToggleButton />
+      <MemoryRouter initialEntries={["/title"]}>
         <Routes>
+          <Route path="/title" element={<TitleScreen />} />
           <Route
             path="/start"
             element={<StartScreen vscode={vscode} characters={characters} />}
@@ -54,8 +57,9 @@ const AppContent: React.FC<AppContentProps> = ({ characters }) => {
   );
 };
 
-const AppRoutes: React.FC = () => {
+const App: React.FC = () => {
   const [characters, setCharacters] = useState<Character[] | null>(null);
+  const [mode, setMode] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
     const data = window.imageUris;
@@ -66,12 +70,42 @@ const AppRoutes: React.FC = () => {
     setCharacters(createCharacters(data));
   }, []);
 
+  useEffect(() => {
+    const toLight = () => setMode("light");
+    const toDark = () => setMode("dark");
+    window.addEventListener("set-light-mode", toLight);
+    window.addEventListener("set-dark-mode", toDark);
+    return () => {
+      window.removeEventListener("set-light-mode", toLight);
+      window.removeEventListener("set-dark-mode", toDark);
+    };
+  }, []);
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        ...baseTheme,
+        palette: {
+          ...baseTheme.palette,
+          mode: mode,
+          background: {
+            default: mode === "dark" ? "#0f1121" : "#ffffff",
+          },
+          text: {
+            primary: mode === "dark" ? "#ffffff" : "#000000",
+          },
+        },
+      }),
+    [mode]
+  );
+
   if (characters === null) {
     return <div>読み込み中…</div>;
   }
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <LoadingProvider>
         <AppContent characters={characters} />
       </LoadingProvider>
@@ -79,4 +113,4 @@ const AppRoutes: React.FC = () => {
   );
 };
 
-export default AppRoutes;
+export default App;

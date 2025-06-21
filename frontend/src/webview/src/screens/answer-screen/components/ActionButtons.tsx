@@ -1,5 +1,4 @@
 import { Box, Button } from "@mui/material";
-import { theme } from "@/theme";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const ActionButtons: React.FC = () => {
@@ -21,7 +20,7 @@ const ActionButtons: React.FC = () => {
         onClick={() => setInterruptModalOpen(true)}
         variant="contained"
         sx={{
-          backgroundColor: theme.palette.secondary.light,
+          backgroundColor: (theme) => theme.palette.secondary.light,
           color: "white",
           minWidth: "120px",
           width: "42%",
@@ -37,8 +36,8 @@ const ActionButtons: React.FC = () => {
         sx={{
           backgroundColor:
             buttonDisplay === "次へ"
-              ? theme.palette.primary.light
-              : theme.palette.secondary.light,
+              ? (theme) => theme.palette.primary.light
+              : (theme) => theme.palette.secondary.light,
           color: "white",
           minWidth: "150px",
           width: "42%",
