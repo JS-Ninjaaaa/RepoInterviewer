@@ -3,17 +3,20 @@ info:
   title: RepoInterviewer API
   version: 1.0.0
 tags:
-  - name: InterviewAPI
+  - name: interview
     description: LLMによるコードレビュー面接システム
 servers:
   - url: http://localhost:8000
+    description: ローカル開発用サーバー
 
 paths:
   /interview:
     post:
-      summary: コードと設定を送って面接セッションを開始
+      summary: ソースコードと設定を送って面接セッションを開始
+      operationId: setUpInterview
+      security: []
       tags:
-        - InterviewAPI
+        - interview
       requestBody:
         required: true
         content:
@@ -24,11 +27,18 @@ paths:
                 source_code:
                   type: string
                   format: binary
+                  description: レビュー対象のソースコード
                 difficulty:
                   type: string
                   enum: [easy, normal, hard, extreme]
+                  description: 面接の難易度
                 total_question:
                   type: integer
+                  description: 面接の質問数
+              required:
+                - source_code
+                - difficulty
+                - total_question
       responses:
         '200':
           description: 面接IDと初回の質問文を返す
@@ -43,15 +53,22 @@ paths:
                     type: string
         '400':
           description: Bad Request
-        '500':
-          description: Internal Server Error
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  error_message:
-                    type: string
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestValidationError'
+        '500':
+          description: Internal Server Error
+          content: 
+            text/plain:
+              schema:
+                type: string
 
   /interview/{interview_id}:
     post:
@@ -168,3 +185,34 @@ paths:
                 properties:
                   error_message:
                     type: string
+
+components: 
+  schemas:
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+        - detail
+
+    RequestValidationError:
+      type: object
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+              msg:
+                type: string
+              input:
+                type: string
+              type:
+                type: string
+      required:
+        - detail
