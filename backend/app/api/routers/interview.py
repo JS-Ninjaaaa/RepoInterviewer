@@ -32,7 +32,7 @@ router = APIRouter()
     response_model=SetUpInterviewResponse,
     status_code=status.HTTP_201_CREATED,
     tags=["Interview"],
-    summary="面接を開始する",
+    summary="ソースコードと面接の設定を受け取って面接を開始する",
     operation_id="set_up_interview",
 )
 async def set_up_interview(
@@ -41,9 +41,6 @@ async def set_up_interview(
     total_question: int = Form(4, gt=0),
     usecase: SetUpInterviewUseCase = Depends(get_set_up_interview_usecase),
 ):
-    """
-    ソースコードと面接の設定を受け取って面接を開始する
-    """
     zip_bytes = await source_code.read()
     try:
         request = SetUpInterviewRequest(
@@ -65,7 +62,7 @@ async def set_up_interview(
     response_model=InterviewInterviewIdPostResponse,
     status_code=status.HTTP_200_OK,
     tags=["Interview"],
-    summary="ユーザーの回答に対してフィードバックを返す",
+    summary="ユーザーの回答に対するLLMからの返答と評価を取得する",
     operation_id="get_feedback",
 )
 def get_feedback(
@@ -73,9 +70,6 @@ def get_feedback(
     body: InterviewInterviewIdPostRequest,
     usecase: GetFeedbackUseCase = Depends(get_feedback_usecase),
 ):
-    """
-    ユーザーの回答に対してフィードバックを返す
-    """
     try:
         request = GetFeedbackRequest(
             interview_id=interview_id,
@@ -110,10 +104,6 @@ def get_interview_interview_id(
     question_id: str,
     usecase: GetQuestionUseCase = Depends(get_question_usecase),
 ):
-    """
-    指定された質問IDの質問文を取得する
-    """
-
     try:
         request = GetQuestionRequest(
             interview_id=interview_id,
@@ -125,7 +115,15 @@ def get_interview_interview_id(
             detail=f"パラメータが不正です: {str(e)}",
         )
 
-    return usecase.execute(request)
+    response = usecase.execute(request)
+
+    if response is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="質問が見つかりません",
+        )
+
+    return response
 
 
 @router.get(

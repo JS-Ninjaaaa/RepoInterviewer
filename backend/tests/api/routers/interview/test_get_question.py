@@ -51,6 +51,19 @@ def test_get_question_success(
     )
 
 
+def test_get_question_not_found(
+    client: TestClient,
+    mock_get_question_usecase: GetQuestionUseCase,
+):
+    mock_get_question_usecase.execute.return_value = None
+
+    response = client.get(
+        f"/interview/{interview_id}?question_id={question_id}",
+    )
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
 def test_get_question_missing_question_id(client: TestClient):
     response = client.get(
         f"/interview/{interview_id}",
