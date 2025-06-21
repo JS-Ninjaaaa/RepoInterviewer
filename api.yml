@@ -130,8 +130,10 @@ paths:
 
     get:
       summary: 指定された質問IDの質問文を取得
+      operationId: getQuestion
+      security: []
       tags:
-        - InterviewAPI
+        - interview
       parameters:
         - in: path
           name: interview_id
@@ -142,7 +144,7 @@ paths:
           name: question_id
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         '200':
           description: 質問文を返す
@@ -151,12 +153,36 @@ paths:
               schema:
                 type: object
                 properties:
+                  interview_id:
+                    type: string
                   question_id:
-                    type: integer
+                    type: string
                   question:
                     type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '404':
-          description: 質問が見つからなかった場合
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestValidationError'
+        '500':
+          description: Internal Server Error
+          content: 
+            text/plain:
+              schema:
+                type: string
 
   /interview/{interview_id}/result:
     get:
