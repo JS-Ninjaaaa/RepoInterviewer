@@ -7,9 +7,10 @@ from __future__ import annotations
 from enum import Enum
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
+# TODO: リファクタリング後に削除する
 class Difficulty(Enum):
     easy = "easy"
     normal = "normal"
@@ -17,46 +18,48 @@ class Difficulty(Enum):
     extreme = "extreme"
 
 
+# TODO: リファクタリング後に削除する
 class InterviewPostRequest(BaseModel):
     source_code: bytes
     difficulty: Difficulty
-    total_question: int
+    total_question: int = Field(gt=0)
 
 
+# TODO: リファクタリング後に削除する
 class InterviewPostResponse(BaseModel):
     interview_id: str
-    question: str
-
-
-class InterviewPostErrorResponse(BaseModel):
-    error_message: str
+    first_question: str
 
 
 class InterviewInterviewIdPostRequest(BaseModel):
-    question_id: int
+    question_id: str
     message: str
 
 
 class InterviewInterviewIdPostResponse(BaseModel):
-    question_id: int
-    score: int
+    interview_id: str
+    question_id: str
+    score: int = Field(ge=0, le=100)
     response: str
-    continue_question: bool
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdPostErrorResponse(BaseModel):
     error_message: str
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdGetResponse(BaseModel):
-    question_id: int
+    question_id: str
     question: str
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdResultGetResponse(BaseModel):
     scores: List[int]
     general_review: str
 
 
+# TODO: リファクタリング後に削除する
 class InterviewInterviewIdResultGetErrorResponse(BaseModel):
     error_message: str

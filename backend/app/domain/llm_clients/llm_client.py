@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
 from app.domain.entities.chat_history import ChatHistory
+from app.domain.entities.difficulty import Difficulty
+from app.domain.entities.evaluation_result import QuestionEvaluationResult
+from app.domain.entities.interview_question import InterviewQuestion
 from app.domain.entities.source_code import SourceCode
 
 
@@ -20,14 +23,21 @@ class LLMClient(ABC):
         pass
 
     @abstractmethod
-    def generate_question(self, source_code: SourceCode) -> list[str]:
+    def generate_questions(
+        self,
+        source_code: SourceCode,
+        difficulty: Difficulty,
+        total_question: int,
+    ) -> list[str]:
         """質問を生成する
 
         Args:
             source_code (SourceCode): ソースコード
+            difficulty (Difficulty): 難易度
+            total_question (int): 質問数
 
         Returns:
-            list[str]: 質問
+            list[str]: 質問文のリスト
         """
         pass
 
@@ -35,16 +45,16 @@ class LLMClient(ABC):
     def generate_feedback(
         self,
         source_code: SourceCode,
-        chat_history: ChatHistory,
-    ) -> str:
+        question: InterviewQuestion,
+    ) -> QuestionEvaluationResult:
         """深掘りなしの面接においてフィードバックを生成する
 
         Args:
             source_code (SourceCode): ソースコード
-            chat_history (ChatHistory): 会話履歴
+            question (InterviewQuestion): 質問の情報
 
         Returns:
-            str: フィードバック
+            QuestionEvaluationResult: 質問の評価結果
         """
         pass
 
@@ -52,25 +62,30 @@ class LLMClient(ABC):
     def generate_chat_response(
         self,
         source_code: SourceCode,
-        chat_history: ChatHistory,
-    ) -> dict:
+        question: InterviewQuestion,
+    ) -> QuestionEvaluationResult:
         """深掘りありの面接において会話の応答を生成する
 
         Args:
             source_code (SourceCode): ソースコード
-            chat_history (ChatHistory): 会話履歴
+            question (InterviewQuestion): 質問の情報
 
         Returns:
-            dict: 会話の応答
+            QuestionEvaluationResult: 質問の評価結果
         """
         pass
 
     @abstractmethod
-    def generate_general_review(self, chat_history: ChatHistory) -> str:
+    def generate_overall_review(
+        self,
+        difficulty: Difficulty,
+        chat_histories: list[ChatHistory],
+    ) -> str:
         """総評を生成する
 
         Args:
-            chat_history (ChatHistory): 会話履歴
+            difficulty (Difficulty): 難易度
+            chat_histories (list[ChatHistory]): 会話履歴のリスト
 
         Returns:
             str: 総評

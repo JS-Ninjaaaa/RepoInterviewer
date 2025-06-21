@@ -188,17 +188,15 @@ class GoogleLLMClient(LLMClient):
             response_schema=list[str],
         )
 
-        contents = self.make_chat_history_contents(source_code.chat_history)
-
         questions_prompt = PromptService.make_questions_prompt(
-            source_code,
-            total_question,
+            total_question=total_question,
+            source_code=source_code,
         )
-        contents.append(
+        contents = [
             types.Content(
                 role="user", parts=[types.Part.from_text(text=questions_prompt)]
             )
-        )
+        ]
 
         response = self.generate_content(
             contents=contents,
@@ -313,29 +311,31 @@ class GoogleLLMClient(LLMClient):
         except json.JSONDecodeError:
             raise ValueError("応答をJSONに変換できませんでした")
 
-    def generate_general_review(
+    def generate_overall_review(
         self,
-        question: InterviewQuestion,
+        difficulty: Difficulty,
+        chat_histories: list[ChatHistory],
     ) -> str:
         """総評を生成する
 
         Args:
-            question (InterviewQuestion): 質問の情報
+            difficulty (Difficulty): 難易度
+            chat_histories (list[ChatHistory]): 会話履歴のリスト
 
         Returns:
             str: 総評
         """
-        character_prompt = PromptService.get_character_prompt(question.difficulty)
+        character_prompt = PromptService.get_character_prompt(difficulty)
         content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="text/plain",
         )
 
         # fmt: off
-        general_review_prompt = PromptService.make_general_review_prompt(question.chat_history)
+        overall_review_prompt = PromptService.make_overall_review_prompt(chat_histories)
         contents = [
             types.Content(
-                role="user", parts=[types.Part.from_text(text=general_review_prompt)]
+                role="user", parts=[types.Part.from_text(text=overall_review_prompt)]
             )
         ]
         # fmt: on

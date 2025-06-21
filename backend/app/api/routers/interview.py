@@ -1,138 +1,150 @@
-from typing import Union
-
-from app.schemas.schemas import (
-    Difficulty,
-    InterviewInterviewIdGetResponse,
-    InterviewInterviewIdPostErrorResponse,
+from app.api.dependencies import (
+    get_feedback_usecase,
+    get_overall_review_usecase,
+    get_question_usecase,
+    get_set_up_interview_usecase,
+)
+from app.domain.entities.difficulty import Difficulty
+from app.schemas.interview_schema import (
     InterviewInterviewIdPostRequest,
     InterviewInterviewIdPostResponse,
-    InterviewInterviewIdResultGetErrorResponse,
-    InterviewInterviewIdResultGetResponse,
-    InterviewPostErrorResponse,
-    InterviewPostRequest,
-    InterviewPostResponse,
 )
-from app.services.interview_service import (
-    get_interview_result,
-    get_question,
-    get_response,
-    set_up_interview,
+from app.usecase.dtos.interview_dto import (
+    GetFeedbackRequest,
+    GetInterviewResultRequest,
+    GetInterviewResultResponse,
+    GetQuestionRequest,
+    GetQuestionResponse,
+    SetUpInterviewRequest,
+    SetUpInterviewResponse,
 )
-from fastapi import APIRouter, Form, HTTPException, UploadFile
+from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
+from app.usecase.usecases.get_interview_result_usecase import GetInterviewResultUseCase
+from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
+from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 
 router = APIRouter()
 
 
 @router.post(
     "",
-    response_model=InterviewPostResponse,
-    responses={"500": {"model": InterviewPostErrorResponse}},
-    tags=["InterviewAPI"],
+    response_model=SetUpInterviewResponse,
+    status_code=status.HTTP_201_CREATED,
+    tags=["Interview"],
+    summary="ソースコードと面接の設定を受け取って面接を開始する",
+    operation_id="set_up_interview",
 )
-async def post_interview(
+async def set_up_interview(
     source_code: UploadFile,
-    difficulty: Difficulty = Form("normal"),
-    total_question: int = Form(5),
-) -> Union[InterviewPostResponse, InterviewPostErrorResponse]:
-    """
-    コードと設定を送って面接セッションを開始
-    """
+    difficulty: Difficulty = Form(Difficulty.normal),
+    total_question: int = Form(4, gt=0),
+    usecase: SetUpInterviewUseCase = Depends(get_set_up_interview_usecase),
+):
     zip_bytes = await source_code.read()
     try:
-        request_body = InterviewPostRequest(
+        request = SetUpInterviewRequest(
             source_code=zip_bytes,
-            difficulty=Difficulty(difficulty),
+            difficulty=difficulty,
             total_question=total_question,
         )
     except Exception as e:
-        return InterviewPostErrorResponse(
-            error_message=f"リクエストボディが不正です: {str(e)}"
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"リクエストボディが不正です: {str(e)}",
         )
 
-    interview_id, first_question = set_up_interview(request_body)
-    if first_question == "":
-        return InterviewPostErrorResponse(
-            error_message="面接のセットアップに失敗しました"
-        )
-
-    return InterviewPostResponse(interview_id=interview_id, question=first_question)
+    return usecase.execute(request)
 
 
 @router.post(
     "/{interview_id}",
     response_model=InterviewInterviewIdPostResponse,
-    responses={"500": {"model": InterviewInterviewIdPostErrorResponse}},
-    tags=["InterviewAPI"],
+    status_code=status.HTTP_200_OK,
+    tags=["Interview"],
+    summary="ユーザーの回答に対するLLMからの返答と評価を取得する",
+    operation_id="get_feedback",
 )
-def post_interview_interview_id(
+def get_feedback(
     interview_id: str,
     body: InterviewInterviewIdPostRequest,
-) -> Union[InterviewInterviewIdPostResponse, InterviewInterviewIdPostErrorResponse]:
-    """
-    ユーザーの回答に対してLLMからの返答を取得
-    """
+    usecase: GetFeedbackUseCase = Depends(get_feedback_usecase),
+):
     try:
-        request_body = InterviewInterviewIdPostRequest(
+        request = GetFeedbackRequest(
+            interview_id=interview_id,
             question_id=body.question_id,
             message=body.message,
         )
     except Exception as e:
-        return InterviewInterviewIdPostErrorResponse(
-            error_message=f"リクエストボディが不正です: {str(e)}"
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"リクエストボディが不正です: {str(e)}",
         )
 
-    score, comment, continue_question = get_response(interview_id, request_body)
-
-    if score == 0 and comment == "":
-        return InterviewInterviewIdPostErrorResponse(
-            error_message="応答の生成に失敗しました"
-        )
+    response = usecase.execute(request)
 
     return InterviewInterviewIdPostResponse(
-        question_id=request_body.question_id,
-        score=score,
-        response=comment,
-        continue_question=continue_question,
+        interview_id=response.interview_id,
+        question_id=response.question_id,
+        score=response.score,
+        response=response.comment,
     )
 
 
 @router.get(
     "/{interview_id}",
-    response_model=InterviewInterviewIdGetResponse,
-    tags=["InterviewAPI"],
+    response_model=GetQuestionResponse,
+    tags=["Interview"],
+    summary="指定された質問IDの質問文を取得する",
+    operation_id="get_question",
 )
 def get_interview_interview_id(
-    interview_id: str, question_id: int
-) -> InterviewInterviewIdGetResponse:
-    """
-    指定された質問IDの質問文を取得
-    """
-    found_question_id, found_question_text = get_question(interview_id, question_id)
-    if found_question_text == "" and found_question_id == 0:
+    interview_id: str,
+    question_id: str,
+    usecase: GetQuestionUseCase = Depends(get_question_usecase),
+):
+    try:
+        request = GetQuestionRequest(
+            interview_id=interview_id,
+            question_id=question_id,
+        )
+    except Exception as e:
         raise HTTPException(
-            status_code=404,
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"パラメータが不正です: {str(e)}",
         )
 
-    return InterviewInterviewIdGetResponse(
-        question_id=found_question_id, question=found_question_text
-    )
+    response = usecase.execute(request)
+
+    if response is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="質問が見つかりません",
+        )
+
+    return response
 
 
 @router.get(
     "/{interview_id}/result",
-    response_model=InterviewInterviewIdResultGetResponse,
-    responses={500: {"model": InterviewInterviewIdResultGetErrorResponse}},
-    tags=["InterviewAPI"],
+    response_model=GetInterviewResultResponse,
+    tags=["Interview"],
+    summary="面接結果を取得する",
+    operation_id="get_interview_result",
 )
-def get_interview_interview_id_result(interview_id: str):
-    scores, general_review = get_interview_result(interview_id)
-
-    if scores == [] and general_review == "":
-        raise HTTPException(
-            status_code=500,
-            detail="総評を取得できませんでした",
+def get_interview_result(
+    interview_id: str,
+    usecase: GetInterviewResultUseCase = Depends(get_overall_review_usecase),
+):
+    try:
+        request = GetInterviewResultRequest(
+            interview_id=interview_id,
         )
-    return {
-        "scores": scores,
-        "general_review": general_review,
-    }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"パラメータが不正です: {str(e)}",
+        )
+
+    return usecase.execute(request)
