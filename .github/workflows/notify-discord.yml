@@ -20,7 +20,9 @@ on:
 ################################################################################
 jobs:
   notify_review_requested:
-    if: github.event_name == 'pull_request' && github.event.action == 'review_requested'
+    if: github.event_name == 'pull_request' &&
+        github.event.action == 'review_requested' &&
+        github.event.requested_reviewer.type == 'User' # botは除外する
     runs-on: ubuntu-latest
     steps:
       - name: Install jq
