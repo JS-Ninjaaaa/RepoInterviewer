@@ -11,7 +11,7 @@ class GetQuestionUseCase:
         """
         self.interview_repository = interview_repository
 
-    def execute(self, request: GetQuestionRequest) -> GetQuestionResponse:
+    def execute(self, request: GetQuestionRequest) -> GetQuestionResponse | None:
         """質問文を取得する
 
         Args:
