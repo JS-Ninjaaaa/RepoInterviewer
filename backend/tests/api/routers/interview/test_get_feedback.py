@@ -35,6 +35,7 @@ def test_get_feedback_success(
         question_id=question_id,
         score=score,
         comment=comment,
+        continue_=False,
     )
     mock_get_feedback_usecase.execute.return_value = expected_response
 
@@ -53,6 +54,7 @@ def test_get_feedback_success(
     assert response_body["question_id"] == question_id
     assert response_body["score"] == score
     assert response_body["response"] == comment
+    assert response_body["continue"] is False
 
     mock_get_feedback_usecase.execute.assert_called_once_with(
         GetFeedbackRequest(
