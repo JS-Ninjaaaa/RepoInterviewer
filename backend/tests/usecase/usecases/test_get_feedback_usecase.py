@@ -1,5 +1,5 @@
 import pytest
-from app.domain.entities.chat_history import ChatHistory
+from app.domain.entities.chat_history import ChatHistory, ChatMessage
 from app.domain.entities.difficulty import Difficulty
 from app.domain.entities.interview_question import InterviewQuestion
 from app.domain.entities.source_code import SourceCode
@@ -76,6 +76,7 @@ def test_execute_success(
     assert response.question_id == question_id
     assert response.score == feedback_score
     assert response.comment == feedback_comment
+    assert response.continue_ is False
 
     # リポジトリの呼び出し確認
     mock_interview_repository.get_question.assert_called_once_with(
@@ -103,6 +104,81 @@ def test_execute_success(
 
     assert question.score == feedback_score
 
+def test_execute_deep_interview_continue(
+    get_feedback_usecase: GetFeedbackUseCase,
+    mock_interview_repository: InterviewRepository,
+    mock_source_code_repository: SourceCodeRepository,
+    mock_llm_client: LLMClient,
+):
+    question = InterviewQuestion(
+        interview_id=interview_id,
+        question_id=question_id,
+        difficulty=Difficulty.hard,
+        total_question=total_question,
+        chat_history=ChatHistory(),
+        score=0,
+    )
+    mock_interview_repository.get_question.return_value = question
+    mock_source_code_repository.get_source_code.return_value = source_code
+    mock_llm_client.generate_chat_response.return_value = InterviewFeedback(
+        score=0,
+        comment=feedback_comment,
+    )
+
+    request = GetFeedbackRequest(
+        interview_id=interview_id,
+        question_id=question_id,
+        message=user_message,
+    )
+
+    response = get_feedback_usecase.execute(request)
+
+    assert response.continue_ is True
+    mock_llm_client.generate_chat_response.assert_called_once()
+    assert question.score == 0
+
+
+def test_execute_deep_interview_final_feedback(
+    get_feedback_usecase: GetFeedbackUseCase,
+    mock_interview_repository: InterviewRepository,
+    mock_source_code_repository: SourceCodeRepository,
+    mock_llm_client: LLMClient,
+):
+    chat_history = ChatHistory(
+        [
+            ChatMessage(role="user", message="a1"),
+            ChatMessage(role="model", message="q1"),
+            ChatMessage(role="user", message="a2"),
+            ChatMessage(role="model", message="q2"),
+        ]
+    )
+    question = InterviewQuestion(
+        interview_id=interview_id,
+        question_id=question_id,
+        difficulty=Difficulty.hard,
+        total_question=total_question,
+        chat_history=chat_history,
+        score=0,
+    )
+    mock_interview_repository.get_question.return_value = question
+    mock_source_code_repository.get_source_code.return_value = source_code
+    mock_llm_client.generate_feedback.return_value = InterviewFeedback(
+        score=feedback_score,
+        comment=feedback_comment,
+    )
+
+    request = GetFeedbackRequest(
+        interview_id=interview_id,
+        question_id=question_id,
+        message=user_message,
+    )
+
+    response = get_feedback_usecase.execute(request)
+
+    assert response.continue_ is False
+    assert response.score == feedback_score
+    mock_llm_client.generate_feedback.assert_called_once()
+    assert question.score == feedback_score
 
 def test_execute_failure_when_interview_not_found(
     get_feedback_usecase: GetFeedbackUseCase,
