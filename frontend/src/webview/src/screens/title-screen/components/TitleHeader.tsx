@@ -26,7 +26,7 @@ const TitleHeader = () => {
             Interactive Coding Interview Practice
           </Typography>
           <Typography variant="body2" color="grey.500">
-            AI-powered questions based on your repository
+            AI-powered interview based on your repository
           </Typography>
         </Box>
       </Box>
