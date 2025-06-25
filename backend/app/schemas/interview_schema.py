@@ -7,8 +7,10 @@ from __future__ import annotations
 from enum import Enum
 from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
+class AppBaseModel(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
 
 # TODO: リファクタリング後に削除する
 class Difficulty(Enum):
@@ -36,12 +38,12 @@ class InterviewInterviewIdPostRequest(BaseModel):
     message: str
 
 
-class InterviewInterviewIdPostResponse(BaseModel):
+class InterviewInterviewIdPostResponse(AppBaseModel):
     interview_id: str
     question_id: str
     score: int = Field(ge=0, le=100)
     response: str
-
+    continue_: bool = Field(alias="continue")
 
 # TODO: リファクタリング後に削除する
 class InterviewInterviewIdPostErrorResponse(BaseModel):

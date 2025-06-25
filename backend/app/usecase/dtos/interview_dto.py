@@ -29,6 +29,7 @@ class GetFeedbackResponse:
     question_id: str
     score: int
     comment: str
+    continue_: bool
 
 
 @dataclass(frozen=True, kw_only=True)
