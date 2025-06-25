@@ -6,10 +6,10 @@ from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
 from app.usecase.dtos.interview_dto import GetFeedbackRequest, GetFeedbackResponse
-# from tests.usecase.usecases.test_get_feedback_usecase import user_message
 
 
 class GetFeedbackUseCase:
+    DEEP_QUESTION_LIMIT = 3
     def __init__(
         self,
         interview_repository: InterviewRepository,
@@ -56,13 +56,13 @@ class GetFeedbackUseCase:
         # 深堀り質問 or 質問
         # 質問状況を特定（深堀り条件か？）
         user_message_count = 0
-        deep_question_limit = 3
+
         is_deep_question = question.difficulty in (Difficulty.hard, Difficulty.extreme)
         for message in question.chat_history.chat_history:
             if message.role == "user":
                 user_message_count += 1
 
-        if user_message_count < deep_question_limit and is_deep_question:
+        if user_message_count < self.DEEP_QUESTION_LIMIT and is_deep_question:
             # 深堀り
             feedback = self.llm_client.generate_chat_response(source_code, question)
             continue_flag = True
