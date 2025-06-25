@@ -16,7 +16,7 @@ const IconWrapper = styled(Box)({
 
 const items = [
   { label: "Smart AI", Icon: MemoryIcon, color: "#00e676" },
-  { label: "Points", Icon: EmojiEventsIcon, color: "#ffd600" },
+  { label: "Score", Icon: EmojiEventsIcon, color: "#ffd600" },
   { label: "Interactive", Icon: ChatBubbleOutlineIcon, color: "#1e88e5" },
 ];
 

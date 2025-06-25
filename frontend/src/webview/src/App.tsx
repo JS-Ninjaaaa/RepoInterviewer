@@ -11,7 +11,7 @@ import AnswerScreen from "@/screens/answer-screen/AnswerScreen";
 import GeneralFeedbackScreen from "@/screens/general-feedback-screen/GeneralFeedbackScreen";
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
-import ModeToggleButton from "@/components/ModeTogleButton";
+import ModeToggleButton from "@/components/ModeToggleButton";
 
 declare global {
   interface Window {
