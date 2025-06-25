@@ -1,10 +1,12 @@
 from pathlib import Path
 
 from app.domain.entities.chat_history import ChatMessage
+from app.domain.entities.difficulty import Difficulty
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
 from app.usecase.dtos.interview_dto import GetFeedbackRequest, GetFeedbackResponse
+# from tests.usecase.usecases.test_get_feedback_usecase import user_message
 
 
 class GetFeedbackUseCase:
@@ -51,16 +53,30 @@ class GetFeedbackUseCase:
 
         session_dir = self.source_code_dir / request.interview_id
         source_code = self.source_code_repository.get_source_code(session_dir)
+        # 深堀り質問 or 質問
+        # 質問状況を特定（深堀り条件か？）
+        user_message_count = 0
+        deep_question_limit = 3
+        is_deep_question = question.difficulty in (Difficulty.hard, Difficulty.extreme)
+        for message in question.chat_history.chat_history:
+            if message.role == "user":
+                user_message_count += 1
 
-        feedback = self.llm_client.generate_feedback(source_code, question)
-
-        question.score = feedback.score
-        question.append_chat_history(
-            ChatMessage(
-                role="model",
-                message=feedback.comment,
+        if user_message_count < deep_question_limit and is_deep_question:
+            # 深堀り
+            feedback = self.llm_client.generate_chat_response(source_code, question)
+            continue_flag = True
+            question.append_chat_history(
+                ChatMessage(role="model", message=feedback.comment)
             )
-        )
+        else:
+            # 通常質問
+            feedback = self.llm_client.generate_feedback(source_code, question)
+            question.score = feedback.score
+            question.append_chat_history(
+                ChatMessage(role="model", message=feedback.comment)
+            )
+            continue_flag = False
 
         self.interview_repository.update_question(
             request.interview_id,
@@ -73,4 +89,5 @@ class GetFeedbackUseCase:
             question_id=request.question_id,
             score=feedback.score,
             comment=feedback.comment,
+            continue_=continue_flag
         )
