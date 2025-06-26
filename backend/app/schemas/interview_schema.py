@@ -4,7 +4,8 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
 
 class InterviewInterviewIdPostRequest(BaseModel):
     question_id: str
@@ -16,5 +17,6 @@ class InterviewInterviewIdPostResponse(BaseModel):
     question_id: str
     score: int = Field(ge=0, le=100)
     response: str
+    # 生成時に属性名でキーワード引数を渡すためにエイリアスを定義する
     continue_: bool = Field(alias="continue")
-    model_config = ConfigDict(populate_by_name=True) # エイリアス対応
+    model_config = ConfigDict(populate_by_name=True)

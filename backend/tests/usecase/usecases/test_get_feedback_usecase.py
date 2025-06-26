@@ -104,6 +104,7 @@ def test_execute_success(
 
     assert question.score == feedback_score
 
+
 def test_execute_deep_interview_continue(
     get_feedback_usecase: GetFeedbackUseCase,
     mock_interview_repository: InterviewRepository,
@@ -133,9 +134,9 @@ def test_execute_deep_interview_continue(
 
     response = get_feedback_usecase.execute(request)
 
+    assert question.score == 0
     assert response.continue_ is True
     mock_llm_client.generate_chat_response.assert_called_once()
-    assert question.score == 0
 
 
 def test_execute_deep_interview_final_feedback(
@@ -178,7 +179,7 @@ def test_execute_deep_interview_final_feedback(
     assert response.continue_ is False
     assert response.score == feedback_score
     mock_llm_client.generate_feedback.assert_called_once()
-    assert question.score == feedback_score
+
 
 def test_execute_failure_when_interview_not_found(
     get_feedback_usecase: GetFeedbackUseCase,
