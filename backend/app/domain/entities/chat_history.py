@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 
 class ChatMessage:
     """会話のメッセージ
@@ -50,6 +52,10 @@ class ChatHistory:
     @property
     def chat_history(self) -> list[ChatMessage]:
         return self._chat_history
+
+    @property
+    def round_count(self) -> int:
+        return math.ceil(len(self._chat_history) / 2)
 
     def __init__(self, messages: list[ChatMessage] = None):
         """コンストラクタ

@@ -4,31 +4,7 @@
 
 from __future__ import annotations
 
-from enum import Enum
-from typing import List
-
-from pydantic import BaseModel, Field
-
-
-# TODO: リファクタリング後に削除する
-class Difficulty(Enum):
-    easy = "easy"
-    normal = "normal"
-    hard = "hard"
-    extreme = "extreme"
-
-
-# TODO: リファクタリング後に削除する
-class InterviewPostRequest(BaseModel):
-    source_code: bytes
-    difficulty: Difficulty
-    total_question: int = Field(gt=0)
-
-
-# TODO: リファクタリング後に削除する
-class InterviewPostResponse(BaseModel):
-    interview_id: str
-    first_question: str
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class InterviewInterviewIdPostRequest(BaseModel):
@@ -41,25 +17,6 @@ class InterviewInterviewIdPostResponse(BaseModel):
     question_id: str
     score: int = Field(ge=0, le=100)
     response: str
-
-
-# TODO: リファクタリング後に削除する
-class InterviewInterviewIdPostErrorResponse(BaseModel):
-    error_message: str
-
-
-# TODO: リファクタリング後に削除する
-class InterviewInterviewIdGetResponse(BaseModel):
-    question_id: str
-    question: str
-
-
-# TODO: リファクタリング後に削除する
-class InterviewInterviewIdResultGetResponse(BaseModel):
-    scores: List[int]
-    general_review: str
-
-
-# TODO: リファクタリング後に削除する
-class InterviewInterviewIdResultGetErrorResponse(BaseModel):
-    error_message: str
+    # 生成時に属性名でキーワード引数を渡すためにエイリアスを定義する
+    continue_: bool = Field(alias="continue")
+    model_config = ConfigDict(populate_by_name=True)

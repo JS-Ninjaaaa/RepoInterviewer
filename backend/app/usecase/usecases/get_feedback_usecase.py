@@ -8,6 +8,8 @@ from app.usecase.dtos.interview_dto import GetFeedbackRequest, GetFeedbackRespon
 
 
 class GetFeedbackUseCase:
+    DEEP_MODE_ROUND_LIMIT = 3
+
     def __init__(
         self,
         interview_repository: InterviewRepository,
@@ -52,14 +54,18 @@ class GetFeedbackUseCase:
         session_dir = self.source_code_dir / request.interview_id
         source_code = self.source_code_repository.get_source_code(session_dir)
 
-        feedback = self.llm_client.generate_feedback(source_code, question)
+        if question.can_continue_question:
+            # 深堀りの質問を返す
+            feedback = self.llm_client.generate_chat_response(source_code, question)
+            can_continue_question = True
+        else:
+            # フィードバックと点数を返す
+            feedback = self.llm_client.generate_feedback(source_code, question)
+            question.score = feedback.score
+            can_continue_question = False
 
-        question.score = feedback.score
         question.append_chat_history(
-            ChatMessage(
-                role="model",
-                message=feedback.comment,
-            )
+            ChatMessage(role="model", message=feedback.comment)
         )
 
         self.interview_repository.update_question(
@@ -73,4 +79,5 @@ class GetFeedbackUseCase:
             question_id=request.question_id,
             score=feedback.score,
             comment=feedback.comment,
+            continue_=can_continue_question,
         )

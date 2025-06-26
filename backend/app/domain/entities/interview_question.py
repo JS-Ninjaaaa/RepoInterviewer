@@ -16,6 +16,8 @@ class InterviewQuestion:
         chat_history (ChatHistory): 会話履歴
     """
 
+    DEEP_MODE_ROUND_LIMIT = 3
+
     @property
     def interview_id(self) -> str:
         return self._interview_id
@@ -52,6 +54,14 @@ class InterviewQuestion:
             )
 
         self._score = value
+
+    @property
+    def can_continue_question(self) -> bool:
+        match self.difficulty:
+            case Difficulty.easy | Difficulty.normal:
+                return False
+            case Difficulty.hard | Difficulty.extreme:
+                return self.chat_history.round_count < self.DEEP_MODE_ROUND_LIMIT
 
     def __init__(
         self,

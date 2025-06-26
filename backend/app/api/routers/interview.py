@@ -89,6 +89,7 @@ def get_feedback(
         question_id=response.question_id,
         score=response.score,
         response=response.comment,
+        continue_=response.continue_
     )
 
 

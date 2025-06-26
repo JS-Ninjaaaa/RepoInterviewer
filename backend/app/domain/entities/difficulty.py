@@ -15,3 +15,6 @@ class Difficulty(Enum):
     normal = "normal"
     hard = "hard"
     extreme = "extreme"
+
+    def is_deep_mode(self) -> bool:
+        return self in (Difficulty.hard, Difficulty.extreme)
