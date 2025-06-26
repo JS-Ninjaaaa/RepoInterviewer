@@ -2,7 +2,7 @@ import { Button, Typography, styled } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const StartButton = styled(Button)(({ theme }) => ({
-  background: "linear-gradient(90deg, #00c853, #4f84f7)",
+  background: theme.gradients.secondary.main,
   color: "#fff",
   textTransform: "none",
   padding: "12px 48px",
@@ -13,7 +13,7 @@ const StartButton = styled(Button)(({ theme }) => ({
       ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
       : "0px 6px 16px rgba(0, 0, 0, 0.15)",
   "&:hover": {
-    background: "linear-gradient(90deg, #00e676, #588fff)",
+    background: theme.gradients.secondary.light,
   },
 }));
 
