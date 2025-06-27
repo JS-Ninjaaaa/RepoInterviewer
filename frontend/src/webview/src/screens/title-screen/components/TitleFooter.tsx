@@ -1,34 +1,19 @@
-import { Button, Typography, styled } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
-const StartButton = styled(Button)(({ theme }) => ({
-  background: theme.gradients.secondary.main,
-  color: "#fff",
-  textTransform: "none",
-  padding: "12px 48px",
-  borderRadius: 8,
-  fontWeight: "bold",
-  boxShadow:
-    theme.palette.mode === "dark"
-      ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
-      : "0px 6px 16px rgba(0, 0, 0, 0.15)",
-  "&:hover": {
-    background: theme.gradients.secondary.light,
-  },
-}));
+import CommonButton from "@/screens/components/button";
 
 const TitleFooter = () => {
   const navigate = useNavigate();
   return (
     <>
-      <StartButton
+      <CommonButton
         size="large"
         onClick={() => navigate("/start")}
         sx={{ mb: 2 }}
         disableElevation
       >
         ▶ START APP
-      </StartButton>
+      </CommonButton>
 
       <Typography variant="caption" color="grey.600">
         💡 Make sure your repository is open in VSCode
