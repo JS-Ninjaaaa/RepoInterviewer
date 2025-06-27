@@ -43,6 +43,7 @@ const CharacterSelectCards: React.FC<Props> = ({ currentCharacter }) => {
       <Box
         sx={{
           display: "flex",
+          justifyContent: "space-between",
           borderRadius: 1,
           backgroundColor: (theme) => theme.palette.background.default,
           textAlign: "center",
