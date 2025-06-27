@@ -39,7 +39,7 @@ export const baseTheme = createTheme({
     primary: "linear-gradient(90deg, #00c853, #3877ff, #772feb)",
     secondary: {
       main: "linear-gradient(90deg, #00c853, #3877ff)",
-      light: "linear-gradient(90deg,rgb(69, 250, 145), #588fff)",
+      light: "linear-gradient(90deg, #45fa91, #588fff)",
     }
   },
   
