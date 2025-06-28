@@ -8,8 +8,9 @@ const ModeToggleButton = () => {
     <Box
       sx={{
         position: "fixed",
-        top: 16,
-        right: 16,
+        top: 22,
+        left: "50%",
+        transform: "translateX(-50%)",
         zIndex: 1000,
       }}
     >

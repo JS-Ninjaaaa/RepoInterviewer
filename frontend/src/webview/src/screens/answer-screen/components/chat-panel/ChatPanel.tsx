@@ -17,7 +17,7 @@ const ChatPanel: React.FC = () => {
   }, [chatHistory, scrollTop]);
 
   return (
-    <Box>
+    <Box sx={{ height: "100%", overflowY: "auto", p: 4, bgcolor: "black"}}>
       {chatHistory.map((msg, index) => (
         <Box key={index}>
           {index === chatHistory.length - 1 && (
