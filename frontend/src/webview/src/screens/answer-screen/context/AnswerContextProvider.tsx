@@ -4,6 +4,7 @@ import type { ChatMessage } from "@/types/chat-message";
 import type { Character } from "@/types/character";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import type { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
+import type { TopButtonState, BottomButtonState } from "@/types/action-button";
 import { Feedback, GeneralFeedback } from "@shared/webview-api-response-type";
 import { useLoading } from "@/screens/context/LoadingContext";
 import { useThinkingAnimation } from "@/screens/components/hooks/use-thinking-animation";
@@ -29,7 +30,8 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   ]);
   const [chatInput, setChatInput] = useState<string>("");
   const [questionId, setQuestionId] = useState<number>(1);
-  const [buttonDisplay, setButtonDisplay] = useState<string>("スキップ");
+  const [topButtonState, setTopButtonState] = useState<TopButtonState>("skip");
+  const [bottomButtonState, setBottomButtonState] = useState<BottomButtonState>("send");
   const [displayEnterBox, setDisplayEnterBox] = useState<boolean>(true);
   const [interruptModalOpen, setInterruptModalOpen] = useState<boolean>(false);
   const [skipModalOpen, setSkipModalOpen] = useState<boolean>(false);
@@ -56,7 +58,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
       } else {
         const total = currentCharacter.totalQuestion;
         const lastId = payload.questionId;
-        setButtonDisplay(lastId >= total ? "最終結果へ" : "次へ");
+        setBottomButtonState(lastId >= total ? "result" : "next");
         setChatHistory((prev) => [
           ...prev,
           { type: "feedback", text: payload.response, score: lastScore },
@@ -92,7 +94,8 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
     };
     vscode.postMessage(msg);
     setQuestionId(nextQuestionId);
-    setButtonDisplay("スキップ");
+    setTopButtonState("skip");
+    setBottomButtonState("send");
     setDisplayEnterBox(true);
   }, [questionId, startThinking, vscode, interviewId]);
 
@@ -106,9 +109,9 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   }, [showLoading, vscode, interviewId]);
 
   const handleNextClick = () => {
-    if (buttonDisplay === "次へ") {
+    if (bottomButtonState === "next") {
       fetchNextQuestion();
-    } else if (buttonDisplay === "最終結果へ") {
+    } else if (bottomButtonState === "result") {
       fetchGeneralFeedback();
     } else {
       setSkipModalOpen(true);
@@ -157,7 +160,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
             },
           ]);
           setQuestionId(msg.payload.questionId);
-          setButtonDisplay("スキップ");
+          setTopButtonState("skip");
           setDisplayEnterBox(true);
           break;
         case "generalFeedback":
@@ -187,7 +190,8 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
         chatHistory,
         chatInput,
         questionId,
-        buttonDisplay,
+        topButtonState,
+        bottomButtonState,
         displayEnterBox,
         interruptModalOpen,
         skipModalOpen,
