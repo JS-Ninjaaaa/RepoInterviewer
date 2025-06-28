@@ -4,6 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: repo-interviewer-app
     ports:
       - "8000:8000"
     environment:
@@ -17,6 +18,7 @@ services:
 
   redis:
     image: "redis:7-alpine"
+    container_name: repo-interviewer-redis
     ports:
       - "6379:6379"
     networks:
@@ -24,6 +26,7 @@ services:
 
   firestore-emulator:
     image: gcr.io/google.com/cloudsdktool/cloud-sdk:emulators
+    container_name: repo-interviewer-firestore-emulator
     ports:
       - "8080:8080"
     command: gcloud beta emulators firestore start --host-port=0.0.0.0:8080
