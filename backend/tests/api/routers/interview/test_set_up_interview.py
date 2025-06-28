@@ -79,7 +79,10 @@ def test_set_up_interview_success(
     )
 
 
-def test_set_up_interview_missing_source_code(client: TestClient):
+def test_set_up_interview_missing_source_code(
+    client: TestClient,
+    mock_set_up_interview_usecase: SetUpInterviewUseCase,  # GCPのFirestoreへ接続しないため
+):
     response = client.post(
         "/interview",
         data={
@@ -91,7 +94,10 @@ def test_set_up_interview_missing_source_code(client: TestClient):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_set_up_interview_invalid_difficulty_format(client: TestClient):
+def test_set_up_interview_invalid_difficulty_format(
+    client: TestClient,
+    mock_set_up_interview_usecase: SetUpInterviewUseCase,  # GCPのFirestoreへ接続しないため
+):
     response = client.post(
         "/interview",
         files={
@@ -110,7 +116,10 @@ def test_set_up_interview_invalid_difficulty_format(client: TestClient):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
 
 
-def test_set_up_interview_minus_total_question(client: TestClient):
+def test_set_up_interview_minus_total_question(
+    client: TestClient,
+    mock_set_up_interview_usecase: SetUpInterviewUseCase,  # GCPのFirestoreへ接続しないため
+):
     response = client.post(
         "/interview",
         files={

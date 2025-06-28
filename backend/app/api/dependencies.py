@@ -4,11 +4,11 @@ from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
 from app.infrastructure.llm_clients.google.llm_client import GoogleLLMClient
+from app.infrastructure.repositories.firestore.interview_repository import (
+    FirestoreInterviewRepository,
+)
 from app.infrastructure.repositories.local.source_code_repository import (
     LocalSourceCodeRepository,
-)
-from app.infrastructure.repositories.redis.interview_repository import (
-    RedisInterviewRepository,
 )
 from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
 from app.usecase.usecases.get_interview_result_usecase import GetInterviewResultUseCase
@@ -18,7 +18,7 @@ from fastapi import Depends
 
 
 def get_interview_repository() -> InterviewRepository:
-    return RedisInterviewRepository()
+    return FirestoreInterviewRepository()
 
 
 def get_source_code_repository() -> SourceCodeRepository:

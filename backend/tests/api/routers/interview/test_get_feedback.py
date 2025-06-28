@@ -65,7 +65,10 @@ def test_get_feedback_success(
     )
 
 
-def test_get_feedback_missing_question_id(client: TestClient):
+def test_get_feedback_missing_question_id(
+    client: TestClient,
+    mock_get_feedback_usecase: GetFeedbackUseCase,
+):
     request_body = {
         "message": message,
     }
@@ -78,7 +81,10 @@ def test_get_feedback_missing_question_id(client: TestClient):
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
 
-def test_get_feedback_missing_message(client: TestClient):
+def test_get_feedback_missing_message(
+    client: TestClient,
+    mock_get_feedback_usecase: GetFeedbackUseCase,  # GCPのFirestoreへ接続しないため
+):
     request_body = {
         "question_id": question_id,
     }
@@ -93,7 +99,7 @@ def test_get_feedback_missing_message(client: TestClient):
 
 def test_get_feedback_use_case_raises_exception(
     client: TestClient,
-    mock_get_feedback_usecase: GetFeedbackUseCase,
+    mock_get_feedback_usecase: GetFeedbackUseCase,  # GCPのFirestoreへ接続しないため
 ):
     mock_get_feedback_usecase.execute.side_effect = Exception()
 
