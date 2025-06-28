@@ -37,7 +37,7 @@ steps:
       - -c
       - |
         export PROJECT_ID=repointerviewer
-        if [ "$BRANCH_NAME" = "dev" ]; then
+        if [ "$BRANCH_NAME" = "develop" ]; then
           PIPELINE_NAME="repointerviewer-pipeline-stg"
         elif [ "$BRANCH_NAME" = "main" ]; then
           PIPELINE_NAME="repointerviewer-pipeline-prod"
