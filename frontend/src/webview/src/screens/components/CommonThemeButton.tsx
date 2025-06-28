@@ -2,7 +2,7 @@ import React from "react";
 import { Button, useTheme } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
 
-const CommonButton: React.FC<ButtonProps> = (props) => {
+const CommonThemeButton: React.FC<ButtonProps> = (props) => {
   const theme = useTheme();
 
   return (
@@ -31,4 +31,4 @@ const CommonButton: React.FC<ButtonProps> = (props) => {
   );
 };
 
-export default CommonButton;
+export default CommonThemeButton;
