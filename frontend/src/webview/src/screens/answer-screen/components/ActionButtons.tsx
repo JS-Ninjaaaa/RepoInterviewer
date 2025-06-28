@@ -1,10 +1,9 @@
-import { Box, IconButton, useTheme } from "@mui/material";
-import HomeIcon from '@mui/icons-material/Home';
+import { Box, IconButton } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const ActionButtons: React.FC = () => {
-  
   const { topButtonState, setInterruptModalOpen, handleNextClick } =
     useAnswerContext();
 
@@ -14,34 +13,37 @@ const ActionButtons: React.FC = () => {
         position: "relative",
         height: "90px",
         width: "100%",
-        bgcolor: "#1c2a42",
-        boxShadow: 1,
+        backgroundColor: (theme) => theme.palette.background.paper,
+        boxShadow: (theme) =>
+          theme.palette.mode === "light"
+            ? `0px 2px 4px ${theme.palette.shadowColor}`
+            : "none",
       }}
     >
-      <IconButton 
-        onClick={() => setInterruptModalOpen(true)} 
+      <IconButton
+        onClick={() => setInterruptModalOpen(true)}
         sx={{
           position: "absolute",
-          top: "50%",     
+          top: "50%",
           transform: "translateY(-50%)",
           left: "16px",
-          color: "#00c853",
+          color: (theme) => theme.palette.secondary.light,
         }}
       >
         <HomeIcon sx={{ fontSize: "42px" }} />
       </IconButton>
       {topButtonState === "skip" && (
-        <IconButton 
-          onClick={handleNextClick} 
+        <IconButton
+          onClick={handleNextClick}
           sx={{
             position: "absolute",
             right: "16px",
-            color: "#3877ff",
-            top: "50%",     
+            color: (theme) => theme.palette.secondary.dark,
+            top: "50%",
             transform: "translateY(-50%)",
           }}
         >
-          <SkipNextIcon sx={{ fontSize:50 }} />
+          <SkipNextIcon sx={{ fontSize: 50 }} />
         </IconButton>
       )}
     </Box>

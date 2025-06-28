@@ -138,7 +138,10 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
             <TextSnippetIcon />
             SELECT FILES
           </Button>
-          <CommonThemeButton onClick={handleStartInterview}>
+          <CommonThemeButton
+            onClick={handleStartInterview}
+            sx={{ padding: "12px 48px", fontWeight: "bold" }}
+          >
             START INTERVIEW
           </CommonThemeButton>
         </Box>
