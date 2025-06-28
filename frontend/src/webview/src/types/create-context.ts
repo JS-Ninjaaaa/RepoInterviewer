@@ -1,5 +1,5 @@
 import type { Character } from "@/types/character";
-import type{ ChatMessage } from "@/types/chat-message";
+import type { ChatMessage } from "@/types/chat-message";
 import type { TopButtonState, BottomButtonState } from "@/types/action-button";
 
 export interface AnswerContextType {
