@@ -12,9 +12,7 @@ const CommonThemeButton: React.FC<ButtonProps> = (props) => {
         background: theme.gradients.secondary.main,
         color: "#fff",
         textTransform: "none",
-        padding: "12px 48px",
-        borderRadius: 8,
-        fontWeight: "bold",
+        borderRadius: "8px",
         boxShadow:
           theme.palette.mode === "dark"
             ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
@@ -22,7 +20,6 @@ const CommonThemeButton: React.FC<ButtonProps> = (props) => {
         "&:hover": {
           background: theme.gradients.secondary.light,
         },
-        // もし props.sx を受け取りたいならマージ
         ...((props.sx as object) || {}),
       }}
     >
