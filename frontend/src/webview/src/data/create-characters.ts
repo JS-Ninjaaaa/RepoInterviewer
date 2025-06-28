@@ -11,10 +11,10 @@ export function createCharacters(imageUris: ImageUri): Character[] {
       questionType: "１問１答",
       totalQuestion: 5,
       quotes: ["マジすごいじゃん〜！えらい！", "ちょっとだけ直せば完璧っしょ☆"],
-      image: imageUris.yuzu, /* ほかのページで使っているので残しておく。最後に消す */
+      image: imageUris.yuzu,
       halfImage: imageUris.halfYuzu,
       wholeImage: imageUris.wholeYuzu,
-      color: amber, /* ほかのページで使っているので残しておく。最後に消す */
+      color: amber,
       lightBackground: imageUris.lightBackground,
       darkBackground: imageUris.darkBackground,
     },
