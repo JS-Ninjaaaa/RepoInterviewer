@@ -37,8 +37,16 @@ steps:
       - -c
       - |
         export PROJECT_ID=repointerviewer
+        if [ "$BRANCH_NAME" = "develop" ]; then
+          PIPELINE_NAME="repointerviewer-pipeline-stg"
+        elif [ "$BRANCH_NAME" = "main" ]; then
+          PIPELINE_NAME="repointerviewer-pipeline-prod"
+        else
+          echo "Branch $BRANCH_NAME is not a deployable branch."
+          exit 0
+        fi
         gcloud deploy releases create release-$(date +%s) \
-          --delivery-pipeline=repointerviewer-pipeline \
+          --delivery-pipeline=$$PIPELINE_NAME \
           --region=asia-northeast1 \
           --project=${PROJECT_ID} \
           --source=.gcp_infra \
