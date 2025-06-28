@@ -9,7 +9,7 @@ import type { Character } from "@/types/character";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 
 import CharacterSelectCards from "./components/CharacterSelectCards";
-import CommonButton from "../components/button";
+import CommonThemeButton from "../components/CommonThemeButton";
 
 interface Props {
   vscode: VSCodeAPI;
@@ -43,10 +43,6 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
     setCharacterIndex((i) => (i - 1 + characters.length) % characters.length);
   const handleNext = () =>
     setCharacterIndex((i) => (i + 1) % characters.length);
-
-  const handleOpenFileModal = () => {
-    // vscode.postMessage({ type: "openFileModal" });
-  };
 
   const handleStartInterview = () => {
     showLoading("質問を生成中・・・");
@@ -130,7 +126,6 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
         <Box mt={4} display="flex" flexDirection="column" alignItems="center">
           <Button
             variant="outlined"
-            onClick={handleOpenFileModal}
             sx={{
               mb: 4,
               width: 160,
@@ -143,9 +138,9 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
             <TextSnippetIcon />
             SELECT FILES
           </Button>
-          <CommonButton onClick={handleStartInterview}>
+          <CommonThemeButton onClick={handleStartInterview}>
             START INTERVIEW
-          </CommonButton>
+          </CommonThemeButton>
         </Box>
       </Box>
     </>
