@@ -31,7 +31,8 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
   const [chatInput, setChatInput] = useState<string>("");
   const [questionId, setQuestionId] = useState<number>(1);
   const [topButtonState, setTopButtonState] = useState<TopButtonState>("skip");
-  const [bottomButtonState, setBottomButtonState] = useState<BottomButtonState>("send");
+  const [bottomButtonState, setBottomButtonState] =
+    useState<BottomButtonState>("send");
   const [displayEnterBox, setDisplayEnterBox] = useState<boolean>(true);
   const [interruptModalOpen, setInterruptModalOpen] = useState<boolean>(false);
   const [skipModalOpen, setSkipModalOpen] = useState<boolean>(false);
@@ -73,6 +74,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
     setChatHistory((prev) => [...prev, { type: "answer", text: chatInput }]);
     startThinking();
     setDisplayEnterBox(false);
+    setTopButtonState("none");
     const msg: VscodeApiRequestValue = {
       type: "fetchFeedback",
       payload: {
@@ -94,7 +96,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
     };
     vscode.postMessage(msg);
     setQuestionId(nextQuestionId);
-    setTopButtonState("skip");
+    setTopButtonState("none");
     setBottomButtonState("send");
     setDisplayEnterBox(true);
   }, [questionId, startThinking, vscode, interviewId]);

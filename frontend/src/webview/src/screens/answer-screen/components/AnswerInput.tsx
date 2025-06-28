@@ -1,9 +1,10 @@
-import { Box, Button, InputBase, useTheme } from "@mui/material";
+import { Box, InputBase } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import NextIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import ResultIcon from "@mui/icons-material/DoneAll";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 import type { BottomButtonState } from "@/types/action-button";
+import CommonThemeButton from "@/screens/components/CommonThemeButton";
 
 const labelMap: Record<BottomButtonState, string> = {
   send: "send",
@@ -18,7 +19,6 @@ const iconMap: Record<BottomButtonState, React.ElementType> = {
 };
 
 const AnswerInput: React.FC = () => {
-  const theme = useTheme();
   const {
     chatInput,
     setChatInput,
@@ -48,17 +48,20 @@ const AnswerInput: React.FC = () => {
 
   return (
     <>
-      <Box 
+      <Box
         sx={{
           display: "flex",
           alignItems: "center",
           height: "90px",
           width: "100%",
           justifyContent: "space-between",
-          bgcolor: "#1c2a42",
-          boxShadow: 1,
-          p: 2,
+          backgroundColor: (theme) => theme.palette.background.paper,
+          p: 4,
           gap: 2,
+          boxShadow: (theme) =>
+            theme.palette.mode === "light"
+              ? `0px -4px 8px ${theme.palette.shadowColor}`
+              : "none",
         }}
       >
         {displayEnterBox ? (
@@ -74,35 +77,35 @@ const AnswerInput: React.FC = () => {
             fullWidth
             sx={{
               flex: 1,
-              border: `1px solid ${theme.palette.grey[400]}`,
+              border: 1,
+              borderColor: (theme) => theme.palette.text.disabled,
+              color: (theme) => theme.palette.text.disabled,
               borderRadius: "8px",
               fontSize: 16,
               px: 2,
               py: "4px",
+              "& input::placeholder": {
+                color: (theme) => theme.palette.text.disabled,
+                opacity: 1,
+              },
             }}
           />
         ) : (
           <Box sx={{ flex: 1 }} />
         )}
-        
-        <Button
+
+        <CommonThemeButton
           type="submit"
           onClick={handleButtonClick}
           endIcon={<IconComponent sx={{ marginRight: "4px" }} />}
           sx={{
-            borderRadius: "8px",
-            textTransform: "none",
             fontSize: 16,
             color: "white",
             px: "12px",
-            background: "linear-gradient(135deg, #00C853 0%, #3877FF 100%)",
-            "&:hover": {
-              background: "linear-gradient(135deg, #00B14A 0%, #336EE6 100%)",
-            },
           }}
         >
           {iconLabel}
-        </Button>
+        </CommonThemeButton>
       </Box>
     </>
   );

@@ -30,12 +30,14 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
       currentCharacter={currentCharacter}
       firstlQuestion={question}
     >
-      <Box 
+      <Box
         sx={{
-          width: "100%",    // 念のため 100%
+          width: "100%",
           height: "100vh",
           display: "grid",
           gridTemplateRows: "auto minmax(0,1fr) auto",
+          position: "absolute",
+          left: 0,
         }}
       >
         <Box>
@@ -48,8 +50,8 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
           <AnswerInput />
         </Box>
       </Box>
-        <InterruptModal />
-        <SkipModal />
+      <InterruptModal />
+      <SkipModal />
     </AnswerContextProvider>
   );
 };
