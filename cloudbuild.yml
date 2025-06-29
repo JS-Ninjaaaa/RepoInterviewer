@@ -39,7 +39,7 @@ steps:
         export PROJECT_ID=repointerviewer
         IMAGE_PATH=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend
 
-        DIGEST=$(gcloud artifacts docker images describe $IMAGE_PATH:$SHORT_SHA \
+        DIGEST=$(gcloud artifacts docker images describe asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend:$SHORT_SHA \
           --format="value(image_summary.digest)")
 
         if [ "$BRANCH_NAME" = "develop" ]; then
@@ -57,7 +57,7 @@ steps:
           --project=${PROJECT_ID} \
           --source=.gcp_infra \
           --skaffold-file=skaffold.yaml \
-          --images=backend=${IMAGE_PATH}@${DIGEST}
+          --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend@$DIGEST
           
 options:
   logging: CLOUD_LOGGING_ONLY
