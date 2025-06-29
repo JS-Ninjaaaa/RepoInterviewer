@@ -13,8 +13,11 @@ interface Props {
 const FeedbackMessage: React.FC<Props> = ({ msg }) => {
   const { currentCharacter } = useAnswerContext();
   const score = Array.isArray(msg.score) ? msg.score[0] : msg.score;
-  const maxPerQuestion = 100 / currentCharacter.totalQuestion;
-  const percent = Math.min(100, Math.max(0, (score / maxPerQuestion) * 100));
+  const maxScorePerQuestion = 100 / currentCharacter.totalQuestion;
+  const percent = Math.min(
+    100,
+    Math.max(0, (score / maxScorePerQuestion) * 100)
+  );
 
   const textColors = [
     "#00C853",

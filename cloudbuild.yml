@@ -21,7 +21,6 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '--no-cache',
       '-t', 'asia-northeast1-docker.pkg.dev/$PROJECT_ID/repointerviewer/backend:$SHORT_SHA',
       './backend'
     ]
@@ -38,6 +37,11 @@ steps:
       - -c
       - |
         export PROJECT_ID=repointerviewer
+        IMAGE_PATH=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend
+
+        DIGEST=$(gcloud artifacts docker images describe asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend:$SHORT_SHA \
+          --format="value(image_summary.digest)")
+
         if [ "$BRANCH_NAME" = "develop" ]; then
           PIPELINE_NAME="repointerviewer-pipeline-stg"
         elif [ "$BRANCH_NAME" = "main" ]; then
@@ -46,13 +50,14 @@ steps:
           echo "Branch $BRANCH_NAME is not a deployable branch."
           exit 0
         fi
+
         gcloud deploy releases create release-$(date +%s) \
           --delivery-pipeline=$$PIPELINE_NAME \
           --region=asia-northeast1 \
           --project=${PROJECT_ID} \
           --source=.gcp_infra \
           --skaffold-file=skaffold.yaml \
-          --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend:$SHORT_SHA
+          --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend@$$DIGEST
           
 options:
   logging: CLOUD_LOGGING_ONLY

@@ -20,16 +20,16 @@ export function useThinkingAnimation(
       return [...prev, { type: "thinking", dots: states[0] }];
     });
 
-    let animIndex = 0;
+    let animationIndex = 0;
 
     intervalRef.current = window.setInterval(() => {
       if (indexRef.current === null) return;
-      animIndex = (animIndex + 1) % states.length;
+      animationIndex = (animationIndex + 1) % states.length;
 
       setChatHistory(current => 
         current.map((m, i) =>
           i === indexRef.current
-            ? { type: "thinking", dots: states[animIndex] }
+            ? { type: "thinking", dots: states[animationIndex] }
             : m
         )
       );
