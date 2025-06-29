@@ -1,4 +1,4 @@
-import { Box, Avatar, Typography, useTheme } from "@mui/material";
+import { Box, Avatar, Typography } from "@mui/material";
 import type { ChatMessage } from "@/types/chat-message";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 import CommonThemeBox from "@/screens/components/CommonThemeBox";
@@ -11,28 +11,25 @@ interface Props {
 }
 
 const FeedbackMessage: React.FC<Props> = ({ msg }) => {
-  const theme = useTheme();
   const { currentCharacter } = useAnswerContext();
   const score = Array.isArray(msg.score) ? msg.score[0] : msg.score;
   const maxPerQuestion = 100 / currentCharacter.totalQuestion;
   const percent = Math.min(100, Math.max(0, (score / maxPerQuestion) * 100));
 
-  let textStyle: React.CSSProperties = {};
-  if (percent <= 20) {
-    textStyle.color = "#ff5252";
-  } else if (percent <= 40) {
-    textStyle.color = "#ffed00";
-  } else if (percent <= 60) {
-    textStyle.color = theme.palette.secondary.light;
-  } else if (percent <= 80) {
-    textStyle.color = theme.palette.secondary.main;
-  } else {
-    textStyle = {
-      background: theme.gradients.primary,
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-    };
-  }
+  const textColors = [
+    "#00C853",
+    "#0CB679",
+    "#19A49F",
+    "#2592C6",
+    "#3280EC",
+    "#3F6FFD",
+    "#4D5FF8",
+    "#5B4FF4",
+    "#693FEF",
+    "#772FEB",
+  ];
+
+  const idx = Math.min(9, Math.floor(percent / 10));
 
   return (
     <Box sx={{ my: 2 }}>
@@ -43,7 +40,7 @@ const FeedbackMessage: React.FC<Props> = ({ msg }) => {
           width: 56,
           height: 56,
           m: 2,
-          border: 2,
+          border: 1.2,
           borderColor: (theme) => theme.palette.primary.light,
         }}
       />
@@ -72,14 +69,7 @@ const FeedbackMessage: React.FC<Props> = ({ msg }) => {
               width: "60%",
               height: 4,
               borderRadius: 4,
-              background:
-                "linear-gradient(90deg, " +
-                "#ff5252 0%, " +
-                "#ffed00 25%, " +
-                "#00c853 50%, " +
-                "#3877ff 75%, " +
-                "#772feb 100%" +
-                ")",
+              background: (theme) => theme.gradients.primary,
               overflow: "hidden",
             }}
           >
@@ -100,7 +90,7 @@ const FeedbackMessage: React.FC<Props> = ({ msg }) => {
               display: "flex",
               alignItems: "baseline",
               fontSize: 36,
-              ...textStyle,
+              color: textColors[idx],
             }}
           >
             {score}
@@ -108,7 +98,7 @@ const FeedbackMessage: React.FC<Props> = ({ msg }) => {
               sx={{
                 fontSize: 24,
                 ml: 1,
-                color: textStyle.color || "inherit",
+                color: "inherit",
               }}
             >
               点
