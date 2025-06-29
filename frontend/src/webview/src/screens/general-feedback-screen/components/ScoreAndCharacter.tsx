@@ -11,18 +11,17 @@ const ScoreAndCharacter = ({ currentCharacter, scores }: Props) => (
   <Box
     sx={{
       display: "flex",
-      gap: 2,
+      gap: 4,
       width: "90%",
       justifyContent: "space-between",
-      alignItems: "flex-start",
-      mt: 3,
+      alignItems: "center",
     }}
   >
     <ScoreDisplay scores={scores} currentCharacter={currentCharacter} />
 
     <img
       src={currentCharacter.wholeImage}
-      height={260}
+      height={320}
       style={{ objectFit: "contain" }}
     />
   </Box>

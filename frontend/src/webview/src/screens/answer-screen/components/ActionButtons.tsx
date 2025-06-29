@@ -30,7 +30,7 @@ const ActionButtons: React.FC = () => {
           color: (theme) => theme.palette.secondary.light,
         }}
       >
-        <HomeIcon sx={{ fontSize: "42px" }} />
+        <HomeIcon sx={{ fontSize: "36px" }} />
       </IconButton>
       {topButtonState === "skip" && (
         <IconButton
@@ -43,7 +43,7 @@ const ActionButtons: React.FC = () => {
             transform: "translateY(-50%)",
           }}
         >
-          <SkipNextIcon sx={{ fontSize: 50 }} />
+          <SkipNextIcon sx={{ fontSize: "42px" }} />
         </IconButton>
       )}
     </Box>
