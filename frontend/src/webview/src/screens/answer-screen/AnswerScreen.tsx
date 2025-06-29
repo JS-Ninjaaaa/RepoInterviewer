@@ -32,37 +32,26 @@ const AnswerScreen: React.FC<AnswerScreenProps> = ({ vscode }) => {
     >
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          backgroundColor: currentCharacter?.color[50],
+          width: "100%",
           height: "100vh",
-          minWidth: "320px",
-          justifyContent: "space-between",
+          display: "grid",
+          gridTemplateRows: "auto minmax(0,1fr) auto",
+          position: "absolute",
+          left: 0,
         }}
       >
-        <Box
-          sx={{
-            border: 2,
-            borderColor: currentCharacter.color[200],
-            backgroundColor: "white",
-            width: "76%",
-            height: "68vh",
-            display: "flex",
-            flexDirection: "column",
-            overflowY: "auto",
-            p: 3,
-            mt: "80px",
-          }}
-        >
+        <Box>
+          <ActionButtons />
+        </Box>
+        <Box>
           <ChatPanel />
+        </Box>
+        <Box sx={{ flexShrink: 0 }}>
           <AnswerInput />
         </Box>
-
-        <ActionButtons />
-        <InterruptModal />
-        <SkipModal />
       </Box>
+      <InterruptModal />
+      <SkipModal />
     </AnswerContextProvider>
   );
 };

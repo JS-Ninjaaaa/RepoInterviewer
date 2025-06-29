@@ -1,10 +1,10 @@
 import { Box, Typography, styled } from "@mui/material";
 
-const GradientText = styled("span")({
-  background: "linear-gradient(90deg, #00c853, #4f84f7, #772feb)",
+const GradientText = styled("span")(({ theme }) => ({
+  background: theme.gradients.primary,
   WebkitBackgroundClip: "text",
   WebkitTextFillColor: "transparent",
-});
+}));
 
 const TitleHeader = () => {
   return (

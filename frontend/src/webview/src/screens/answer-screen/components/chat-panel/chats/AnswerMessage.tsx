@@ -1,6 +1,6 @@
-import { Box, Avatar, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import type { ChatMessage } from "@/types/chat-message";
-import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
+import CommonThemeBox from "@/screens/components/CommonThemeBox";
 
 type AnswerChatMessage = Extract<ChatMessage, { type: "answer" }>;
 
@@ -10,28 +10,14 @@ interface Props {
 }
 
 const AnswerMessage: React.FC<Props> = ({ msg }) => {
-  const { currentCharacter } = useAnswerContext();
+  if (!msg.text.trim()) {
+    return null;
+  }
+
   return (
-    <Box sx={{ my: 2, width: "100%" }}>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
-        <Avatar
-          alt={currentCharacter.name}
-          sx={{ width: 56, height: 56, m: 2 }}
-        />
-      </Box>
-      <Box sx={{ display: "flex", width: "100%" }}>
-        <Box
-          sx={{
-            bgcolor: currentCharacter.color[50],
-            p: 2,
-            borderRadius: 2,
-            width: "100%",
-          }}
-        >
-          <Typography sx={{ fontSize: 16 }}>{msg.text}</Typography>
-        </Box>
-      </Box>
-    </Box>
+    <CommonThemeBox sx={{ my: 4, ml: "auto" }}>
+      <Typography sx={{ fontSize: 16 }}>{msg.text}</Typography>
+    </CommonThemeBox>
   );
 };
 
