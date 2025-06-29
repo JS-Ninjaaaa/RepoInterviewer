@@ -52,12 +52,12 @@ steps:
         fi
 
         gcloud deploy releases create release-$(date +%s) \
-          --delivery-pipeline=$PIPELINE_NAME \
+          --delivery-pipeline=$$PIPELINE_NAME \
           --region=asia-northeast1 \
           --project=${PROJECT_ID} \
           --source=.gcp_infra \
           --skaffold-file=skaffold.yaml \
-          --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend@$DIGEST
+          --images=backend=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/repointerviewer/backend@$$DIGEST
           
 options:
   logging: CLOUD_LOGGING_ONLY
