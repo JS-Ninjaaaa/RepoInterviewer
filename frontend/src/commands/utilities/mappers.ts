@@ -17,7 +17,7 @@ export function mapFirstQuestion(
 ): FirstQuestion {
   return {
     interviewId: src.interview_id,
-    question: src.first_question, // Rename to 'question' to match webview expectations
+    question: src.first_question,
   };
 }
 
