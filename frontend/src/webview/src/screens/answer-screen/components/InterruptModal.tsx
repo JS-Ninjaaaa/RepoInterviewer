@@ -22,24 +22,30 @@ const InterruptModal: React.FC = () => {
           transform: "translate(-50%, -50%)",
           bgcolor: "white",
           borderRadius: 2,
-          p: 4,
+          p: 6,
           maxWidth: "400px",
           width: "80%",
           textAlign: "center",
         }}
       >
-        <Typography id="interrupt-modal-title" variant="h6" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: "18px",
+            color: "black",
+            mb: 4,
+          }}
+        >
           本当に中断しますか？
         </Typography>
         <Box
-          sx={{ display: "flex", justifyContent: "center", gap: "20px", mt: 2 }}
+          sx={{ display: "flex", justifyContent: "center", gap: "40px", mt: 2 }}
         >
           <Button
             variant="contained"
             onClick={handleInterruptModalClose}
             sx={{
               minWidth: "80px",
-              backgroundColor: (theme) => theme.palette.primary.light,
+              backgroundColor: (theme) => theme.palette.primary.contrastText,
               color: "white",
             }}
           >
