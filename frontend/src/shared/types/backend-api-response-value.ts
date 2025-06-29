@@ -1,6 +1,6 @@
 export interface BackendFirstQuestionResponse {
   interview_id: string;
-  question: string;
+  first_question: string;
 }
 
 export interface BackendNextQuestionResponse {
