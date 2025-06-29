@@ -161,7 +161,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
               questionId: msg.payload.questionId,
             },
           ]);
-          setQuestionId(msg.payload.questionId);
+          setQuestionId(Number(msg.payload.questionId));
           setTopButtonState("skip");
           setDisplayEnterBox(true);
           break;
