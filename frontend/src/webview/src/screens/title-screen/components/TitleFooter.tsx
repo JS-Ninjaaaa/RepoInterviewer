@@ -13,6 +13,10 @@ const TitleFooter = () => {
           mb: 2,
           padding: "12px 48px",
           fontWeight: "bold",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
+              : "0px 6px 16px rgba(0, 0, 0, 0.15)",
         }}
         disableElevation
       >

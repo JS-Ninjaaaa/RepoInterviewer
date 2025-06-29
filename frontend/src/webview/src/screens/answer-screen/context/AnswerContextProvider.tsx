@@ -7,7 +7,7 @@ import type { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
 import type { TopButtonState, BottomButtonState } from "@/types/action-button";
 import { Feedback, GeneralFeedback } from "@shared/webview-api-response-type";
 import { useLoading } from "@/screens/context/LoadingContext";
-import { useThinkingAnimation } from "@/screens/components/hooks/use-thinking-animation";
+import { useThinkingAnimation } from "@/screens/answer-screen/components/chat-panel/chats/hooks/use-thinking-animation";
 import { AnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 interface AnswerContextProviderProps {
