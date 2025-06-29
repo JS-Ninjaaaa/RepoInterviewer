@@ -25,14 +25,14 @@ export function mapNextQuestion(
   src: BackendNextQuestionResponse
 ): NextQuestion {
   return {
-    questionId: src.question_id,
+    questionId: Number(src.question_id),
     question: src.question,
   };
 }
 
 export function mapFeedback(src: BackendFeedBackResponse): Feedback {
   return {
-    questionId: src.question_id,
+    questionId: Number(src.question_id),
     response: src.response,
     score: src.score,
     continueQuestion: src.continue_question,
