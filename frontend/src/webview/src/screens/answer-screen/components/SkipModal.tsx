@@ -54,7 +54,7 @@ const SkipModal: React.FC = () => {
             onClick={handleSkipConfirm}
             sx={{
               minWidth: "80px",
-              backgroundColor: (theme) => theme.palette.secondary.main,
+              backgroundColor: (theme) => theme.palette.secondary.dark,
               color: "white",
             }}
           >

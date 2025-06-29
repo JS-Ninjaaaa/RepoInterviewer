@@ -34,7 +34,7 @@ const ThinkingMessage: React.FC<Props> = ({ msg }) => {
           width: 56,
           height: 56,
           m: 2,
-          border: 2,
+          border: 1.2,
           borderColor: (theme) => theme.palette.primary.light,
         }}
       />

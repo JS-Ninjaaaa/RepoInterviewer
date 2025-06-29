@@ -10,6 +10,10 @@ interface Props {
 }
 
 const AnswerMessage: React.FC<Props> = ({ msg }) => {
+  if (!msg.text.trim()) {
+    return null;
+  }
+
   return (
     <CommonThemeBox sx={{ my: 4, ml: "auto" }}>
       <Typography sx={{ fontSize: 16 }}>{msg.text}</Typography>
