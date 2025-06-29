@@ -1,8 +1,8 @@
 import { useLocation } from "react-router-dom";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import Footer from "@/screens/general-feedback-screen/components/Footer";
-import ScoreDisplay from "@/screens/general-feedback-screen/components/ScoreDisplay";
-import FeedbackBox from "./components/Feedbackbox";
+import FeedbackBox from "@/screens/general-feedback-screen/components/FeedbackBox";
+import ScoreAndCharacter from "./components/ScoreAndCharacter";
 
 interface GeneralFeedbackScreenProps {
   vscode: VSCodeAPI;
@@ -27,11 +27,7 @@ const GeneralFeedbackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
         pb: 2,
       }}
     >
-      <Typography variant="h2" sx={{ fontWeight: "bold", color: "#fff" }}>
-        RESULT
-      </Typography>
-
-      <ScoreDisplay currentCharacter={currentCharacter} scores={scores} />
+      <ScoreAndCharacter currentCharacter={currentCharacter} scores={scores} />
 
       <FeedbackBox generalReview={generalReview} />
 
