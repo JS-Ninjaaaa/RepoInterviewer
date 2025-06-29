@@ -8,8 +8,14 @@ from google.cloud import firestore
 class FirestoreInterviewRepository(InterviewRepository):
     def __init__(self) -> None:
         """コンストラクタ"""
-        self.db = firestore.Client(project=os.getenv("GCP_PROJECT_ID"))
-        self.interviews_collection = self.db.collection("interviews")
+        project_id = os.getenv("GCP_PROJECT_ID")
+        database_id = os.getenv("FIRESTORE_DATABASE_ID")
+
+        self.db = firestore.Client(
+            project=project_id,
+            database=database_id,
+        )
+        self.interview_collection = self.db.collection("interviews")
 
     def create_interview(self, questions: list[InterviewQuestion]) -> None:
         """面接を作成する
@@ -23,7 +29,7 @@ class FirestoreInterviewRepository(InterviewRepository):
         for question in questions:
             # 面接IDをドキュメントIDとして使用
             # 質問をサブコレクションとして保存
-            interview_doc = self.interviews_collection.document(question.interview_id)
+            interview_doc = self.interview_collection.document(question.interview_id)
             question_doc = interview_doc.collection("questions").document(
                 question.question_id
             )
@@ -52,7 +58,7 @@ class FirestoreInterviewRepository(InterviewRepository):
         try:
             # 特定の質問ドキュメントを取得
             question_doc = (
-                self.interviews_collection.document(interview_id)
+                self.interview_collection.document(interview_id)
                 .collection("questions")
                 .document(question_id)
                 .get()
@@ -89,7 +95,7 @@ class FirestoreInterviewRepository(InterviewRepository):
         """
         # 質問ドキュメントを更新
         question_doc = (
-            self.interviews_collection.document(interview_id)
+            self.interview_collection.document(interview_id)
             .collection("questions")
             .document(question_id)
         )
@@ -115,7 +121,7 @@ class FirestoreInterviewRepository(InterviewRepository):
         try:
             # 面接の全質問ドキュメントを取得
             questions_docs = (
-                self.interviews_collection.document(interview_id)
+                self.interview_collection.document(interview_id)
                 .collection("questions")
                 .stream()
             )
