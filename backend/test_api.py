@@ -4,7 +4,7 @@ from enum import Enum
 import inquirer
 import requests
 
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "http://127.0.0.1:8080"
 
 
 class Action(Enum):

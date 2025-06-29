@@ -281,7 +281,7 @@ class GoogleLLMClient(LLMClient):
         content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="application/json",
-            response_schema=QuestionEvaluationResult,
+            response_schema=InterviewFeedback,
         )
 
         contents = self.make_chat_history_contents(question.chat_history)
