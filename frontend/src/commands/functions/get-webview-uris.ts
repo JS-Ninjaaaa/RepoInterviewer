@@ -8,14 +8,20 @@ export interface WebviewUris {
 }
 
 const imageFileNames: { [K in keyof ImageUri]: string } = {
-  yuzu: "yuzu.png",
-  haru: "haru.png",
-  saki: "saki.png",
-  ren: "ren.png",
-  wholeYuzu: "whole-yuzu.png",
-  wholeHaru: "whole-haru.png",
-  wholeSaki: "whole-saki.png",
-  wholeRen: "whole-ren.png",
+  yuzu: "characters/yuzu.png",
+  haru: "characters/haru.png",
+  saki: "characters/saki.png",
+  ren: "characters/ren.png",
+  halfYuzu: "characters/half-yuzu.png",
+  halfHaru: "characters/half-haru.png",
+  halfSaki: "characters/half-saki.png",
+  halfRen: "characters/half-ren.png",
+  wholeYuzu: "characters/whole-yuzu.png",
+  wholeHaru: "characters/whole-haru.png",
+  wholeSaki: "characters/whole-saki.png",
+  wholeRen: "characters/whole-ren.png",
+  lightBackground: "background/light-mode-background.png",
+  darkBackground: "background/dark-mode-background.png",
 };
 
 export function getWebviewUris(
@@ -34,10 +40,10 @@ export function getWebviewUris(
   const imageUris = {} as ImageUri;
 
   for (const key of Object.keys(imageFileNames) as (keyof ImageUri)[]) {
-    const fileName = imageFileNames[key];
+    const filePath = imageFileNames[key].split("/");
     imageUris[key] = getUri(webview, extensionUri, [
       ...basePath,
-      fileName,
+      ...filePath,
     ]).toString();
   }
 

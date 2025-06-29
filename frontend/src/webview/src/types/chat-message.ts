@@ -15,5 +15,5 @@ export type ChatMessage =
     }
   | {
       type: "thinking";
-      text: string;
+      dots: number;
     };

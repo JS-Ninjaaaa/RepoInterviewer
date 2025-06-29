@@ -8,34 +8,28 @@ export function useThinkingAnimation(
   const indexRef = useRef<number | null>(null);
 
   const startThinking = useCallback(() => {
-    // 既存の interval があればクリア
     if (intervalRef.current !== null) {
       clearInterval(intervalRef.current);
     }
 
-    // ５つのアニメーション状態
-    const states = ["考え中", "考え中・", "考え中・・", "考え中・・・"];
+    const states = [0, 1, 2, 3];
 
-    // プレースホルダーを追加し、インデックスを保存
     setChatHistory((prev) => {
       const idx = prev.length;
       indexRef.current = idx;
-      return [...prev, { type: "thinking", text: states[0] }];
+      return [...prev, { type: "thinking", dots: states[0] }];
     });
 
-    // アニメーション用のカウンタ
-    let animIndex = 0;
+    let animationIndex = 0;
 
     intervalRef.current = window.setInterval(() => {
-      if (indexRef.current === null) {
-        return;
-      }
-      // 次の状態へ
-      animIndex = (animIndex + 1) % states.length;
-      setChatHistory((currentChatHistory) =>
-        currentChatHistory.map((m, i) =>
+      if (indexRef.current === null) return;
+      animationIndex = (animationIndex + 1) % states.length;
+
+      setChatHistory(current => 
+        current.map((m, i) =>
           i === indexRef.current
-            ? { type: "thinking", text: states[animIndex] }
+            ? { type: "thinking", dots: states[animationIndex] }
             : m
         )
       );
