@@ -25,7 +25,7 @@ dev = [
 ]
 
 [tool.taskipy.tasks]
-start = "gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 --reload"
+start = "gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 --reload --log-level debug --access-logfile -"
 
 [tool.black]
 line-length = 88

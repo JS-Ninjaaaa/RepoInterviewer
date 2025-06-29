@@ -44,7 +44,7 @@ export async function fetchFeedBack(payload: PayloadOf<"fetchFeedback">) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      question_id: questionId,
+      question_id: questionId.toString(),
       message: answer,
     }),
   });
