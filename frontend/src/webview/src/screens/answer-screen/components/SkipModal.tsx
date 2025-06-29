@@ -20,13 +20,19 @@ const SkipModal: React.FC = () => {
           transform: "translate(-50%, -50%)",
           bgcolor: "white",
           borderRadius: 2,
-          p: 4,
+          p: 6,
           maxWidth: "400px",
           width: "80%",
           textAlign: "center",
         }}
       >
-        <Typography id="skip-modal-title" variant="h6" gutterBottom>
+        <Typography
+          sx={{
+            fontSize: "18px",
+            color: "black",
+            mb: 4,
+          }}
+        >
           本当にスキップしますか？ この問題は0点になります
         </Typography>
         <Box
@@ -37,7 +43,7 @@ const SkipModal: React.FC = () => {
             onClick={handleSkipModalClose}
             sx={{
               minWidth: "80px",
-              backgroundColor: (theme) => theme.palette.primary.light,
+              backgroundColor: (theme) => theme.palette.primary.contrastText,
               color: "white",
             }}
           >
@@ -48,7 +54,7 @@ const SkipModal: React.FC = () => {
             onClick={handleSkipConfirm}
             sx={{
               minWidth: "80px",
-              backgroundColor: (theme) => theme.palette.secondary.light,
+              backgroundColor: (theme) => theme.palette.secondary.main,
               color: "white",
             }}
           >

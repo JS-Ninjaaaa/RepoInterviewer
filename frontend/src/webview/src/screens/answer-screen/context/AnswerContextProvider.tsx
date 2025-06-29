@@ -129,7 +129,7 @@ export const AnswerContextProvider: React.FC<AnswerContextProviderProps> = ({
 
   const handleInterruptConfirm = () => {
     setInterruptModalOpen(false);
-    navigate("/start");
+    navigate("/title");
   };
 
   const moveGeneralFeedbackScreen = useCallback(
