@@ -45,7 +45,7 @@ paths:
                 properties:
                   interview_id:
                     type: string
-                  question:
+                  first_question:
                     type: string
         '400':
           description: Bad Request
