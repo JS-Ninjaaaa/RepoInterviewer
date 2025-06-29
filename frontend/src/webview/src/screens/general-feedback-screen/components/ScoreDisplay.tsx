@@ -7,63 +7,71 @@ interface ScoreDisplayProps {
 }
 
 const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
-  let totalScore: number = 0;
-  for (let i = 0; i < scores.length; i++) {
-    totalScore += scores[i];
-  }
+  const questions = Array.from(
+    { length: currentCharacter.totalQuestion },
+    (_, i) => scores[i] ?? 0
+  );
+
+  const totalScore = questions.reduce((a, b) => a + b, 0);
+  const maxPerQuestion = 100 / currentCharacter.totalQuestion;
 
   return (
-    <>
+    <Box sx={{ width: "60%" }}>
+      {scores.map((s, i) => {
+        const percent = Math.min(100, Math.max(0, (s / maxPerQuestion) * 100));
+
+        return (
+          <Box key={i} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <Typography sx={{ width: 40, color: "#fff", fontSize: 14 }}>
+              {`Q.${i + 1}`}
+            </Typography>
+
+            {/* ===== バー部分 ===== */}
+            <Box
+              sx={{
+                position: "relative",
+                flexGrow: 1,
+                height: 4,
+                borderRadius: 4,
+                background: (theme) => theme.gradients.primary, // ← 全面にグラデーション
+                overflow: "hidden",
+                mr: 1,
+              }}
+            >
+              {/* 未達成部分を上からグレーで隠す */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  left: `${percent}%`,
+                  right: 0,
+                  bgcolor: "#24304b", // スクリーンショットの薄いネイビー
+                }}
+              />
+            </Box>
+
+            <Typography sx={{ width: 24, color: "#fff", fontSize: 14 }}>
+              {s}
+            </Typography>
+          </Box>
+        );
+      })}
+
+      {/* ── TOTAL SCORE ── */}
       <Typography
         sx={{
-          fontSize: "28px",
+          mt: 2,
+          fontSize: 16,
           fontWeight: "bold",
-          mt: "16%",
+          color: "#fff",
         }}
       >
-        最終結果
+        TOTAL&nbsp;SCORE&nbsp;&nbsp;
+        <span style={{ fontSize: 20 }}>{totalScore}</span>
+        /100
       </Typography>
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "baseline",
-          color: currentCharacter.color[700],
-          p: 0,
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: 76,
-            lineHeight: 1,
-          }}
-        >
-          {totalScore}
-        </Typography>
-
-        <Typography
-          sx={{
-            fontSize: "32px",
-          }}
-        >
-          点
-        </Typography>
-      </Box>
-
-      <Box
-        sx={{
-          mb: 2,
-        }}
-      >
-        <Typography
-          sx={{
-            color: currentCharacter.color[700],
-          }}
-        >
-          {scores.join(" / ")}
-        </Typography>
-      </Box>
-    </>
+    </Box>
   );
 };
 
