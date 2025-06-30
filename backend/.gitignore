@@ -12,3 +12,5 @@ tmp/
 lib64
 pyvenv.cfg
 launch.sh
+
+.vscode/settings.json
