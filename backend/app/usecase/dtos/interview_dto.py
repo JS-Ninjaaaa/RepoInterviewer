@@ -17,18 +17,18 @@ class SetUpInterviewResponse:
 
 
 @dataclass(frozen=True, kw_only=True)
-class GetFeedbackRequest:
+class GetResponseRequest:
     interview_id: str
     question_id: str
     message: str
 
 
 @dataclass(frozen=True, kw_only=True)
-class GetFeedbackResponse:
+class GetResponseResponse:
     interview_id: str
     question_id: str
     score: int
-    comment: str
+    response: str
     continue_: bool
 
 
