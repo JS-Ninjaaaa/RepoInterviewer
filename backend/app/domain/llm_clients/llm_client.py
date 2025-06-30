@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from app.domain.entities.chat_history import ChatHistory
+from app.domain.entities.chat_response import InterviewChatResponse
 from app.domain.entities.difficulty import Difficulty
-from app.domain.entities.evaluation_result import QuestionEvaluationResult
 from app.domain.entities.interview_question import InterviewQuestion
 from app.domain.entities.source_code import SourceCode
 
@@ -46,7 +46,7 @@ class LLMClient(ABC):
         self,
         source_code: SourceCode,
         question: InterviewQuestion,
-    ) -> QuestionEvaluationResult:
+    ) -> InterviewChatResponse:
         """深掘りなしの面接においてフィードバックを生成する
 
         Args:
@@ -54,7 +54,7 @@ class LLMClient(ABC):
             question (InterviewQuestion): 質問の情報
 
         Returns:
-            QuestionEvaluationResult: 質問の評価結果
+            InterviewChatResponse: 質問の応答
         """
         pass
 
@@ -63,7 +63,7 @@ class LLMClient(ABC):
         self,
         source_code: SourceCode,
         question: InterviewQuestion,
-    ) -> QuestionEvaluationResult:
+    ) -> InterviewChatResponse:
         """深掘りありの面接において会話の応答を生成する
 
         Args:
@@ -71,7 +71,7 @@ class LLMClient(ABC):
             question (InterviewQuestion): 質問の情報
 
         Returns:
-            QuestionEvaluationResult: 質問の評価結果
+            InterviewChatResponse: 質問の応答
         """
         pass
 
