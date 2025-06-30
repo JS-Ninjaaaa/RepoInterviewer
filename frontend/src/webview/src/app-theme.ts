@@ -1,34 +1,6 @@
 import { createTheme } from "@mui/material";
 import type { PaletteMode } from "@mui/material";
 
-import "@mui/material/styles";
-declare module "@mui/material/styles" {
-  interface Palette {
-    shadowColor: string;
-  }
-  interface PaletteOptions {
-    shadowColor?: string;
-  }
-  interface Theme {
-    gradients: {
-      primary: string;
-      secondary: {
-        main: string;
-        light: string;
-      };
-    };
-  }
-  interface ThemeOptions {
-    gradients?: {
-      primary?: string;
-      secondary?: {
-        main?: string;
-        light?: string;
-      };
-    };
-  }
-}
-
 export const baseTheme = createTheme({
   palette: {
     primary: {
@@ -38,18 +10,18 @@ export const baseTheme = createTheme({
       contrastText: "#b8b8b8",
     },
     secondary: {
-      light: "#00c853",
-      main: "#3877ff",
+      light: "#00b350",
+      main: "#135dff",
       dark: "#772feb",
       contrastText: "#939393",
     },
     shadowColor: "rgba(0, 0, 0, 0.15)",
   },
   gradients: {
-    primary: "linear-gradient(90deg, #00c853, #3877ff, #772feb)",
+    primary: "linear-gradient(90deg, #00b350, #135dff, #772feb)",
     secondary: {
-      main: "linear-gradient(90deg, #00c853, #3877ff)",
-      light: "linear-gradient(90deg, #45fa91, #588fff)",
+      main: "linear-gradient(90deg, #00b350, #135dff)",
+      light: "linear-gradient(90deg, #2cdd76, #588fff)",
     },
   },
 });
@@ -63,6 +35,7 @@ export const createAppTheme = (mode: PaletteMode) =>
       background: {
         default: mode === "dark" ? "#0f1121" : "#ffffff",
         paper: mode === "dark" ? "#1c2a42" : "#ffffff",
+        nav: mode === "dark" ? "#1c2a42" : "#d9d9d9",
       },
       text: {
         primary: mode === "dark" ? "#ffffff" : "#000000",
