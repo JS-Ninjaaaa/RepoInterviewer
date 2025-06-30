@@ -8,7 +8,7 @@ interface ScoreDisplayProps {
 }
 
 const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
-  const maxPerQuestion = 100 / currentCharacter.totalQuestion;
+  const maxScorePerQuestion = 100 / currentCharacter.totalQuestion;
 
   return (
     <Box
@@ -41,7 +41,7 @@ const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
       {scores.map((score, i) => {
         const percent = Math.min(
           100,
-          Math.max(0, (score / maxPerQuestion) * 100)
+          Math.max(0, (score / maxScorePerQuestion) * 100)
         );
 
         return (
