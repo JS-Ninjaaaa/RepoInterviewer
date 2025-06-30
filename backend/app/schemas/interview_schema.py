@@ -13,10 +13,11 @@ class InterviewInterviewIdPostRequest(BaseModel):
 
 
 class InterviewInterviewIdPostResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     interview_id: str
     question_id: str
     score: int = Field(ge=0, le=100)
     response: str
-    # 生成時に属性名でキーワード引数を渡すためにエイリアスを定義する
+    # レスポンスボディのキー名を continue にするため
     continue_: bool = Field(alias="continue")
-    model_config = ConfigDict(populate_by_name=True)
