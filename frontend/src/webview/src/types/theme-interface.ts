@@ -5,6 +5,7 @@ declare module "@mui/material/styles" {
   }
   interface PaletteOptions {
     shadowColor?: string;
+    background?: Partial<TypeBackground>;
   }
   interface Theme {
     gradients: {
@@ -26,8 +27,5 @@ declare module "@mui/material/styles" {
   }
   interface TypeBackground {
     nav: string;
-  }
-  interface PaletteOptions {
-    background?: Partial<TypeBackground>;
   }
 }

@@ -21,6 +21,7 @@ const ScoreAndCharacter = ({ currentCharacter, scores }: Props) => (
 
     <img
       src={currentCharacter.wholeImage}
+      alt={currentCharacter.name + " の全身イラスト"}
       height={320}
       style={{ objectFit: "contain" }}
     />
