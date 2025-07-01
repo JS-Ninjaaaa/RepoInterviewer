@@ -101,7 +101,7 @@ def get_response(
     summary="指定された質問IDの質問文を取得する",
     operation_id="get_question",
 )
-def get_interview_interview_id(
+def get_interview_question(
     interview_id: str,
     question_id: str,
     usecase: GetQuestionUseCase = Depends(get_question_usecase),
