@@ -78,61 +78,62 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
     <>
       <Box
         sx={{
-          backgroundImage: `url(${bgUrl})`,
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100vh",
-          objectFit: "cover",
-          zIndex: -1,
-        }}
-      />
-      <Box
-        sx={{
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100vh",
           color: textColor,
+          backgroundImage: `url(${bgUrl})`,
+          width: "100%",
+          maxHeight: "100vh",
+          position: "absolute",
+          left: 0,
         }}
       >
-        <Box sx={{ display: "flex" }}>
-          <IconButton onClick={handlePrev} sx={{ color: "#00c853" }}>
-            <ArrowLeftIcon
-              sx={{
-                ml: "-16px", // アイコンの左右の余白を引っ込める
-                mr: "-16px",
-                fontSize: "64px",
-              }}
-            />
-          </IconButton>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            p: 2,
+            height: "100vh",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mt: 8,
+            }}
+          >
+            <IconButton onClick={handlePrev} sx={{ color: "#00c853" }}>
+              <ArrowLeftIcon
+                sx={{
+                  ml: "-16px", // アイコンの左右の余白を引っ込める
+                  mr: "-16px",
+                  fontSize: "64px",
+                }}
+              />
+            </IconButton>
 
-          <CharacterSelectCards currentCharacter={currentCharacter} />
+            <CharacterSelectCards currentCharacter={currentCharacter} />
 
-          <IconButton onClick={handleNext} sx={{ color: "#3877ff" }}>
-            <ArrowRightIcon
-              sx={{
-                ml: "-16px",
-                mr: "-16px",
-                fontSize: "64px",
-              }}
-            />
-          </IconButton>
-        </Box>
+            <IconButton onClick={handleNext} sx={{ color: "#3877ff" }}>
+              <ArrowRightIcon
+                sx={{
+                  ml: "-16px",
+                  mr: "-16px",
+                  fontSize: "64px",
+                }}
+              />
+            </IconButton>
+          </Box>
 
-        <Box mt={4} display="flex" flexDirection="column" alignItems="center">
           <Button
             variant="outlined"
             sx={{
-              mb: 4,
               width: 160,
               color: "black",
               backgroundColor: "#d9d9d9",
-              gap: 1,
               p: 1,
+              my: 4,
             }}
           >
             <TextSnippetIcon />
@@ -143,6 +144,7 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
             sx={{
               padding: "12px 48px",
               fontWeight: "bold",
+              mb: 4,
               boxShadow: (theme) =>
                 theme.palette.mode === "dark"
                   ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
