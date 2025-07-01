@@ -40,7 +40,7 @@ export const createAppTheme = (mode: PaletteMode) =>
       text: {
         primary: mode === "dark" ? "#ffffff" : "#000000",
         secondary: mode === "dark" ? "#000000" : "#ffffff",
-        disabled: mode === "dark" ? "#ffffff" : "#7c7c7c",
+        disabled: mode === "dark" ? "#ffffff" : "#5c5b5b",
       },
       shadowColor:
         mode === "dark"
