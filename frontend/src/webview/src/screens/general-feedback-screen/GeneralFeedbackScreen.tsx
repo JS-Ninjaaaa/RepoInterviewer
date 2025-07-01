@@ -20,11 +20,11 @@ const GeneralFeedbackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
         display: "flex",
         alignItems: "center",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "space-between",
         backgroundColor: (theme) => theme.palette.background.default,
         minHeight: "100vh",
         pt: 12,
-        pb: 2,
+        pb: 3,
       }}
     >
       <ScoreAndCharacter currentCharacter={currentCharacter} scores={scores} />

@@ -1,4 +1,3 @@
-
 import { Box, Typography } from "@mui/material";
 import { Character } from "@/types/character";
 
@@ -26,7 +25,7 @@ const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
           color: (theme) => theme.palette.text.primary,
           width: "100%",
           textAlign: "center",
-          mb: "4px"
+          mb: "4px",
         }}
       >
         RESULT
@@ -35,7 +34,7 @@ const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
         sx={{
           width: "100%",
           borderTop: (theme) => `1px solid ${theme.palette.text.primary}`,
-          mb: 1
+          mb: 1,
         }}
       />
       {scores.map((score, i) => {
@@ -45,7 +44,10 @@ const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
         );
 
         return (
-          <Box key={i} sx={{ display: "flex", alignItems: "center", my: "4px" }}>
+          <Box
+            key={i}
+            sx={{ display: "flex", alignItems: "center", my: "6px" }}
+          >
             <Typography
               sx={{
                 color: (theme) => theme.palette.text.primary,
@@ -61,10 +63,10 @@ const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
                 position: "relative",
                 flexGrow: 1,
                 height: 4,
-                borderRadius : 4,
+                borderRadius: 4,
                 background: (theme) => theme.gradients.primary,
                 overflow: "hidden",
-                mx: 1,
+                mx: 2,
               }}
             >
               <Box
@@ -96,7 +98,7 @@ const ScoreDisplay = ({ currentCharacter, scores }: ScoreDisplayProps) => {
         sx={{
           width: "100%",
           borderBottom: (theme) => `1px solid ${theme.palette.text.primary}`,
-          mt: 1
+          mt: 1,
         }}
       />
     </Box>

@@ -10,48 +10,49 @@ interface Props {
 const ScoreAndCharacter = ({ currentCharacter, scores }: Props) => {
   const totalScore = scores.reduce((sum, v) => sum + v, 0);
 
-  return(
-  <Box
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      width: "100%", 
-    }}>
+  return (
     <Box
       sx={{
         display: "flex",
-        gap: 4,
+        flexDirection: "column",
         alignItems: "center",
-        width: "90%", 
+        width: "100%",
       }}
     >
-      <ScoreDisplay scores={scores} currentCharacter={currentCharacter} />
-
       <Box
-        component="img"
-        src={currentCharacter.wholeImage}
-        alt={`${currentCharacter.name} の全身イラスト`}
         sx={{
-          maxHeight: 240,      // ここで縦をピタリと制限
-          width: 'auto',       // 横はアスペクト比を保って自動調整
-          objectFit: 'contain',// はみ出さずにフィット
+          display: "flex",
+          gap: 4,
+          alignItems: "center",
+          width: "90%",
         }}
-      />
+      >
+        <ScoreDisplay scores={scores} currentCharacter={currentCharacter} />
 
-    </Box>
+        <Box
+          component="img"
+          src={currentCharacter.wholeImage}
+          alt={`${currentCharacter.name} の全身イラスト`}
+          sx={{
+            maxHeight: 240, // ここで縦をピタリと制限
+            width: "auto", // 横はアスペクト比を保って自動調整
+            objectFit: "contain", // はみ出さずにフィット
+          }}
+        />
+      </Box>
       <Typography
         sx={{
-          fontSize: 24,
+          fontSize: 28,
           fontWeight: "bold",
           color: (theme) => theme.palette.text.primary,
-          whiteSpace: 'pre-wrap',
-          m: 2
+          whiteSpace: "pre-wrap",
+          m: 2,
         }}
       >
         {`TOTAL SCORE  ${totalScore} / 100`}
       </Typography>
-  </Box>
-)};
+    </Box>
+  );
+};
 
 export default ScoreAndCharacter;
