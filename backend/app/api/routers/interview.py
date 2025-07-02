@@ -1,7 +1,9 @@
+from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
+
 from app.api.dependencies import (
-    get_feedback_usecase,
     get_overall_review_usecase,
     get_question_usecase,
+    get_response_usecase,
     get_set_up_interview_usecase,
 )
 from app.domain.entities.difficulty import Difficulty
@@ -10,19 +12,18 @@ from app.schemas.interview_schema import (
     InterviewInterviewIdPostResponse,
 )
 from app.usecase.dtos.interview_dto import (
-    GetFeedbackRequest,
     GetInterviewResultRequest,
     GetInterviewResultResponse,
     GetQuestionRequest,
     GetQuestionResponse,
+    GetResponseRequest,
     SetUpInterviewRequest,
     SetUpInterviewResponse,
 )
-from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
 from app.usecase.usecases.get_interview_result_usecase import GetInterviewResultUseCase
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
+from app.usecase.usecases.get_response_usecase import GetResponseUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile, status
 
 router = APIRouter()
 
@@ -63,15 +64,15 @@ async def set_up_interview(
     status_code=status.HTTP_200_OK,
     tags=["Interview"],
     summary="ユーザーの回答に対するLLMからの返答と評価を取得する",
-    operation_id="get_feedback",
+    operation_id="get_response",
 )
-def get_feedback(
+def get_response(
     interview_id: str,
     body: InterviewInterviewIdPostRequest,
-    usecase: GetFeedbackUseCase = Depends(get_feedback_usecase),
+    usecase: GetResponseUseCase = Depends(get_response_usecase),
 ):
     try:
-        request = GetFeedbackRequest(
+        request = GetResponseRequest(
             interview_id=interview_id,
             question_id=body.question_id,
             message=body.message,
@@ -88,8 +89,8 @@ def get_feedback(
         interview_id=response.interview_id,
         question_id=response.question_id,
         score=response.score,
-        response=response.comment,
-        continue_=response.continue_
+        response=response.response,
+        continue_=response.continue_,
     )
 
 
@@ -100,7 +101,7 @@ def get_feedback(
     summary="指定された質問IDの質問文を取得する",
     operation_id="get_question",
 )
-def get_interview_interview_id(
+def get_interview_question(
     interview_id: str,
     question_id: str,
     usecase: GetQuestionUseCase = Depends(get_question_usecase),

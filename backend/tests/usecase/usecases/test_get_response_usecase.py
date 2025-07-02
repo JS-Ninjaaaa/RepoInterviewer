@@ -1,4 +1,5 @@
 import pytest
+
 from app.domain.entities.chat_history import ChatHistory, ChatMessage
 from app.domain.entities.difficulty import Difficulty
 from app.domain.entities.interview_question import InterviewQuestion
@@ -6,9 +7,9 @@ from app.domain.entities.source_code import SourceCode
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
-from app.infrastructure.llm_clients.google.llm_client import InterviewFeedback
-from app.usecase.dtos.interview_dto import GetFeedbackRequest
-from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
+from app.infrastructure.llm_clients.google.llm_client import InterviewChatResponse
+from app.usecase.dtos.interview_dto import GetResponseRequest
+from app.usecase.usecases.get_response_usecase import GetResponseUseCase
 
 # テストデータ
 interview_id = "b5d0d93a-737b-4f90-81dc-bb58a2cba892"
@@ -20,18 +21,18 @@ source_code = SourceCode(
     }
 )
 total_question = 4
-feedback_score = 20
-feedback_comment = "良いコードです"
+score = 20
+chat_response = "良いコードです"
 
 
 @pytest.fixture
-def get_feedback_usecase(
+def get_response_usecase(
     mock_interview_repository,
     mock_source_code_repository,
     mock_llm_client,
     temp_dir,
-) -> GetFeedbackUseCase:
-    return GetFeedbackUseCase(
+) -> GetResponseUseCase:
+    return GetResponseUseCase(
         interview_repository=mock_interview_repository,
         source_code_repository=mock_source_code_repository,
         llm_client=mock_llm_client,
@@ -40,7 +41,7 @@ def get_feedback_usecase(
 
 
 def test_execute_success(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -56,26 +57,27 @@ def test_execute_success(
     )
     mock_interview_repository.get_question.return_value = question
     mock_source_code_repository.get_source_code.return_value = source_code
-    mock_llm_client.generate_feedback.return_value = InterviewFeedback(
-        score=feedback_score,
-        comment=feedback_comment,
+    mock_llm_client.generate_feedback.return_value = InterviewChatResponse(
+        score=score,
+        response=chat_response,
+        continue_=False,
     )
 
     # リクエストの準備
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
     )
 
     # テスト実行
-    response = get_feedback_usecase.execute(request)
+    response = get_response_usecase.execute(request)
 
     # 戻り値の検証
     assert response.interview_id == interview_id
     assert response.question_id == question_id
-    assert response.score == feedback_score
-    assert response.comment == feedback_comment
+    assert response.score == score
+    assert response.response == chat_response
     assert response.continue_ is False
 
     # リポジトリの呼び出し確認
@@ -100,13 +102,13 @@ def test_execute_success(
     assert chat_history[0].role == "user"
     assert chat_history[0].message == user_message
     assert chat_history[1].role == "model"
-    assert chat_history[1].message == feedback_comment
+    assert chat_history[1].message == chat_response
 
-    assert question.score == feedback_score
+    assert question.score == score
 
 
 def test_execute_deep_interview_continue(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -121,18 +123,19 @@ def test_execute_deep_interview_continue(
     )
     mock_interview_repository.get_question.return_value = question
     mock_source_code_repository.get_source_code.return_value = source_code
-    mock_llm_client.generate_chat_response.return_value = InterviewFeedback(
+    mock_llm_client.generate_chat_response.return_value = InterviewChatResponse(
         score=0,
-        comment=feedback_comment,
+        response=chat_response,
+        continue_=True,
     )
 
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
     )
 
-    response = get_feedback_usecase.execute(request)
+    response = get_response_usecase.execute(request)
 
     assert question.score == 0
     assert response.continue_ is True
@@ -140,7 +143,7 @@ def test_execute_deep_interview_continue(
 
 
 def test_execute_deep_interview_final_feedback(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -163,26 +166,27 @@ def test_execute_deep_interview_final_feedback(
     )
     mock_interview_repository.get_question.return_value = question
     mock_source_code_repository.get_source_code.return_value = source_code
-    mock_llm_client.generate_feedback.return_value = InterviewFeedback(
-        score=feedback_score,
-        comment=feedback_comment,
+    mock_llm_client.generate_feedback.return_value = InterviewChatResponse(
+        score=score,
+        response=chat_response,
+        continue_=False,
     )
 
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
     )
 
-    response = get_feedback_usecase.execute(request)
+    response = get_response_usecase.execute(request)
 
     assert response.continue_ is False
-    assert response.score == feedback_score
+    assert response.score == score
     mock_llm_client.generate_feedback.assert_called_once()
 
 
 def test_execute_failure_when_interview_not_found(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -191,7 +195,7 @@ def test_execute_failure_when_interview_not_found(
     mock_interview_repository.get_question.side_effect = Exception()
 
     # リクエストの準備
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
@@ -199,7 +203,7 @@ def test_execute_failure_when_interview_not_found(
 
     # テスト実行と例外の検証
     with pytest.raises(Exception):
-        get_feedback_usecase.execute(request)
+        get_response_usecase.execute(request)
 
     # リポジトリの呼び出し確認
     mock_interview_repository.get_question.assert_called_once_with(
@@ -212,7 +216,7 @@ def test_execute_failure_when_interview_not_found(
 
 
 def test_execute_failure_when_source_code_not_found(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -230,7 +234,7 @@ def test_execute_failure_when_source_code_not_found(
     mock_source_code_repository.get_source_code.side_effect = Exception()
 
     # リクエストの準備
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
@@ -238,7 +242,7 @@ def test_execute_failure_when_source_code_not_found(
 
     # テスト実行と例外の検証
     with pytest.raises(Exception):
-        get_feedback_usecase.execute(request)
+        get_response_usecase.execute(request)
 
     # リポジトリの呼び出し確認
     mock_interview_repository.get_question.assert_called_once_with(
@@ -251,7 +255,7 @@ def test_execute_failure_when_source_code_not_found(
 
 
 def test_execute_failure_when_feedback_generation_fails(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -270,7 +274,7 @@ def test_execute_failure_when_feedback_generation_fails(
     mock_llm_client.generate_feedback.side_effect = Exception()
 
     # リクエストの準備
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
@@ -278,7 +282,7 @@ def test_execute_failure_when_feedback_generation_fails(
 
     # テスト実行と例外の検証
     with pytest.raises(Exception):
-        get_feedback_usecase.execute(request)
+        get_response_usecase.execute(request)
 
     # リポジトリの呼び出し確認
     mock_interview_repository.get_question.assert_called_once_with(
@@ -291,7 +295,7 @@ def test_execute_failure_when_feedback_generation_fails(
 
 
 def test_execute_failure_when_score_exceeds_max_score(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -307,13 +311,14 @@ def test_execute_failure_when_score_exceeds_max_score(
     )
     mock_interview_repository.get_question.return_value = question
     mock_source_code_repository.get_source_code.return_value = source_code
-    mock_llm_client.generate_feedback.return_value = InterviewFeedback(
+    mock_llm_client.generate_feedback.return_value = InterviewChatResponse(
         score=question.max_score + 1,  # max_scoreより大きいスコア
-        comment=feedback_comment,
+        response=chat_response,
+        continue_=False,
     )
 
     # リクエストの準備
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
@@ -321,7 +326,7 @@ def test_execute_failure_when_score_exceeds_max_score(
 
     # テスト実行と例外の検証
     with pytest.raises(ValueError):
-        get_feedback_usecase.execute(request)
+        get_response_usecase.execute(request)
 
     # リポジトリの呼び出し確認
     mock_interview_repository.get_question.assert_called_once_with(
@@ -334,7 +339,7 @@ def test_execute_failure_when_score_exceeds_max_score(
 
 
 def test_execute_failure_when_update_question_fails(
-    get_feedback_usecase: GetFeedbackUseCase,
+    get_response_usecase: GetResponseUseCase,
     mock_interview_repository: InterviewRepository,
     mock_source_code_repository: SourceCodeRepository,
     mock_llm_client: LLMClient,
@@ -350,14 +355,15 @@ def test_execute_failure_when_update_question_fails(
     )
     mock_interview_repository.get_question.return_value = question
     mock_source_code_repository.get_source_code.return_value = source_code
-    mock_llm_client.generate_feedback.return_value = InterviewFeedback(
-        score=feedback_score,
-        comment=feedback_comment,
+    mock_llm_client.generate_feedback.return_value = InterviewChatResponse(
+        score=score,
+        response=chat_response,
+        continue_=False,
     )
     mock_interview_repository.update_question.side_effect = Exception()
 
     # リクエストの準備
-    request = GetFeedbackRequest(
+    request = GetResponseRequest(
         interview_id=interview_id,
         question_id=question_id,
         message=user_message,
@@ -365,7 +371,7 @@ def test_execute_failure_when_update_question_fails(
 
     # テスト実行と例外の検証
     with pytest.raises(Exception):
-        get_feedback_usecase.execute(request)
+        get_response_usecase.execute(request)
 
     # リポジトリの呼び出し確認
     mock_interview_repository.get_question.assert_called_once_with(

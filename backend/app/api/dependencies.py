@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from fastapi import Depends
+
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
@@ -10,11 +12,10 @@ from app.infrastructure.repositories.firestore.interview_repository import (
 from app.infrastructure.repositories.local.source_code_repository import (
     LocalSourceCodeRepository,
 )
-from app.usecase.usecases.get_feedback_usecase import GetFeedbackUseCase
 from app.usecase.usecases.get_interview_result_usecase import GetInterviewResultUseCase
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
+from app.usecase.usecases.get_response_usecase import GetResponseUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
-from fastapi import Depends
 
 
 def get_interview_repository() -> InterviewRepository:
@@ -42,12 +43,12 @@ def get_set_up_interview_usecase(
     )
 
 
-def get_feedback_usecase(
+def get_response_usecase(
     interview_repository: InterviewRepository = Depends(get_interview_repository),
     source_code_repository: SourceCodeRepository = Depends(get_source_code_repository),
     llm_client: LLMClient = Depends(get_llm_client),
-) -> GetFeedbackUseCase:
-    return GetFeedbackUseCase(
+) -> GetResponseUseCase:
+    return GetResponseUseCase(
         interview_repository=interview_repository,
         source_code_repository=source_code_repository,
         llm_client=llm_client,
