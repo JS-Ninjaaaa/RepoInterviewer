@@ -28,9 +28,7 @@ const CharacterSelectCards: React.FC<Props> = ({ currentCharacter }) => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "space-between",
-        height: 600,
-        width: 600,
-        maxWidth: "80vw",
+        width: "100%",
         borderRadius: 2,
         background: theme.gradients.secondary.main,
         p: 1.5,
@@ -48,7 +46,7 @@ const CharacterSelectCards: React.FC<Props> = ({ currentCharacter }) => {
           backgroundColor: (theme) => theme.palette.background.default,
           textAlign: "center",
           px: 2,
-          height: "280px",
+          maxHeight: "40vw",
           width: "100%",
         }}
       >
@@ -117,7 +115,7 @@ const CharacterSelectCards: React.FC<Props> = ({ currentCharacter }) => {
           }}
         />
       </Box>
-      <Typography sx={{ color: textColor, my: 3, fontSize: "18px" }}>
+      <Typography sx={{ color: textColor, my: 2, fontSize: "18px" }}>
         {currentCharacter.title}
       </Typography>
       <Box
@@ -164,7 +162,7 @@ const CharacterSelectCards: React.FC<Props> = ({ currentCharacter }) => {
           alignItems: "center",
           fontSize: "14px",
           color: textColor,
-          m: 4,
+          m: 2,
           gap: 2,
         }}
       >

@@ -4,14 +4,13 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 
 const IconWrapper = styled(Box)({
-  width: 56,
-  height: 56,
+  width: "64px",
+  height: "64px",
   borderRadius: 12,
   backgroundColor: "hsla(53, 100%, 51.4%, 0.17)",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  mb: 1,
 });
 
 const items = [
@@ -21,13 +20,39 @@ const items = [
 ];
 
 const FeatureGrid = () => (
-  <Stack direction="row" spacing={6} justifyContent="center" mb={4}>
+  <Stack
+    sx={{
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      mb: 4,
+      gap: 6,
+    }}
+  >
     {items.map(({ label, Icon, color }) => (
-      <Box key={label} textAlign="center">
+      <Box
+        key={label}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          mt: 2,
+          gap: 1,
+        }}
+      >
         <IconWrapper>
           <Icon sx={{ color, fontSize: 28 }} />
         </IconWrapper>
-        <Typography variant="body2">{label}</Typography>
+        <Typography
+          sx={{
+            fontSize: "16px",
+          }}
+        >
+          {label}
+        </Typography>
       </Box>
     ))}
   </Stack>

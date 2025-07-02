@@ -13,6 +13,8 @@ const CommonThemeBox: React.FC<BoxProps> = ({ sx, ...props }) => {
         bgcolor: (theme) => theme.palette.background.default,
         overflow: "hidden",
         width: "80%",
+        whiteSpace: "pre-wrap",
+        wordBreak: "break-word",
         "&::before": {
           content: '""',
           position: "absolute",

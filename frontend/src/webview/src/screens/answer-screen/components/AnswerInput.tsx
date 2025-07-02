@@ -51,12 +51,12 @@ const AnswerInput: React.FC = () => {
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
-          height: "90px",
+          alignItems: "flex-end",
           width: "100%",
           justifyContent: "space-between",
           backgroundColor: (theme) => theme.palette.background.paper,
-          p: 4,
+          py: 3,
+          px: 4,
           gap: 2,
           boxShadow: (theme) =>
             theme.palette.mode === "light"
@@ -74,6 +74,9 @@ const AnswerInput: React.FC = () => {
                 handleButtonClick();
               }
             }}
+            multiline
+            minRows={1}
+            maxRows={5}
             fullWidth
             sx={{
               flex: 1,
@@ -83,10 +86,17 @@ const AnswerInput: React.FC = () => {
               borderRadius: "8px",
               fontSize: 16,
               px: 2,
-              py: "4px",
-              "& input::placeholder": {
+              py: 1,
+              overflowY: "auto",
+              "& textarea": {
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": {
+                  width: 0,
+                  height: 0,
+                },
+              },
+              "& textarea::placeholder": {
                 color: (theme) => theme.palette.text.disabled,
-                opacity: 1,
               },
             }}
           />

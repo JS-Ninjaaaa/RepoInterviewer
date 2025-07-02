@@ -23,7 +23,12 @@ const TitleFooter = () => {
         ▶ START APP
       </CommonThemeButton>
 
-      <Typography variant="caption" color="grey.600">
+      <Typography
+        sx={{
+          color: (theme) => theme.palette.primary.light,
+          fontSize: "16px",
+        }}
+      >
         💡 Make sure your repository is open in VSCode
       </Typography>
     </>
