@@ -44,6 +44,6 @@ export function mapGeneralFeedback(
 ): GeneralFeedback {
   return {
     scores: src.scores,
-    generalReview: src.general_review,
+    generalReview: src.overall_review,
   };
 }
