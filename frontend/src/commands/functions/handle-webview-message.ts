@@ -17,25 +17,25 @@ export async function handleWebviewMessage(
     case "fetchFileList": {
       const uris = await getFilteredFiles();
       const root = vscode.workspace.workspaceFolders?.[0].uri.fsPath!;
-      const rels = uris.map(u =>
+      const rels = uris.map((u) =>
         vscode.workspace.asRelativePath(u).replace(/\\/g, "/")
       );
       panel.webview.postMessage({ type: "fileList", payload: rels });
       break;
     }
-    
+
     case "fetchFirstQuestion": {
       try {
         const blob = await fetchFiles(message.payload.selectedFiles);
         const questionInfo = await fetchFirstQuestion(blob, message.payload);
         panel.webview.postMessage({
           type: "firstQuestion",
-          payload: questionInfo
+          payload: questionInfo,
         });
       } catch (err) {
         panel.webview.postMessage({
           type: "error",
-          payload: err instanceof Error ? err.message : String(err)
+          payload: err instanceof Error ? err.message : String(err),
         });
       }
       break;
