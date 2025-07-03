@@ -1,6 +1,9 @@
+import os
+import secrets
 from pathlib import Path
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
@@ -16,6 +19,32 @@ from app.usecase.usecases.get_interview_result_usecase import GetInterviewResult
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
 from app.usecase.usecases.get_response_usecase import GetResponseUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
+
+bearer = HTTPBearer()
+
+
+def verify_token(token: HTTPAuthorizationCredentials = Depends(bearer)) -> bool:
+    TESTING = os.getenv("TESTING")
+
+    if TESTING is not None:
+        return True
+
+    API_TOKEN = os.getenv("API_TOKEN")
+
+    if API_TOKEN is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="API_TOKENが設定されていません",
+        )
+
+    # タイミング攻撃を防ぐため
+    if not secrets.compare_digest(token.credentials, API_TOKEN):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="トークンが不正です",
+        )
+
+    return True
 
 
 def get_interview_repository() -> InterviewRepository:
