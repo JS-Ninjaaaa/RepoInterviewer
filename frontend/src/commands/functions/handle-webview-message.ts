@@ -5,7 +5,7 @@ import {
   fetchFeedBack,
   fetchGeneralFeedback,
 } from "../api/api";
-import { fetchFiles } from "./fetch-files";
+import { fetchFiles, getFilteredFiles } from "./fetch-files";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
 import type { VscodeApiResponseValue } from "@shared/vscode-api-response-value";
 
@@ -14,25 +14,31 @@ export async function handleWebviewMessage(
   message: VscodeApiRequestValue
 ) {
   switch (message.type) {
+    case "fetchFileList": {
+      const uris = await getFilteredFiles();
+      const root = vscode.workspace.workspaceFolders?.[0].uri.fsPath!;
+      const rels = uris.map(u =>
+        vscode.workspace.asRelativePath(u).replace(/\\/g, "/")
+      );
+      panel.webview.postMessage({ type: "fileList", payload: rels });
+      break;
+    }
+    
     case "fetchFirstQuestion": {
-      const zipBlob: Blob = await fetchFiles();
       try {
-        const questionInfo = await fetchFirstQuestion(zipBlob, message.payload);
-
-        const responseMessage: VscodeApiResponseValue = {
+        const blob = await fetchFiles(message.payload.selectedFiles);
+        const questionInfo = await fetchFirstQuestion(blob, message.payload);
+        panel.webview.postMessage({
           type: "firstQuestion",
-          payload: questionInfo,
-        };
-        panel.webview.postMessage(responseMessage);
-
-        break;
-      } catch (err: unknown) {
+          payload: questionInfo
+        });
+      } catch (err) {
         panel.webview.postMessage({
           type: "error",
-          payload: err || "不明なエラー",
+          payload: err instanceof Error ? err.message : String(err)
         });
-        return null;
       }
+      break;
     }
 
     case "fetchNextQuestion": {

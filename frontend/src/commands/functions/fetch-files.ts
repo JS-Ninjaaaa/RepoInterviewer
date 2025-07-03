@@ -4,19 +4,16 @@ import JSZip from "jszip";
 import { spawn } from "child_process";
 import { mensetsuIgnoreFiles } from "../data/mensetsuignore";
 
-export async function fetchFiles(): Promise<Blob> {
-  const files = await getFilteredFiles(); // ファイルパスをすべて探す
-  const zip = new JSZip(); // ファイルをフィルターして中身を取り出しzipファイルにする
-
-  for (const file of files) {
-    const bytes = await vscode.workspace.fs.readFile(file);
+export async function fetchFiles(selected: string[]): Promise<Blob> {
+  const rootFolder = vscode.workspace.workspaceFolders![0].uri.fsPath;
+  const zip = new JSZip();
+  for (const rel of selected) {
+    const abs = vscode.Uri.file(path.join(rootFolder, rel));
+    const bytes = await vscode.workspace.fs.readFile(abs);
     const content = new TextDecoder("utf-8").decode(bytes);
-    const rel = vscode.workspace.asRelativePath(file);
     zip.file(rel, content);
   }
-
-  const blob = await zip.generateAsync({ type: "blob" });
-  return blob;
+  return zip.generateAsync({ type: "blob" });
 }
 
 export async function getFilteredFiles(): Promise<vscode.Uri[]> {
