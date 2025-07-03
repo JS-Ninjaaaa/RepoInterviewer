@@ -5,13 +5,19 @@ import { useLoading } from "@/screens/context/LoadingContext";
 import CommonThemeButton from "../components/CommonThemeButton";
 import FileList from "@/screens/file-select-screen/components/FileList";
 
+interface VSCodeAPI {
+  postMessage(message: { type: string; payload?: unknown }): void;
+  getState(): unknown;
+  setState(state: unknown): void;
+}
+
 interface Props {
   vscode: VSCodeAPI;
 }
 
 export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
   const [fileList, setFileList] = useState<string[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+  const [ignoreFiles, setIgnoreFiles] = useState<string[]>([]);
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
 
@@ -23,9 +29,13 @@ export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
   useEffect(() => {
     const handler = (e: MessageEvent) => {
       if (e.data.type === "fileList") {
-        console.log("File was sent", e.data.payload);
         hideLoading();
-        setFileList(e.data.payload as string[]);
+        const pastFileList = e.data.payload as string[];
+        setFileList(pastFileList);
+        // 前回の選択状況を再現する
+        const state = vscode.getState() as { ignoreFiles?: string[] };
+        const init = state?.ignoreFiles ?? [];
+        setIgnoreFiles(init.filter((f) => pastFileList.includes(f)));
       }
     };
     window.addEventListener("message", handler);
@@ -33,15 +43,21 @@ export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
   }, []);
 
   const toggleFile = (file: string) => {
-    setSelectedFiles((prev) =>
-      prev.includes(file) ? prev.filter((f) => f !== file) : [...prev, file]
-    );
+    setIgnoreFiles((prev) => {
+      const updated = prev.includes(file)
+        ? prev.filter((f) => f !== file)
+        : [...prev, file];
+
+      vscode.setState({ ignoreFiles: updated });
+      localStorage.setItem("ignoreFiles", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const handleSave = () => {
-    // selectedFiles に含まれないファイル一覧を作る
-    const nonSelected = fileList.filter((f) => !selectedFiles.includes(f));
-    navigate("/start", { state: { excludedFiles: nonSelected } });
+    // ignoreFiles に含まれないファイル一覧を作る
+    const selectedFiles = fileList.filter((f) => !ignoreFiles.includes(f));
+    navigate("/start", { state: { selectedFiles } });
   };
 
   return (
@@ -75,7 +91,7 @@ export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
 
         <FileList
           paths={fileList}
-          selected={selectedFiles}
+          selected={ignoreFiles}
           onToggle={toggleFile}
         />
         <CommonThemeButton onClick={handleSave} sx={{ px: 4 }}>

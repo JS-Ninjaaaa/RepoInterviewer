@@ -49,6 +49,7 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
   const handleStartInterview = () => {
     showLoading("質問を生成中…");
     console.log(selectedFiles);
+    console.log("These are selected files", selectedFiles);
     const msg: VscodeApiRequestValue = {
       type: "fetchFirstQuestion",
       payload: {
