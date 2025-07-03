@@ -16,17 +16,17 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import CommonThemeBox from "@/screens/components/CommonThemeBox";
 
-type Props = {
-  paths: string[];
-  selected: string[];
-  onToggle: (full: string) => void;
+type FileListProps = {
+  filePaths: string[];
+  ignoreFiles: string[];
+  onFileToggle: (filePaths: string) => void;
 };
 
-type Group = { folder: string; files: string[] };
+type FileGroup = { directory: string; fileNames: string[] };
 
-function groupByFolder(paths: string[]): Group[] {
+function groupByDirectory(filePaths: string[]): FileGroup[] {
   const map = new Map<string, string[]>();
-  paths.forEach((p) => {
+  filePaths.forEach((p) => {
     const idx = p.lastIndexOf("/");
     const dir = idx === -1 ? "" : p.slice(0, idx);
     const file = p.slice(idx + 1);
@@ -34,24 +34,33 @@ function groupByFolder(paths: string[]): Group[] {
     arr.push(file);
     map.set(dir, arr);
   });
-  return Array.from(map, ([folder, files]) => ({ folder, files }));
+  return Array.from(map, ([directory, fileNames]) => ({
+    directory,
+    fileNames,
+  }));
 }
 
-const FileList: React.FC<Props> = ({ paths, selected, onToggle }) => {
+const FileList: React.FC<FileListProps> = ({
+  filePaths,
+  ignoreFiles,
+  onFileToggle,
+}) => {
   const theme = useTheme();
-  const groups = useMemo(() => groupByFolder(paths), [paths]);
+  const groups = useMemo(() => groupByDirectory(filePaths), [filePaths]);
 
-  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const [fileToggleOpen, setFileToggleOpen] = useState<Record<string, boolean>>(
+    {}
+  );
   useEffect(() => {
     const initial: Record<string, boolean> = {};
     groups.forEach((g) => {
-      initial[g.folder] = true;
+      initial[g.directory] = true;
     });
-    setOpen(initial);
+    setFileToggleOpen(initial);
   }, [groups]);
 
-  const toggleFolder = (folder: string) => {
-    setOpen((prev) => ({ ...prev, [folder]: !prev[folder] }));
+  const toggleFolder = (directory: string) => {
+    setFileToggleOpen((prev) => ({ ...prev, [directory]: !prev[directory] }));
   };
 
   return (
@@ -83,19 +92,21 @@ const FileList: React.FC<Props> = ({ paths, selected, onToggle }) => {
         }}
       >
         <List disablePadding>
-          {groups.map(({ folder, files }) => {
-            const fullPaths = files.map((f) => (folder ? `${folder}/${f}` : f));
-            const allSelected = fullPaths.every((p) => selected.includes(p));
-            const someSelected = fullPaths.some((p) => selected.includes(p));
+          {groups.map(({ directory, fileNames }) => {
+            const fullPaths = fileNames.map((f) =>
+              directory ? `${directory}/${f}` : f
+            );
+            const allSelected = fullPaths.every((p) => ignoreFiles.includes(p));
+            const someSelected = fullPaths.some((p) => ignoreFiles.includes(p));
 
             return (
-              <React.Fragment key={folder || "__root__"}>
+              <React.Fragment key={directory || "__root__"}>
                 <ListSubheader disableSticky sx={{ pl: 0, bgcolor: "inherit" }}>
                   <ListItemButton
                     disableRipple
                     disableTouchRipple
                     sx={{ color: (theme) => theme.palette.text.primary }}
-                    onClick={() => toggleFolder(folder)}
+                    onClick={() => toggleFolder(directory)}
                   >
                     <Checkbox
                       edge="start"
@@ -109,11 +120,11 @@ const FileList: React.FC<Props> = ({ paths, selected, onToggle }) => {
                       onChange={() => {
                         if (allSelected) {
                           fullPaths.forEach(
-                            (p) => selected.includes(p) && onToggle(p)
+                            (p) => ignoreFiles.includes(p) && onFileToggle(p)
                           );
                         } else {
                           fullPaths.forEach(
-                            (p) => !selected.includes(p) && onToggle(p)
+                            (p) => !ignoreFiles.includes(p) && onFileToggle(p)
                           );
                         }
                       }}
@@ -128,22 +139,26 @@ const FileList: React.FC<Props> = ({ paths, selected, onToggle }) => {
                       }}
                     />
                     <Typography sx={{ flex: 1 }}>
-                      {folder || "(root)"}
+                      {directory || "(root)"}
                     </Typography>
-                    {open[folder] ? <ExpandLess /> : <ExpandMore />}
+                    {fileToggleOpen[directory] ? (
+                      <ExpandLess />
+                    ) : (
+                      <ExpandMore />
+                    )}
                   </ListItemButton>
                 </ListSubheader>
 
                 <Collapse
-                  in={Boolean(open[folder])}
+                  in={Boolean(fileToggleOpen[directory])}
                   timeout="auto"
                   unmountOnExit
                 >
-                  {files.map((f) => {
-                    const full = folder ? `${folder}/${f}` : f;
+                  {fileNames.map((f) => {
+                    const filePaths = directory ? `${directory}/${f}` : f;
                     return (
                       <ListItemButton
-                        key={full}
+                        key={filePaths}
                         disableRipple
                         disableTouchRipple
                         dense
@@ -151,13 +166,13 @@ const FileList: React.FC<Props> = ({ paths, selected, onToggle }) => {
                           pl: 4,
                           color: (theme) => theme.palette.text.primary,
                         }}
-                        onClick={() => onToggle(full)}
+                        onClick={() => onFileToggle(filePaths)}
                       >
                         <Checkbox
                           edge="start"
                           size="small"
-                          checked={selected.includes(full)}
-                          onChange={() => onToggle(full)}
+                          checked={ignoreFiles.includes(filePaths)}
+                          onChange={() => onFileToggle(filePaths)}
                           onClick={(e) => e.stopPropagation()}
                           icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                           checkedIcon={<CheckBoxIcon fontSize="small" />}

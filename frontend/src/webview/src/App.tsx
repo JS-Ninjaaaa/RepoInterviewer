@@ -44,7 +44,10 @@ const AppContent: React.FC<AppContentProps> = ({ characters }) => {
       <MemoryRouter initialEntries={["/title"]}>
         <Routes>
           <Route path="/title" element={<TitleScreen />} />
-          <Route path="/select" element={<SelectFileScreen vscode={vscode} />} />
+          <Route
+            path="/select-files"
+            element={<SelectFileScreen vscode={vscode} />}
+          />
           <Route
             path="/start"
             element={

@@ -8,7 +8,7 @@ const TitleFooter = () => {
     <>
       <CommonThemeButton
         size="large"
-        onClick={() => navigate("/select")}
+        onClick={() => navigate("/select-files")}
         sx={{
           mb: 2,
           padding: "12px 48px",

@@ -4,6 +4,7 @@ import { Box, Typography } from "@mui/material";
 import { useLoading } from "@/screens/context/LoadingContext";
 import CommonThemeButton from "../components/CommonThemeButton";
 import FileList from "@/screens/file-select-screen/components/FileList";
+import { GradientText } from "../title-screen/components/TitleHeader";
 
 interface VSCodeAPI {
   postMessage(message: { type: string; payload?: unknown }): void;
@@ -16,7 +17,7 @@ interface Props {
 }
 
 export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
-  const [fileList, setFileList] = useState<string[]>([]);
+  const [filePaths, setFileList] = useState<string[]>([]);
   const [ignoreFiles, setIgnoreFiles] = useState<string[]>([]);
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
     return () => window.removeEventListener("message", handler);
   }, []);
 
-  const toggleFile = (file: string) => {
+  const onFileToggle = (file: string) => {
     setIgnoreFiles((prev) => {
       const updated = prev.includes(file)
         ? prev.filter((f) => f !== file)
@@ -56,7 +57,7 @@ export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
 
   const handleSave = () => {
     // ignoreFiles に含まれないファイル一覧を作る
-    const selectedFiles = fileList.filter((f) => !ignoreFiles.includes(f));
+    const selectedFiles = filePaths.filter((f) => !ignoreFiles.includes(f));
     navigate("/start", { state: { selectedFiles } });
   };
 
@@ -87,14 +88,26 @@ export const SelectFilesScreen: React.FC<Props> = ({ vscode }) => {
           px: 4,
         }}
       >
-        <Typography sx={{ fontSize: 36 }}>面接除外ファイル選択</Typography>
-
+        <Typography sx={{ fontWeight: "bold", fontSize: "36px" }}>
+          <GradientText>面接除外ファイル選択</GradientText>
+        </Typography>
         <FileList
-          paths={fileList}
-          selected={ignoreFiles}
-          onToggle={toggleFile}
+          filePaths={filePaths}
+          ignoreFiles={ignoreFiles}
+          onFileToggle={onFileToggle}
         />
-        <CommonThemeButton onClick={handleSave} sx={{ px: 4 }}>
+        <CommonThemeButton
+          onClick={handleSave}
+          sx={{
+            padding: "12px 48px",
+            fontWeight: "bold",
+            mb: 4,
+            boxShadow: (theme) =>
+              theme.palette.mode === "dark"
+                ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
+                : "0px 6px 16px rgba(0, 0, 0, 0.15)",
+          }}
+        >
           次へ
         </CommonThemeButton>
       </Box>
