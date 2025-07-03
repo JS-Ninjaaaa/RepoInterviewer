@@ -4,7 +4,7 @@ import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
-from app.api.dependencies import get_response_usecase
+from app.api.dependencies import get_response_usecase, verify_token
 from app.usecase.dtos.interview_dto import (
     GetResponseRequest,
     GetResponseResponse,
@@ -23,6 +23,7 @@ chat_response = "良い回答です"
 @pytest.fixture
 def mock_get_response_usecase():
     mock_usecase = MagicMock(spec=GetResponseUseCase)
+    app.dependency_overrides[verify_token] = lambda: True
     app.dependency_overrides[get_response_usecase] = lambda: mock_usecase
     return mock_usecase
 
