@@ -36,6 +36,7 @@ export const createAppTheme = (mode: PaletteMode) =>
         default: mode === "dark" ? "#0f1121" : "#ffffff",
         paper: mode === "dark" ? "#1c2a42" : "#ffffff",
         nav: mode === "dark" ? "#1c2a42" : "#d9d9d9",
+        reverse: mode === "dark" ? "#ffffff" : "#0f1121",
       },
       text: {
         primary: mode === "dark" ? "#ffffff" : "#000000",

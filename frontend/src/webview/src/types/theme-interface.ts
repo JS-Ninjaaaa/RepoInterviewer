@@ -28,5 +28,6 @@ declare module "@mui/material/styles" {
   }
   interface TypeBackground {
     nav: string;
+    reverse: string;
   }
 }
