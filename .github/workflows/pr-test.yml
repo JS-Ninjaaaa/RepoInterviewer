@@ -5,14 +5,14 @@ on:
     branches:
       - main
       - develop
-  workflow_dispatch:  # テスト用（手動）
+  workflow_dispatch:
 
 jobs:
   test-backend:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend  # backendフォルダで実行
+        working-directory: backend
 
     steps:
       - name: Checkout code
@@ -22,14 +22,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'  # 要求レベル最低version
-      # uvを使った環境構築
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
         with:
           enable-cache: true
+
       - name: Create venv and Install dependencies
-        run: uv sync --dev # --dev をつけることで dev グループの依存関係もインストール
+        run: uv sync --dev # dev グループの依存関係もインストール
+
       - name: Run Tests
         run: |
           export PYTHONPATH=$(pwd) # 現在のワーキングディレクトリ (backend) を PYTHONPATH に設定
           uv run pytest tests
+        env:
+          TESTING: "true"
