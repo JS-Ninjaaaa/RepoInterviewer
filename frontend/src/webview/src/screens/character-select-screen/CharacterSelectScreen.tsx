@@ -47,7 +47,7 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
     setCharacterIndex((i) => (i + 1) % characters.length);
 
   const handleStartInterview = () => {
-    showLoading("質問を生成中…");
+    showLoading("質問を生成中・・・");
     const msg: VscodeApiRequestValue = {
       type: "fetchFirstQuestion",
       payload: {
@@ -115,7 +115,18 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
         </Box>
 
         <Box mt={4} display="flex" flexDirection="column" alignItems="center">
-          <CommonThemeButton onClick={handleStartInterview}>
+          <CommonThemeButton
+            onClick={handleStartInterview}
+            sx={{
+              padding: "12px 48px",
+              fontWeight: "bold",
+              mb: 4,
+              boxShadow: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
+                  : "0px 6px 16px rgba(0, 0, 0, 0.15)",
+            }}
+          >
             START INTERVIEW
           </CommonThemeButton>
         </Box>

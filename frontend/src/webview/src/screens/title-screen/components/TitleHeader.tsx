@@ -1,10 +1,11 @@
 import { Box, Typography, styled } from "@mui/material";
 
-const GradientText = styled("span")(({ theme }) => ({
-  background: theme.gradients.primary,
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-}));
+export const GradientText: React.FC<React.HTMLAttributes<HTMLSpanElement>> =
+  styled("span")(({ theme }) => ({
+    background: theme.gradients.primary,
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+  }));
 
 const TitleHeader = () => {
   return (
