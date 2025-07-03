@@ -16,8 +16,7 @@ from app.usecase.usecases.get_interview_result_usecase import GetInterviewResult
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
 from app.usecase.usecases.get_response_usecase import GetResponseUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
-import os
-from app.infrastructure.llm_clients.token_auth import get_tokens_from_secret_manager
+import os, secrets
 
 
 
@@ -76,30 +75,26 @@ def get_overall_review_usecase(
         llm_client=llm_client,
     )
 
-http_bearer = HTTPBearer(auto_error=False)
+bearer = HTTPBearer(auto_error=False)
 
-def get_valid_tokens() -> str:
+def verify_token(token: HTTPAuthorizationCredentials = Depends(bearer)) -> bool:
     env = os.getenv("ENV", "prod").lower()
     if env == "local":
-        return ""
-    return get_tokens_from_secret_manager()
+        return True
+    # on deploy or prod test
+    API_TOKEN = os.getenv("API_TOKEN")
 
-def verify_api_token(credentials: HTTPAuthorizationCredentials = Depends(http_bearer)):
-    tokens = get_valid_tokens()
-    # ローカルなら認証スキップ
-    if os.getenv("ENV", "prod").lower() == "local":
-        return
-    # トークンが存在しない場合
-    if credentials is None:
+    if API_TOKEN is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="API_TOKENが設定されていません",
+        )
+
+    # タイミング攻撃を防ぐため
+    if not secrets.compare_digest(token.credentials, API_TOKEN):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authentication credentials were not provided.",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="トークンが不正です",
         )
-    # トークンの認証
-    if credentials.credentials not in tokens:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid or expired token.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+
+    return True
