@@ -24,11 +24,6 @@ bearer = HTTPBearer()
 
 
 def verify_token(token: HTTPAuthorizationCredentials = Depends(bearer)) -> bool:
-    TESTING = os.getenv("TESTING")
-
-    if TESTING is not None:
-        return True
-
     API_TOKEN = os.getenv("API_TOKEN")
 
     if API_TOKEN is None:
