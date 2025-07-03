@@ -35,5 +35,3 @@ jobs:
         run: |
           export PYTHONPATH=$(pwd) # 現在のワーキングディレクトリ (backend) を PYTHONPATH に設定
           uv run pytest tests
-        env:
-          TESTING: "true"
