@@ -78,8 +78,8 @@ def get_overall_review_usecase(
 bearer = HTTPBearer(auto_error=False)
 
 def verify_token(token: HTTPAuthorizationCredentials = Depends(bearer)) -> bool:
-    env = os.getenv("ENV", "prod").lower()
-    if env == "local":
+    ENV = os.getenv("ENV", "prod").lower()
+    if ENV == "test":
         return True
     # on deploy or prod test
     API_TOKEN = os.getenv("API_TOKEN")
@@ -89,12 +89,10 @@ def verify_token(token: HTTPAuthorizationCredentials = Depends(bearer)) -> bool:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="API_TOKENが設定されていません",
         )
-
     # タイミング攻撃を防ぐため
     if not secrets.compare_digest(token.credentials, API_TOKEN):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="トークンが不正です",
         )
-
     return True
