@@ -1,7 +1,7 @@
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import { Box, Typography } from "@mui/material";
 
-const SurveyLink = () => {
+const SurveyFormLink = () => {
   return (
     <Box
       component="a"
@@ -38,4 +38,4 @@ const SurveyLink = () => {
   );
 };
 
-export default SurveyLink;
+export default SurveyFormLink;

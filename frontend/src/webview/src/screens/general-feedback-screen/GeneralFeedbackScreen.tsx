@@ -1,6 +1,6 @@
 import FeedbackBox from "@/screens/general-feedback-screen/components/FeedbackBox";
 import Footer from "@/screens/general-feedback-screen/components/Footer";
-import SurveyLink from "@/screens/general-feedback-screen/components/SurveyLink";
+import SurveyFormLink from "@/screens/general-feedback-screen/components/SurveyLink";
 import { Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import ScoreAndCharacter from "./components/ScoreAndCharacter";
@@ -32,7 +32,7 @@ const GeneralFeedbackScreen = ({ vscode }: GeneralFeedbackScreenProps) => {
 
       <FeedbackBox generalReview={generalReview} />
 
-      <SurveyLink />
+      <SurveyFormLink />
 
       <Footer vscode={vscode} />
     </Box>
