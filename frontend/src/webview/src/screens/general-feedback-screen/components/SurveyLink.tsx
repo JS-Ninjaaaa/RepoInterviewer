@@ -12,7 +12,7 @@ const SurveyLink = () => {
         display: "inline-flex",
         alignItems: "center",
         gap: 1.2,
-        textDecoration: "none",
+        textDecoration: "none", // リンクの下線を消す
         bgcolor: (theme) => theme.palette.primary.main,
         color: "#fff",
         px: 2.5,
