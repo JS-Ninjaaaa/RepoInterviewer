@@ -1,20 +1,20 @@
-import React, { useMemo, useState, useEffect } from "react";
+import CommonThemeBox from "@/screens/components/CommonThemeBox";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import {
   Box,
-  List,
-  ListSubheader,
-  ListItemButton,
   Checkbox,
   Collapse,
+  List,
+  ListItemButton,
+  ListSubheader,
   Typography,
   useTheme,
 } from "@mui/material";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
-import CommonThemeBox from "@/screens/components/CommonThemeBox";
+import React, { useEffect, useMemo, useState } from "react";
 
 type FileListProps = {
   filePaths: string[];
@@ -25,16 +25,16 @@ type FileListProps = {
 type FileGroup = { directory: string; fileNames: string[] };
 
 function groupByDirectory(filePaths: string[]): FileGroup[] {
-  const map = new Map<string, string[]>();
+  const directoryToFilesMap = new Map<string, string[]>();
   filePaths.forEach((p) => {
     const idx = p.lastIndexOf("/");
     const dir = idx === -1 ? "" : p.slice(0, idx);
     const file = p.slice(idx + 1);
-    const arr = map.get(dir) ?? [];
-    arr.push(file);
-    map.set(dir, arr);
+    const filesInDirectory = directoryToFilesMap.get(dir) ?? [];
+    filesInDirectory.push(file);
+    directoryToFilesMap.set(dir, filesInDirectory);
   });
-  return Array.from(map, ([directory, fileNames]) => ({
+  return Array.from(directoryToFilesMap, ([directory, fileNames]) => ({
     directory,
     fileNames,
   }));
@@ -52,11 +52,11 @@ const FileList: React.FC<FileListProps> = ({
     {}
   );
   useEffect(() => {
-    const initial: Record<string, boolean> = {};
+    const initialFileToggleState: Record<string, boolean> = {};
     groups.forEach((g) => {
-      initial[g.directory] = true;
+      initialFileToggleState[g.directory] = true;
     });
-    setFileToggleOpen(initial);
+    setFileToggleOpen(initialFileToggleState);
   }, [groups]);
 
   const toggleFolder = (directory: string) => {
