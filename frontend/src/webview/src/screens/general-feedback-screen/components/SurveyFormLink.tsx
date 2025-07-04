@@ -14,7 +14,7 @@ const SurveyFormLink = () => {
         gap: 1.2,
         textDecoration: "none", // リンクの下線を消す
         bgcolor: (theme) => theme.palette.primary.main,
-        color: "#fff",
+        color: (theme) => theme.palette.primary.contrastText,
         px: 2.5,
         py: 1.2,
         borderRadius: 2,
@@ -30,8 +30,19 @@ const SurveyFormLink = () => {
         },
       }}
     >
-      <FeedbackIcon sx={{ fontSize: 24, color: "#fff" }} />
-      <Typography variant="body1" sx={{ fontWeight: 700, color: "#fff" }}>
+      <FeedbackIcon
+        sx={{
+          fontSize: 24,
+          color: (theme) => theme.palette.primary.contrastText,
+        }}
+      />
+      <Typography
+        variant="body1"
+        sx={{
+          fontWeight: 700,
+          color: (theme) => theme.palette.primary.contrastText,
+        }}
+      >
         アンケートにご協力ください
       </Typography>
     </Box>

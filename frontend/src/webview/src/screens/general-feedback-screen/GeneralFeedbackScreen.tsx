@@ -1,6 +1,6 @@
 import FeedbackBox from "@/screens/general-feedback-screen/components/FeedbackBox";
 import Footer from "@/screens/general-feedback-screen/components/Footer";
-import SurveyFormLink from "@/screens/general-feedback-screen/components/SurveyLink";
+import SurveyFormLink from "@/screens/general-feedback-screen/components/SurveyFormLink";
 import { Box } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import ScoreAndCharacter from "./components/ScoreAndCharacter";
