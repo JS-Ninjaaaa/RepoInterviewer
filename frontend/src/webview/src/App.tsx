@@ -13,6 +13,7 @@ import GeneralFeedbackScreen from "@/screens/general-feedback-screen/GeneralFeed
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
 import ModeToggleButton from "@/components/ModeToggleButton";
+import SelectFileScreen from "@/screens/file-select-screen/SelectFileScreen";
 
 declare global {
   interface Window {
@@ -43,6 +44,10 @@ const AppContent: React.FC<AppContentProps> = ({ characters }) => {
       <MemoryRouter initialEntries={["/title"]}>
         <Routes>
           <Route path="/title" element={<TitleScreen />} />
+          <Route
+            path="/select-files"
+            element={<SelectFileScreen vscode={vscode} />}
+          />
           <Route
             path="/start"
             element={

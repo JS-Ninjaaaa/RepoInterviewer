@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, IconButton, Button, useTheme } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box, IconButton, useTheme } from "@mui/material";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import { useLoading } from "@/screens/context/LoadingContext";
 import type { Character } from "@/types/character";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
@@ -26,11 +25,14 @@ declare global {
 }
 
 const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
+  const location = useLocation();
+  const { selectedFiles = [] } =
+    (location.state as { selectedFiles?: string[] }) || {};
+
   const [characterIndex, setCharacterIndex] = useState(0);
   const currentCharacter = characters[characterIndex];
   const theme = useTheme();
   const textColor = theme.palette.text.primary;
-
   const bgUrl =
     theme.palette.mode === "dark"
       ? currentCharacter.darkBackground
@@ -51,6 +53,7 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
       payload: {
         difficulty: currentCharacter.level,
         totalQuestion: currentCharacter.totalQuestion,
+        selectedFiles,
       },
     };
     vscode.postMessage(msg);
@@ -78,67 +81,40 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
     <>
       <Box
         sx={{
-          color: textColor,
           backgroundImage: `url(${bgUrl})`,
-          width: "100%",
-          maxHeight: "100vh",
           position: "absolute",
           left: 0,
+          width: "100%",
+          height: "100vh",
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+      />
+
+      <Box
+        sx={{
+          position: "relative",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          color: textColor,
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 2,
-            height: "100vh",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              mt: 8,
-            }}
-          >
-            <IconButton onClick={handlePrev} sx={{ color: "#00c853" }}>
-              <ArrowLeftIcon
-                sx={{
-                  ml: "-16px", // アイコンの左右の余白を引っ込める
-                  mr: "-16px",
-                  fontSize: "64px",
-                }}
-              />
-            </IconButton>
+        <Box sx={{ display: "flex" }}>
+          <IconButton onClick={handlePrev} sx={{ color: "#00c853" }}>
+            <ArrowLeftIcon sx={{ ml: -2, mr: -2, fontSize: 64 }} />
+          </IconButton>
 
-            <CharacterSelectCards currentCharacter={currentCharacter} />
+          <CharacterSelectCards currentCharacter={currentCharacter} />
 
-            <IconButton onClick={handleNext} sx={{ color: "#3877ff" }}>
-              <ArrowRightIcon
-                sx={{
-                  ml: "-16px",
-                  mr: "-16px",
-                  fontSize: "64px",
-                }}
-              />
-            </IconButton>
-          </Box>
+          <IconButton onClick={handleNext} sx={{ color: "#3877ff" }}>
+            <ArrowRightIcon sx={{ ml: -2, mr: -2, fontSize: 64 }} />
+          </IconButton>
+        </Box>
 
-          <Button
-            variant="outlined"
-            sx={{
-              width: 160,
-              color: "black",
-              backgroundColor: "#d9d9d9",
-              p: 1,
-              my: 4,
-            }}
-          >
-            <TextSnippetIcon />
-            SELECT FILES
-          </Button>
+        <Box mt={4} display="flex" flexDirection="column" alignItems="center">
           <CommonThemeButton
             onClick={handleStartInterview}
             sx={{

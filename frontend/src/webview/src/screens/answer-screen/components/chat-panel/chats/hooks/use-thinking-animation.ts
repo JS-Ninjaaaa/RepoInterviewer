@@ -26,7 +26,7 @@ export function useThinkingAnimation(
       if (indexRef.current === null) return;
       animationIndex = (animationIndex + 1) % states.length;
 
-      setChatHistory(current => 
+      setChatHistory((current) =>
         current.map((m, i) =>
           i === indexRef.current
             ? { type: "thinking", dots: states[animationIndex] }

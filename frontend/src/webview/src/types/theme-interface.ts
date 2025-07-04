@@ -1,4 +1,3 @@
-
 import "@mui/material/styles";
 declare module "@mui/material/styles" {
   interface Palette {
@@ -28,5 +27,6 @@ declare module "@mui/material/styles" {
   }
   interface TypeBackground {
     nav: string;
+    reverse: string;
   }
 }

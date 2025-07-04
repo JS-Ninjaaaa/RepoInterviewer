@@ -1,4 +1,5 @@
 import {
+  FileList,
   FirstQuestion,
   NextQuestion,
   Feedback,
@@ -6,6 +7,7 @@ import {
 } from "./webview-api-response-type";
 
 export type VscodeApiResponseValue =
+  | { type: "fileList"; payload: FileList }
   | { type: "firstQuestion"; payload: FirstQuestion }
   | { type: "nextQuestion"; payload: NextQuestion }
   | { type: "feedback"; payload: Feedback }
