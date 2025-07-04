@@ -8,14 +8,27 @@ const TitleFooter = () => {
     <>
       <CommonThemeButton
         size="large"
-        onClick={() => navigate("/start")}
-        sx={{ mb: 2 }}
+        onClick={() => navigate("/select-files")}
+        sx={{
+          mb: 2,
+          padding: "12px 48px",
+          fontWeight: "bold",
+          boxShadow: (theme) =>
+            theme.palette.mode === "dark"
+              ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
+              : "0px 6px 16px rgba(0, 0, 0, 0.15)",
+        }}
         disableElevation
       >
         ▶ START APP
       </CommonThemeButton>
 
-      <Typography variant="caption" color="grey.600">
+      <Typography
+        sx={{
+          color: (theme) => theme.palette.primary.light,
+          fontSize: "16px",
+        }}
+      >
         💡 Make sure your repository is open in VSCode
       </Typography>
     </>

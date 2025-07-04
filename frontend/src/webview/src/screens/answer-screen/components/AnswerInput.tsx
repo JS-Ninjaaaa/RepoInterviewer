@@ -1,54 +1,121 @@
-import { Box, Button } from "@mui/material";
+import { Box, InputBase } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import NextIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import ResultIcon from "@mui/icons-material/DoneAll";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
+import type { BottomButtonState } from "@/types/action-button";
+import CommonThemeButton from "@/screens/components/CommonThemeButton";
+
+const labelMap: Record<BottomButtonState, string> = {
+  send: "send",
+  next: "next",
+  result: "result",
+};
+
+const iconMap: Record<BottomButtonState, React.ElementType> = {
+  send: SendIcon,
+  next: NextIcon,
+  result: ResultIcon,
+};
 
 const AnswerInput: React.FC = () => {
   const {
     chatInput,
     setChatInput,
     fetchFeedback,
+    fetchNextQuestion,
+    fetchGeneralFeedback,
     displayEnterBox,
-    currentCharacter,
+    bottomButtonState,
   } = useAnswerContext();
 
-  if (!displayEnterBox) return null;
+  const IconComponent = iconMap[bottomButtonState];
+  const iconLabel = labelMap[bottomButtonState];
+
+  const handleButtonClick = () => {
+    switch (bottomButtonState) {
+      case "send":
+        fetchFeedback();
+        break;
+      case "next":
+        fetchNextQuestion();
+        break;
+      case "result":
+        fetchGeneralFeedback();
+        break;
+    }
+  };
 
   return (
     <>
       <Box
-        component="textarea"
-        value={chatInput}
-        onChange={(e) => setChatInput(e.target.value)}
         sx={{
-          height: "100%",
-          minHeight: "80px",
-          border: "1px solid",
-          borderColor: currentCharacter.color[200],
-          borderRadius: 2,
-          fontSize: 20,
-          mb: 2,
-          mt: 4,
-          p: 2,
-          "&:focus": {
-            outline: "none",
-          },
+          display: "flex",
+          alignItems: "flex-end",
+          width: "100%",
+          justifyContent: "space-between",
+          backgroundColor: (theme) => theme.palette.background.paper,
+          py: 3,
+          px: 4,
+          gap: 2,
+          boxShadow: (theme) =>
+            theme.palette.mode === "light"
+              ? `0px -4px 8px ${theme.palette.shadowColor}`
+              : "none",
         }}
-      />
-      <Box sx={{ textAlign: "right" }}>
-        <Button onClick={fetchFeedback}>
-          <SendIcon
+      >
+        {displayEnterBox ? (
+          <InputBase
+            placeholder="Type your answer…"
+            value={chatInput}
+            onChange={(e) => setChatInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.ctrlKey && e.key === "Enter") {
+                handleButtonClick();
+              }
+            }}
+            multiline
+            minRows={1}
+            maxRows={5}
+            fullWidth
             sx={{
-              cursor: "pointer",
-              borderRadius: 2,
-              bgcolor: currentCharacter.color[400],
-              color: "white",
-              py: 1,
+              flex: 1,
+              border: 1,
+              borderColor: (theme) => theme.palette.text.disabled,
+              color: (theme) => theme.palette.text.disabled,
+              borderRadius: "8px",
+              fontSize: 16,
               px: 2,
-              fontSize: "28px",
-              boxShadow: 3,
+              py: 1,
+              overflowY: "auto",
+              "& textarea": {
+                scrollbarWidth: "none",
+                "&::-webkit-scrollbar": {
+                  width: 0,
+                  height: 0,
+                },
+              },
+              "& textarea::placeholder": {
+                color: (theme) => theme.palette.text.disabled,
+              },
             }}
           />
-        </Button>
+        ) : (
+          <Box sx={{ flex: 1 }} />
+        )}
+
+        <CommonThemeButton
+          type="submit"
+          onClick={handleButtonClick}
+          endIcon={<IconComponent sx={{ marginRight: "4px" }} />}
+          sx={{
+            fontSize: 16,
+            color: "white",
+            px: "12px",
+          }}
+        >
+          {iconLabel}
+        </CommonThemeButton>
       </Box>
     </>
   );

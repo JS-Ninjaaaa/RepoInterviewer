@@ -1,52 +1,51 @@
-import { Box, Button } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import HomeIcon from "@mui/icons-material/Home";
+import SkipNextIcon from "@mui/icons-material/SkipNext";
 import { useAnswerContext } from "@/screens/answer-screen/context/UseAnswerContext";
 
 const ActionButtons: React.FC = () => {
-  const { buttonDisplay, setInterruptModalOpen, handleNextClick } =
+  const { topButtonState, setInterruptModalOpen, handleNextClick } =
     useAnswerContext();
 
   return (
     <Box
       sx={{
-        display: "flex",
-        width: "auto",
-        mt: 1,
-        gap: "20%",
-        justifyContent: "center",
-        mb: "68px",
+        position: "relative",
+        height: "90px",
+        width: "100%",
+        backgroundColor: (theme) => theme.palette.background.paper,
+        boxShadow: (theme) =>
+          theme.palette.mode === "light"
+            ? `0px 2px 4px ${theme.palette.shadowColor}`
+            : "none",
       }}
     >
-      <Button
+      <IconButton
         onClick={() => setInterruptModalOpen(true)}
-        variant="contained"
         sx={{
-          backgroundColor: (theme) => theme.palette.secondary.light,
-          color: "white",
-          minWidth: "120px",
-          width: "42%",
-          height: 42,
-          fontSize: 18,
+          position: "absolute",
+          top: "50%",
+          transform: "translateY(-50%)",
+          left: "16px",
+          color: (theme) => theme.palette.secondary.light,
         }}
       >
-        中断
-      </Button>
-      <Button
-        onClick={handleNextClick}
-        variant="contained"
-        sx={{
-          backgroundColor:
-            buttonDisplay === "次へ"
-              ? (theme) => theme.palette.primary.light
-              : (theme) => theme.palette.secondary.light,
-          color: "white",
-          minWidth: "150px",
-          width: "42%",
-          height: 42,
-          fontSize: 18,
-        }}
-      >
-        {buttonDisplay}
-      </Button>
+        <HomeIcon sx={{ fontSize: "36px" }} />
+      </IconButton>
+      {topButtonState === "skip" && (
+        <IconButton
+          onClick={handleNextClick}
+          sx={{
+            position: "absolute",
+            right: "16px",
+            color: (theme) => theme.palette.secondary.dark,
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
+          <SkipNextIcon sx={{ fontSize: "42px" }} />
+        </IconButton>
+      )}
     </Box>
   );
 };

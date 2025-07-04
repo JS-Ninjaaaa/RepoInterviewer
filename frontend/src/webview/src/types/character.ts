@@ -8,7 +8,7 @@ export interface Character {
   totalQuestion: number;
   quotes: string[];
   image: string;
-  halfImage: string,
+  halfImage: string;
   wholeImage: string;
   color: Color;
   lightBackground: string;

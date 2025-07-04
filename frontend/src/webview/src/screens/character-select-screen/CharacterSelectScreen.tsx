@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, IconButton, Button, useTheme } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Box, IconButton, useTheme } from "@mui/material";
 import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import { useLoading } from "@/screens/context/LoadingContext";
 import type { Character } from "@/types/character";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
@@ -26,11 +25,14 @@ declare global {
 }
 
 const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
+  const location = useLocation();
+  const { selectedFiles = [] } =
+    (location.state as { selectedFiles?: string[] }) || {};
+
   const [characterIndex, setCharacterIndex] = useState(0);
   const currentCharacter = characters[characterIndex];
   const theme = useTheme();
   const textColor = theme.palette.text.primary;
-
   const bgUrl =
     theme.palette.mode === "dark"
       ? currentCharacter.darkBackground
@@ -51,6 +53,7 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
       payload: {
         difficulty: currentCharacter.level,
         totalQuestion: currentCharacter.totalQuestion,
+        selectedFiles,
       },
     };
     vscode.postMessage(msg);
@@ -80,7 +83,6 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
         sx={{
           backgroundImage: `url(${bgUrl})`,
           position: "absolute",
-          top: 0,
           left: 0,
           width: "100%",
           height: "100vh",
@@ -88,6 +90,7 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
           zIndex: -1,
         }}
       />
+
       <Box
         sx={{
           position: "relative",
@@ -101,44 +104,29 @@ const CharacterSelectScreen: React.FC<Props> = ({ vscode, characters }) => {
       >
         <Box sx={{ display: "flex" }}>
           <IconButton onClick={handlePrev} sx={{ color: "#00c853" }}>
-            <ArrowLeftIcon
-              sx={{
-                ml: "-16px", // アイコンの左右の余白を引っ込める
-                mr: "-16px",
-                fontSize: "64px",
-              }}
-            />
+            <ArrowLeftIcon sx={{ ml: -2, mr: -2, fontSize: 64 }} />
           </IconButton>
 
           <CharacterSelectCards currentCharacter={currentCharacter} />
 
           <IconButton onClick={handleNext} sx={{ color: "#3877ff" }}>
-            <ArrowRightIcon
-              sx={{
-                ml: "-16px",
-                mr: "-16px",
-                fontSize: "64px",
-              }}
-            />
+            <ArrowRightIcon sx={{ ml: -2, mr: -2, fontSize: 64 }} />
           </IconButton>
         </Box>
 
         <Box mt={4} display="flex" flexDirection="column" alignItems="center">
-          <Button
-            variant="outlined"
+          <CommonThemeButton
+            onClick={handleStartInterview}
             sx={{
+              padding: "12px 48px",
+              fontWeight: "bold",
               mb: 4,
-              width: 160,
-              color: "black",
-              backgroundColor: "#d9d9d9",
-              gap: 1,
-              p: 1,
+              boxShadow: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
+                  : "0px 6px 16px rgba(0, 0, 0, 0.15)",
             }}
           >
-            <TextSnippetIcon />
-            SELECT FILES
-          </Button>
-          <CommonThemeButton onClick={handleStartInterview}>
             START INTERVIEW
           </CommonThemeButton>
         </Box>

@@ -1,10 +1,11 @@
 import { Box, Typography, styled } from "@mui/material";
 
-const GradientText = styled("span")(({ theme }) => ({
-  background: theme.gradients.primary,
-  WebkitBackgroundClip: "text",
-  WebkitTextFillColor: "transparent",
-}));
+export const GradientText: React.FC<React.HTMLAttributes<HTMLSpanElement>> =
+  styled("span")(({ theme }) => ({
+    background: theme.gradients.primary,
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+  }));
 
 const TitleHeader = () => {
   return (
@@ -22,10 +23,19 @@ const TitleHeader = () => {
           <GradientText>Repo</GradientText> Interviewer
         </Typography>
         <Box sx={{ mb: 8 }}>
-          <Typography variant="subtitle1">
+          <Typography
+            sx={{
+              fontSize: "24px",
+            }}
+          >
             Interactive Coding Interview Practice
           </Typography>
-          <Typography variant="body2" color="grey.500">
+          <Typography
+            sx={{
+              color: (theme) => theme.palette.primary.light,
+              fontSize: "20px",
+            }}
+          >
             AI-powered interview based on your repository
           </Typography>
         </Box>

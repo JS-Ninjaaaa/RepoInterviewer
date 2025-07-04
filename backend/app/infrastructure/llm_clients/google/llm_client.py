@@ -1,16 +1,17 @@
 import json
 import os
 
+from google import genai
+from google.genai import types
+from pydantic import BaseModel
+
 from app.domain.entities.chat_history import ChatHistory
+from app.domain.entities.chat_response import InterviewChatResponse
 from app.domain.entities.difficulty import Difficulty
-from app.domain.entities.evaluation_result import QuestionEvaluationResult
 from app.domain.entities.interview_question import InterviewQuestion
 from app.domain.entities.source_code import SourceCode
 from app.domain.llm_clients.llm_client import LLMClient
 from app.infrastructure.llm_clients.prompt_service import PromptService
-from google import genai
-from google.genai import types
-from pydantic import BaseModel
 
 # 相応しくない内容を生成させないようにする設定
 safety_settings = [
@@ -34,7 +35,7 @@ safety_settings = [
 ]
 
 
-class InterviewFeedback(BaseModel):
+class InterviewFeedbackSchema(BaseModel):
     """FB生成時に指定するスキーマ
 
     LLMはこのスキーマに従った応答を出力する
@@ -46,6 +47,20 @@ class InterviewFeedback(BaseModel):
 
     score: int
     comment: str
+
+
+class InterviewChatResponseSchema(BaseModel):
+    """深掘りありの面接における応答生成時に指定するスキーマ
+
+    Attributes:
+        score (int): スコア
+        response (str): 応答
+        continue_ (bool): 質問を続けるかどうか
+    """
+
+    score: int
+    response: str
+    continue_: bool
 
 
 class GoogleLLMClient(LLMClient):
@@ -215,7 +230,7 @@ class GoogleLLMClient(LLMClient):
         self,
         source_code: SourceCode,
         question: InterviewQuestion,
-    ) -> QuestionEvaluationResult:
+    ) -> InterviewChatResponse:
         """FBを生成する
 
         Args:
@@ -227,13 +242,13 @@ class GoogleLLMClient(LLMClient):
             ValueError: FBをJSONに変換できなかった場合
 
         Returns:
-            QuestionEvaluationResult: 面接の評価結果
+            InterviewChatResponse: 面接の評価結果
         """
         character_prompt = PromptService.get_character_prompt(question.difficulty)
         content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="application/json",
-            response_schema=InterviewFeedback,
+            response_schema=InterviewFeedbackSchema,
         )
 
         contents = self.make_chat_history_contents(question.chat_history)
@@ -259,7 +274,11 @@ class GoogleLLMClient(LLMClient):
 
         try:
             response_dict = json.loads(response.text)
-            return QuestionEvaluationResult.from_dict(response_dict)
+            return InterviewChatResponse(
+                score=response_dict["score"],
+                response=response_dict["comment"],
+                continue_=False,
+            )
         except json.JSONDecodeError:
             raise ValueError("FBをJSONに変換できませんでした")
 
@@ -267,7 +286,7 @@ class GoogleLLMClient(LLMClient):
         self,
         source_code: SourceCode,
         question: InterviewQuestion,
-    ) -> QuestionEvaluationResult:
+    ) -> InterviewChatResponse:
         """深掘りありの面接における応答を生成する
 
         Args:
@@ -275,13 +294,13 @@ class GoogleLLMClient(LLMClient):
             question (InterviewQuestion): 質問の情報
 
         Returns:
-            QuestionEvaluationResult: 面接の評価結果
+            InterviewChatResponse: 面接の応答
         """
         character_prompt = PromptService.get_character_prompt(question.difficulty)
         content_config = self.make_content_config(
             character_prompt=character_prompt,
             response_mime_type="application/json",
-            response_schema=QuestionEvaluationResult,
+            response_schema=InterviewChatResponseSchema,
         )
 
         contents = self.make_chat_history_contents(question.chat_history)
@@ -307,7 +326,7 @@ class GoogleLLMClient(LLMClient):
 
         try:
             response_dict = json.loads(response.text)
-            return QuestionEvaluationResult.from_dict(response_dict)
+            return InterviewChatResponse.from_dict(response_dict)
         except json.JSONDecodeError:
             raise ValueError("応答をJSONに変換できませんでした")
 
@@ -346,6 +365,6 @@ class GoogleLLMClient(LLMClient):
         )
 
         if response.text is None:
-            raise ValueError("一般評価の生成に失敗しました")
+            raise ValueError("総評の生成に失敗しました")
 
         return response.text

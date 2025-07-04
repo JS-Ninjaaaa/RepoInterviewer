@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.115.12",
+    "google-cloud-firestore>=2.21.0",
     "google-genai>=1.17.0",
     "gunicorn>=23.0.0",
     "python-dotenv>=1.1.0",
@@ -24,7 +25,7 @@ dev = [
 ]
 
 [tool.taskipy.tasks]
-start = "gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --reload"
+start = "gunicorn main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8080 --reload"
 
 [tool.black]
 line-length = 88
@@ -39,3 +40,8 @@ force_grid_wrap = 0
 use_parentheses = true
 ensure_newline_before_comments = true
 force_single_line = true
+
+[tool.pytest.ini_options]
+pythonpath = [
+    ".",
+]

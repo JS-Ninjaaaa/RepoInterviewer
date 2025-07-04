@@ -11,13 +11,13 @@ React + TypeScript + Vite を用いたアプリです。VisualStudioCodeの拡�
 1. ターミナルのfrontendディレクトリで以下のコマンドを実行し，必要なパッケージをインストールします。
 
 ```sh
-  pnpm install
+npm install
 ```
 
 2. ターミナルのfrontendディレクトリで以下のコマンドを実行するとwebviewディレクトリのTypeScriptのコードが拡張機能で扱えるJavaScript + HTMLにビルドされます。
 
 ```sh
-  pnpm run build
+npm run build
 ```
 
 ビルド成果物はfrontend/buildディレクトリで確認できます。

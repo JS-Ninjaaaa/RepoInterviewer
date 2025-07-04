@@ -23,7 +23,10 @@ const TitleScreen = () => {
         justifyContent: "center",
         textAlign: "center",
         px: 2,
-        gap: 2,
+        gap: 4,
+        position: "absolute",
+        left: 0,
+        width: "100%",
       }}
     >
       <TitleHeader />

@@ -1,5 +1,6 @@
-import { Character } from "@/types/character";
-import { ChatMessage } from "@/types/chat-message";
+import type { Character } from "@/types/character";
+import type { ChatMessage } from "@/types/chat-message";
+import type { TopButtonState, BottomButtonState } from "@/types/action-button";
 
 export interface AnswerContextType {
   currentCharacter: Character;
@@ -7,7 +8,8 @@ export interface AnswerContextType {
   chatHistory: ChatMessage[];
   chatInput: string;
   questionId: number;
-  buttonDisplay: string;
+  topButtonState: TopButtonState;
+  bottomButtonState: BottomButtonState;
   displayEnterBox: boolean;
   interruptModalOpen: boolean;
   skipModalOpen: boolean;

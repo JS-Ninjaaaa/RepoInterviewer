@@ -1,14 +1,15 @@
 from unittest.mock import MagicMock
 
 import pytest
-from app.api.dependencies import get_question_usecase
+from fastapi import status
+from fastapi.testclient import TestClient
+
+from app.api.dependencies import get_question_usecase, verify_token
 from app.usecase.dtos.interview_dto import (
     GetQuestionRequest,
     GetQuestionResponse,
 )
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
-from fastapi import status
-from fastapi.testclient import TestClient
 from main import app
 
 # テストデータ
@@ -20,6 +21,7 @@ question = "質問文"
 @pytest.fixture
 def mock_get_question_usecase():
     mock_usecase = MagicMock(spec=GetQuestionUseCase)
+    app.dependency_overrides[verify_token] = lambda: True
     app.dependency_overrides[get_question_usecase] = lambda: mock_usecase
     return mock_usecase
 
@@ -53,7 +55,7 @@ def test_get_question_success(
 
 def test_get_question_not_found(
     client: TestClient,
-    mock_get_question_usecase: GetQuestionUseCase,
+    mock_get_question_usecase: GetQuestionUseCase,  # GCPのFirestoreへ接続しないため
 ):
     mock_get_question_usecase.execute.return_value = None
 
@@ -64,7 +66,10 @@ def test_get_question_not_found(
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_get_question_missing_question_id(client: TestClient):
+def test_get_question_missing_question_id(
+    client: TestClient,
+    mock_get_question_usecase: GetQuestionUseCase,  # GCPのFirestoreへ接続しないため
+):
     response = client.get(
         f"/interview/{interview_id}",
     )
@@ -74,7 +79,7 @@ def test_get_question_missing_question_id(client: TestClient):
 
 def test_get_question_use_case_raises_exception(
     client: TestClient,
-    mock_get_question_usecase: GetQuestionUseCase,
+    mock_get_question_usecase: GetQuestionUseCase,  # GCPのFirestoreへ接続しないため
 ):
     mock_get_question_usecase.execute.side_effect = Exception()
 

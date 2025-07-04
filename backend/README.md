@@ -26,6 +26,8 @@ Dockerコンテナが削除される度にVS Codeの拡張機能をインスト�
 ホストの環境でFastAPIを起動し、RedisのみをDockerで起動する。
 
 ```sh
+# 使用するデータベースに応じて起動するコンテナを選択する
+docker compose up firestore-emulator -d
 docker compose up redis -d
 
 source .venv/bin/activate

@@ -1,29 +1,20 @@
 import React from "react";
-import { Button, useTheme } from "@mui/material";
+import { Button } from "@mui/material";
 import type { ButtonProps } from "@mui/material";
 
-const CommonThemeButton: React.FC<ButtonProps> = (props) => {
-  const theme = useTheme();
-
+const CommonThemeButton: React.FC<ButtonProps> = ({ sx, ...props }) => {
   return (
     <Button
       {...props}
       sx={{
-        background: theme.gradients.secondary.main,
+        background: (theme) => theme.gradients.secondary.main,
         color: "#fff",
         textTransform: "none",
-        padding: "12px 48px",
-        borderRadius: 8,
-        fontWeight: "bold",
-        boxShadow:
-          theme.palette.mode === "dark"
-            ? "0px 6px 16px rgba(255, 255, 255, 0.24)"
-            : "0px 6px 16px rgba(0, 0, 0, 0.15)",
+        borderRadius: "8px",
         "&:hover": {
-          background: theme.gradients.secondary.light,
+          background: (theme) => theme.gradients.secondary.light,
         },
-        // もし props.sx を受け取りたいならマージ
-        ...((props.sx as object) || {}),
+        ...sx,
       }}
     >
       {props.children}

@@ -1,92 +1,67 @@
-import { useNavigate } from "react-router-dom";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import ReplayIcon from "@mui/icons-material/Replay";
 import XIcon from "@mui/icons-material/X";
-import { Character } from "@/types/character";
+import { useNavigate } from "react-router-dom";
 
-interface FooterProps {
+interface Props {
   vscode: VSCodeAPI;
-  currentCharacter: Character;
 }
 
-const Footer = ({ vscode, currentCharacter }: FooterProps) => {
+const Footer = ({ vscode }: Props) => {
   const navigate = useNavigate();
 
-  const moveFirstScreen = () => {
-    navigate("/start");
-  };
+  const moveFirstScreen = () => navigate("/title");
+  const closeWebview = () => vscode.postMessage({ type: "closeWebview" });
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          width: "100%",
-          gap: "5%",
-          justifyContent: "center",
-          alignItems: "center",
-          mb: "30px",
-        }}
-      >
-        <Box
-          component="a"
-          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-            `${currentCharacter.name}から技術面接のフィードバックをもらった！`
-          )}&hashtags=RepoInterviewer`}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ display: "inline-block" }}
-        >
-          <XIcon
-            sx={{
-              bgcolor: "black",
-              color: "white",
-              p: 1,
-              borderRadius: 1,
-              fontSize: "18px",
-            }}
-          />
-        </Box>
-        <Typography>SNSで結果をシェアしよう !</Typography>
-      </Box>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        px: 3,
+      }}
+    >
+      <IconButton onClick={closeWebview}>
+        <ExitToAppIcon
+          sx={{
+            fontSize: "36px",
+            color: (theme) => theme.palette.secondary.light,
+          }}
+        />
+      </IconButton>
 
-      <Box
+      <IconButton
+        component="a"
+        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          "RepoInterviewer で技術面接に挑戦した！"
+        )}&hashtags=RepoInterviewer`}
+        target="_blank"
+        rel="noopener noreferrer"
         sx={{
-          display: "flex",
-          gap: "30%",
-          justifyContent: "center",
-          alignItems: "baseline",
-          mb: "68px",
+          bgcolor: (theme) => theme.palette.secondary.main,
+          "&:hover": { bgcolor: (theme) => theme.palette.shadowColor },
+          borderRadius: 1,
+          p: 1.2,
+          width: "36px",
+          height: "36px",
         }}
       >
-        <Button
-          onClick={() => vscode.postMessage({ type: "closeWebview" })}
-          variant="contained"
+        <XIcon sx={{ fontSize: 20, color: "#fff" }} />
+      </IconButton>
+
+      {/* Retry → Webview 終了（例として）*/}
+      <IconButton onClick={moveFirstScreen}>
+        <ReplayIcon
           sx={{
-            backgroundColor: (theme) => theme.palette.secondary.light,
-            color: "white",
-            minWidth: "120px",
-            height: "36px",
-            width: "80%",
-            fontSize: 16,
+            fontSize: "36px",
+            color: (theme) => theme.palette.secondary.dark,
           }}
-        >
-          終了
-        </Button>
-        <Button
-          onClick={moveFirstScreen}
-          variant="contained"
-          sx={{
-            backgroundColor: currentCharacter.color[400],
-            color: "white",
-            minWidth: "120px",
-            height: "36px",
-            fontSize: 16,
-          }}
-        >
-          リトライ
-        </Button>
-      </Box>
-    </>
+        />
+      </IconButton>
+    </Box>
   );
 };
 

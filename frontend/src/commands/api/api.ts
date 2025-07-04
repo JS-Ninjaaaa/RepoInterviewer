@@ -1,10 +1,10 @@
-import { API_ENDPOINT } from "../env";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
+import { API_ENDPOINT, API_TOKEN } from "../env";
 import {
-  mapFirstQuestion,
-  mapNextQuestion,
   mapFeedback,
+  mapFirstQuestion,
   mapGeneralFeedback,
+  mapNextQuestion,
 } from "../utilities/mappers";
 
 type PayloadOf<T extends VscodeApiRequestValue["type"]> =
@@ -22,6 +22,9 @@ export async function fetchFirstQuestion(
 
   const response = await fetch(`${API_ENDPOINT}/interview`, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${API_TOKEN}`,
+    },
     body: formData,
   });
 
@@ -41,10 +44,11 @@ export async function fetchFeedBack(payload: PayloadOf<"fetchFeedback">) {
   const response = await fetch(url, {
     method: "POST",
     headers: {
+      Authorization: `Bearer ${API_TOKEN}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      question_id: questionId,
+      question_id: questionId.toString(),
       message: answer,
     }),
   });
@@ -66,6 +70,9 @@ export async function fetchNextQuestion(
 
   const response = await fetch(url, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${API_TOKEN}`,
+    },
   });
 
   if (!response.ok) {
@@ -85,6 +92,9 @@ export async function fetchGeneralFeedback(
 
   const response = await fetch(url, {
     method: "GET",
+    headers: {
+      Authorization: `Bearer ${API_TOKEN}`,
+    },
   });
 
   if (!response.ok) {

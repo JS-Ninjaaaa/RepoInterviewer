@@ -30,4 +30,20 @@ export const mensetsuIgnoreFiles = [
   "**/.editorconfig",
   "**/README.md",
   "**/LICENSE",
+
+  "**/*.png",
+  "**/*.jpg",
+  "**/*.jpeg",
+  "**/*.gif",
+  "**/*.svg",
+  "**/*.webp",
+  "**/*.ico",
+
+  "**/*.ttf",
+  "**/*.otf",
+  "**/*.woff",
+  "**/*.woff2",
+  "**/*.eot",
+
+  "**/assets/**",
 ];

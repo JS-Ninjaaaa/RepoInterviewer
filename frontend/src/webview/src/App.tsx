@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
-import { baseTheme } from "@/theme";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import "@mui/material/styles";
 import { createCharacters } from "@/data/create-characters";
 import type { Character } from "@/types/character";
 import { ImageUri } from "@shared/uri";
+import { createAppTheme } from "@/app-theme";
 import TitleScreen from "@/screens/title-screen/TitleScreen";
 import CharacterSelectScreen from "@/screens/character-select-screen/CharacterSelectScreen";
 import AnswerScreen from "@/screens/answer-screen/AnswerScreen";
@@ -12,6 +13,7 @@ import GeneralFeedbackScreen from "@/screens/general-feedback-screen/GeneralFeed
 import { LoadingProvider, useLoading } from "@/screens/context/LoadingContext";
 import { LoadingOverlay } from "@/screens/components/LoadingOverlay";
 import ModeToggleButton from "@/components/ModeToggleButton";
+import SelectFileScreen from "@/screens/file-select-screen/SelectFileScreen";
 
 declare global {
   interface Window {
@@ -43,6 +45,10 @@ const AppContent: React.FC<AppContentProps> = ({ characters }) => {
         <Routes>
           <Route path="/title" element={<TitleScreen />} />
           <Route
+            path="/select-files"
+            element={<SelectFileScreen vscode={vscode} />}
+          />
+          <Route
             path="/start"
             element={
               <CharacterSelectScreen vscode={vscode} characters={characters} />
@@ -58,7 +64,14 @@ const AppContent: React.FC<AppContentProps> = ({ characters }) => {
     </>
   );
 };
-
+declare module "@mui/material/styles" {
+  interface Palette {
+    shadowColor: string;
+  }
+  interface PaletteOptions {
+    shadowColor?: string;
+  }
+}
 const App: React.FC = () => {
   const [characters, setCharacters] = useState<Character[] | null>(null);
   const [mode, setMode] = useState<"light" | "dark">("dark");
@@ -83,24 +96,7 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const theme = useMemo(
-    () =>
-      createTheme({
-        ...baseTheme,
-        palette: {
-          ...baseTheme.palette,
-          mode: mode,
-          background: {
-            default: mode === "dark" ? "#0f1121" : "#ffffff",
-          },
-          text: {
-            primary: mode === "dark" ? "#ffffff" : "#000000",
-            secondary: mode === "dark" ? "#000000" : "#ffffff",
-          },
-        },
-      }),
-    [mode]
-  );
+  const theme = createAppTheme(mode);
 
   if (characters === null) {
     return <div>読み込み中…</div>;

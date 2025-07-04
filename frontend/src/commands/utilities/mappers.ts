@@ -1,14 +1,14 @@
 import type {
-  BackendFirstQuestionResponse,
-  BackendNextQuestionResponse,
   BackendFeedBackResponse,
+  BackendFirstQuestionResponse,
   BackendGeneralFeedbackResponse,
+  BackendNextQuestionResponse,
 } from "@shared/backend-api-response-value";
 import type {
-  FirstQuestion,
-  NextQuestion,
   Feedback,
+  FirstQuestion,
   GeneralFeedback,
+  NextQuestion,
 } from "@shared/webview-api-response-type";
 
 // 変数名の変換関数の定義
@@ -17,7 +17,7 @@ export function mapFirstQuestion(
 ): FirstQuestion {
   return {
     interviewId: src.interview_id,
-    question: src.question,
+    question: src.first_question,
   };
 }
 
@@ -25,17 +25,17 @@ export function mapNextQuestion(
   src: BackendNextQuestionResponse
 ): NextQuestion {
   return {
-    questionId: src.question_id,
+    questionId: Number(src.question_id),
     question: src.question,
   };
 }
 
 export function mapFeedback(src: BackendFeedBackResponse): Feedback {
   return {
-    questionId: src.question_id,
+    questionId: Number(src.question_id),
     response: src.response,
     score: src.score,
-    continueQuestion: src.continue_question,
+    continueQuestion: src.continue,
   };
 }
 
@@ -44,6 +44,6 @@ export function mapGeneralFeedback(
 ): GeneralFeedback {
   return {
     scores: src.scores,
-    generalReview: src.general_review,
+    generalReview: src.overall_review,
   };
 }

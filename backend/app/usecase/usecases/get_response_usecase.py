@@ -4,11 +4,10 @@ from app.domain.entities.chat_history import ChatMessage
 from app.domain.llm_clients.llm_client import LLMClient
 from app.domain.repositories.interview_repository import InterviewRepository
 from app.domain.repositories.source_code_repository import SourceCodeRepository
-from app.usecase.dtos.interview_dto import GetFeedbackRequest, GetFeedbackResponse
+from app.usecase.dtos.interview_dto import GetResponseRequest, GetResponseResponse
 
 
-class GetFeedbackUseCase:
-    DEEP_MODE_ROUND_LIMIT = 3
+class GetResponseUseCase:
 
     def __init__(
         self,
@@ -30,14 +29,14 @@ class GetFeedbackUseCase:
         self.llm_client = llm_client
         self.source_code_dir = source_code_dir
 
-    def execute(self, request: GetFeedbackRequest) -> GetFeedbackResponse:
-        """フィードバックを生成する
+    def execute(self, request: GetResponseRequest) -> GetResponseResponse:
+        """ユーザーの回答に対するLLMからの返答を生成する
 
         Args:
-            request (GetFeedbackRequest): フィードバックを生成するリクエスト
+            request (GetResponseRequest): ユーザーの回答に対するLLMからの返答を生成するリクエスト
 
         Returns:
-            GetFeedbackResponse: フィードバックを生成した結果
+            GetResponseResponse: ユーザーの回答に対するLLMからの返答を生成した結果
         """
         question = self.interview_repository.get_question(
             request.interview_id,
@@ -56,16 +55,14 @@ class GetFeedbackUseCase:
 
         if question.can_continue_question:
             # 深堀りの質問を返す
-            feedback = self.llm_client.generate_chat_response(source_code, question)
-            can_continue_question = True
+            response = self.llm_client.generate_chat_response(source_code, question)
         else:
             # フィードバックと点数を返す
-            feedback = self.llm_client.generate_feedback(source_code, question)
-            question.score = feedback.score
-            can_continue_question = False
+            response = self.llm_client.generate_feedback(source_code, question)
 
+        question.score = response.score
         question.append_chat_history(
-            ChatMessage(role="model", message=feedback.comment)
+            ChatMessage(role="model", message=response.response)
         )
 
         self.interview_repository.update_question(
@@ -74,10 +71,10 @@ class GetFeedbackUseCase:
             question,
         )
 
-        return GetFeedbackResponse(
+        return GetResponseResponse(
             interview_id=request.interview_id,
             question_id=request.question_id,
-            score=feedback.score,
-            comment=feedback.comment,
-            continue_=can_continue_question,
+            score=response.score,
+            response=response.response,
+            continue_=response.continue_,
         )
