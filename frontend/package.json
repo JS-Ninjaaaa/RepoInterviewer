@@ -5,7 +5,10 @@
   "description": "技術面接の練習ができる拡張機能",
   "version": "0.0.1",
   "icon": "public/assets/images/icons/icon.png",
-  "repository": "https://github.com/work-in-progress-team/RepoInterviewer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/work-in-progress-team/RepoInterviewer"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
