@@ -5,6 +5,7 @@ from app.api.dependencies import (
     get_question_usecase,
     get_response_usecase,
     get_set_up_interview_usecase,
+    verify_token,
 )
 from app.domain.entities.difficulty import Difficulty
 from app.schemas.interview_schema import (
@@ -25,7 +26,9 @@ from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
 from app.usecase.usecases.get_response_usecase import GetResponseUseCase
 from app.usecase.usecases.setup_interview_usecase import SetUpInterviewUseCase
 
-router = APIRouter()
+router = APIRouter(
+    dependencies=[Depends(verify_token)],
+)
 
 
 @router.post(

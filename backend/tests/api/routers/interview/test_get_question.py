@@ -1,14 +1,15 @@
 from unittest.mock import MagicMock
 
 import pytest
-from app.api.dependencies import get_question_usecase
+from fastapi import status
+from fastapi.testclient import TestClient
+
+from app.api.dependencies import get_question_usecase, verify_token
 from app.usecase.dtos.interview_dto import (
     GetQuestionRequest,
     GetQuestionResponse,
 )
 from app.usecase.usecases.get_question_usecase import GetQuestionUseCase
-from fastapi import status
-from fastapi.testclient import TestClient
 from main import app
 
 # テストデータ
@@ -20,6 +21,7 @@ question = "質問文"
 @pytest.fixture
 def mock_get_question_usecase():
     mock_usecase = MagicMock(spec=GetQuestionUseCase)
+    app.dependency_overrides[verify_token] = lambda: True
     app.dependency_overrides[get_question_usecase] = lambda: mock_usecase
     return mock_usecase
 

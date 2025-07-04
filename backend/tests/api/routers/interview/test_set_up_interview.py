@@ -3,7 +3,10 @@ import zipfile
 from unittest.mock import MagicMock
 
 import pytest
-from app.api.dependencies import get_set_up_interview_usecase
+from fastapi import status
+from fastapi.testclient import TestClient
+
+from app.api.dependencies import get_set_up_interview_usecase, verify_token
 from app.domain.entities.difficulty import Difficulty
 from app.usecase.dtos.interview_dto import (
     SetUpInterviewRequest,
@@ -12,8 +15,6 @@ from app.usecase.dtos.interview_dto import (
 from app.usecase.usecases.setup_interview_usecase import (
     SetUpInterviewUseCase,
 )
-from fastapi import status
-from fastapi.testclient import TestClient
 from main import app
 
 # テストデータ
@@ -35,6 +36,7 @@ def test_zip_file():
 @pytest.fixture
 def mock_set_up_interview_usecase():
     mock_usecase = MagicMock(spec=SetUpInterviewUseCase)
+    app.dependency_overrides[verify_token] = lambda: True
     app.dependency_overrides[get_set_up_interview_usecase] = lambda: mock_usecase
     return mock_usecase
 

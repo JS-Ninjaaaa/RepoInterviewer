@@ -1,14 +1,15 @@
 from unittest.mock import MagicMock
 
 import pytest
-from app.api.dependencies import get_overall_review_usecase
+from fastapi import status
+from fastapi.testclient import TestClient
+
+from app.api.dependencies import get_overall_review_usecase, verify_token
 from app.usecase.dtos.interview_dto import (
     GetInterviewResultRequest,
     GetInterviewResultResponse,
 )
 from app.usecase.usecases.get_interview_result_usecase import GetInterviewResultUseCase
-from fastapi import status
-from fastapi.testclient import TestClient
 from main import app
 
 # テストデータ
@@ -20,6 +21,7 @@ overall_review = "全体的に良い回答でした"
 @pytest.fixture
 def mock_get_interview_result_usecase():
     mock_usecase = MagicMock(spec=GetInterviewResultUseCase)
+    app.dependency_overrides[verify_token] = lambda: True
     app.dependency_overrides[get_overall_review_usecase] = lambda: mock_usecase
     return mock_usecase
 
