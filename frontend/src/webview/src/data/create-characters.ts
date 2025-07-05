@@ -9,7 +9,7 @@ export function createCharacters(imageUris: ImageUri): Character[] {
       name: "Yuzu",
       title: "やさしいギャル",
       questionType: "１問１答",
-      totalQuestion: 1,
+      totalQuestion: 5,
       quotes: ["マジすごいじゃん〜！えらい！", "ちょっとだけ直せば完璧っしょ☆"],
       image: imageUris.yuzu,
       halfImage: imageUris.halfYuzu,
