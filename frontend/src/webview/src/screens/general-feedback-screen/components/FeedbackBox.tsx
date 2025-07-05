@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import ReactMarkdown from "react-markdown";
 
 interface Props {
   generalReview: string;
@@ -23,7 +24,7 @@ const FeedbackBox = ({ generalReview }: Props) => {
         lineHeight: 1.6,
       }}
     >
-      <Typography sx={{ whiteSpace: "pre-wrap" }}>{generalReview}</Typography>
+      <ReactMarkdown>{generalReview}</ReactMarkdown>
     </Box>
   );
 };
