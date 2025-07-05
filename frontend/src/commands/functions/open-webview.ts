@@ -6,9 +6,11 @@ let currentPanel: vscode.WebviewPanel | undefined;
 export async function openWindow(
   extensionUri: vscode.Uri
 ): Promise<vscode.WebviewPanel> {
-  await vscode.commands.executeCommand(
-    "workbench.action.files.newUntitledFile"
-  );
+  if (vscode.window.visibleTextEditors.length === 0) {
+    await vscode.commands.executeCommand(
+      "workbench.action.openWalkthrough"
+    );
+  }
 
   if (currentPanel) {
     currentPanel.reveal();

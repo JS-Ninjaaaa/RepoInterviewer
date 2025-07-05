@@ -1,9 +1,9 @@
-import * as vscode from "vscode";
 import type { VscodeApiRequestValue } from "@shared/vscode-api-request-value";
-import { handleWebviewMessage } from "./functions/handle-webview-message";
+import * as vscode from "vscode";
 import { getWebviewUris } from "./functions/get-webview-uris";
-import { getNonce } from "./utilities/get-nonce";
+import { handleWebviewMessage } from "./functions/handle-webview-message";
 import { openWindow } from "./functions/open-webview";
+import { getNonce } from "./utilities/get-nonce";
 
 // 拡張機能起動時のエントリポイント
 export function activate(context: vscode.ExtensionContext) {
