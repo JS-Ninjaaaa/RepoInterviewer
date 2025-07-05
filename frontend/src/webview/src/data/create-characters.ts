@@ -1,5 +1,5 @@
-import { amber, lightGreen, blue, deepPurple } from "@mui/material/colors";
 import { Character } from "@/types/character";
+import { amber, blue, deepPurple, lightGreen } from "@mui/material/colors";
 import type { ImageUri } from "@shared/uri";
 
 export function createCharacters(imageUris: ImageUri): Character[] {
@@ -9,7 +9,7 @@ export function createCharacters(imageUris: ImageUri): Character[] {
       name: "Yuzu",
       title: "やさしいギャル",
       questionType: "１問１答",
-      totalQuestion: 5,
+      totalQuestion: 1,
       quotes: ["マジすごいじゃん〜！えらい！", "ちょっとだけ直せば完璧っしょ☆"],
       image: imageUris.yuzu,
       halfImage: imageUris.halfYuzu,
